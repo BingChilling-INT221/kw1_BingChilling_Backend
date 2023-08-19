@@ -18,8 +18,8 @@ import java.time.ZonedDateTime;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "iduser", nullable = true)
-    private Integer idUser ;
+    @Column(name = "id", nullable = true)
+    private Integer id ;
     @Column(name="username",unique = true, nullable = false,length = 45)
     private String username ;
     @Column(name="name",unique = true , nullable = false,length = 100)
