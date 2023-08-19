@@ -42,7 +42,8 @@ public class UserService {
         userObj.setRole(Role.valueOf(user.getRole()));
        // userObj.setCreatedOn(ZonedDateTime.parse(formatter.format(ZonedDateTime.now(UTC)),formatter));
       //  userObj.setUpdatedOn(ZonedDateTime.parse(formatter.format(ZonedDateTime.now(UTC)),formatter));
-        return userRepository.saveAndFlush(userObj);
+       return   userRepository.saveAndFlush(userObj);
+
     }
 
     public User updateUser(Integer userid,UserRequestDTO user){
