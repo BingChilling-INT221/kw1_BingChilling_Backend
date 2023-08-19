@@ -16,6 +16,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import static java.time.ZoneOffset.UTC;
 
@@ -32,14 +33,14 @@ public class UserService {
        return userRepository.findById(userid).orElseThrow(()->new NotfoundById((userid+" doesn't not exist"),"id"));
     }
 
-    public User creatUser (UserRequestDTO user){
+    public User creatUser (UserRequestDTO user) throws InterruptedException {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         User userObj = new User() ;
-        userObj.setUsername(user.getUsername());
-        userObj.setName(user.getName());
-        userObj.setEmail(user.getEmail());
-        userObj.setRole(Role.valueOf(user.getRole()));
+        userObj.setUsername(user.getUsername().trim());
+        userObj.setName(user.getName().trim());
+        userObj.setEmail(user.getEmail().trim());
+        userObj.setRole(Role.valueOf(user.getRole().trim()));
        // userObj.setCreatedOn(ZonedDateTime.parse(formatter.format(ZonedDateTime.now(UTC)),formatter));
       //  userObj.setUpdatedOn(ZonedDateTime.parse(formatter.format(ZonedDateTime.now(UTC)),formatter));
         return userRepository.saveAndFlush(userObj);

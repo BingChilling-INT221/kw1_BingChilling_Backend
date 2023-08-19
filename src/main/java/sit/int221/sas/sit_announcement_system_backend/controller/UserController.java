@@ -14,7 +14,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/users")
 //แก้ Cross origin ให้กำหนด port
-@CrossOrigin(origins = "http://localhost:80")
+@CrossOrigin(origins = "{http://localhost:80,http://intproj22.sit.kmutt.ac.th:80/kw1}")
 public class UserController {
     @Autowired
     private UserService userService;
@@ -33,7 +33,7 @@ public class UserController {
     }
 
     @PostMapping("")
-    public  User creatUser(@RequestBody UserRequestDTO userObj){
+    public  User creatUser(@RequestBody UserRequestDTO userObj) throws InterruptedException {
     //ถามเรื่อง db ควร notnull ไหม
         return userService.creatUser(userObj);
     }
