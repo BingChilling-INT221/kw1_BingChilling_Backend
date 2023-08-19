@@ -8,13 +8,13 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.CustomException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+    //มีอันที่รับทุก Error
+    //หากส่ง Error มาเหมือนกัน คือเป็น Class แต่ไม่ใช่ Error ที่เราเซตไว้
+    //มีอีก Error ที่รับทั้งหมด ทั้ง class และ filed
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<ErrorResponse> handleValidateError(MethodArgumentNotValidException ex, WebRequest request) {
@@ -28,6 +28,8 @@ public class GlobalExceptionHandler {
         });
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(er);
     }
+//ปัญหามีอยู่ว่า หากมีเออเร่อก่อน ที่จะเช็คตาม Custom จะทำไง ?
+    // ตั้งชื่อ Error ไม่สื่อ
 
     @ExceptionHandler(CustomException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)

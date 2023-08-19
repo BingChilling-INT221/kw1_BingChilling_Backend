@@ -16,7 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("api/announcements")
-@CrossOrigin
+@CrossOrigin(origins = "http://localhost:80")
 @Validated
 public class AnnouncementController<T> {
     @Autowired
@@ -97,4 +97,9 @@ public class AnnouncementController<T> {
     public ResponseEntity<Integer> updateAnnouncementViews(@PathVariable Integer id){
         return  ResponseEntity.status(HttpStatus.OK).body(announcementService.updateViewCount(id));
     }
+
+//    @GetMapping("/{id}/views")
+//    public ResponseEntity<Integer> getViews(@PathVariable Integer id){
+//        return ResponseEntity.status(HttpStatus.OK).body(announcementService.getViewsCount(id));
+//    }
 }

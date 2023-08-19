@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import sit.int221.sas.sit_announcement_system_backend.DTO.AnnouncementsRequestDTO;
 import sit.int221.sas.sit_announcement_system_backend.entity.Announcement;
-import sit.int221.sas.sit_announcement_system_backend.execeptions.CustomException;
+import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.CustomException;
 import sit.int221.sas.sit_announcement_system_backend.repository.AnnouncementRepository;
 import sit.int221.sas.sit_announcement_system_backend.repository.CategoryRepository;
 
@@ -17,8 +17,6 @@ import sit.int221.sas.sit_announcement_system_backend.repository.CategoryReposit
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
-
-import static org.hibernate.Hibernate.size;
 
 @Service
 public class AnnouncementService {
@@ -47,7 +45,10 @@ public class AnnouncementService {
 
 
     public Announcement getAnnouncementById(Integer announcementid) {
-        return announcementRepository.findById(announcementid).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Announcement id " + announcementid + " does not exist"));
+    return announcementRepository.findById(announcementid).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Announcement id " + announcementid + " does not exist"));
+//        announcement.setViewCount(announcement.getViewCount()+1);
+//        announcementRepository.saveAndFlush(announcement);
+//        return announcement ;
     }
 
     public Announcement createAnnoucement(AnnouncementsRequestDTO announcementDTO) {
@@ -128,6 +129,10 @@ public class AnnouncementService {
         announcementRepository.saveAndFlush(announcement);
         return announcement.getViewCount();
     }
+
+  /*  public Integer getViewsCount(Integer id){
+        return announcementRepository.viewcountById(id);
+    }*/
 }
 
 
