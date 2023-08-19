@@ -41,8 +41,6 @@ public class UserService {
         userObj.setName(user.getName().trim());
         userObj.setEmail(user.getEmail().trim());
         userObj.setRole(Role.valueOf(user.getRole().trim()));
-       // userObj.setCreatedOn(ZonedDateTime.parse(formatter.format(ZonedDateTime.now(UTC)),formatter));
-      //  userObj.setUpdatedOn(ZonedDateTime.parse(formatter.format(ZonedDateTime.now(UTC)),formatter));
         return userRepository.saveAndFlush(userObj);
     }
 
@@ -53,8 +51,6 @@ public class UserService {
         userExist.setName(user.getName());
         userExist.setEmail(user.getEmail());
         userExist.setRole(Role.valueOf(user.getRole()));
-        //userExist.setUpdatedOn(localDateTimeNow.atZone(ZoneId.of("UTC")));
-//        //ZonedDateTime.parse(formatter.format(ZonedDateTime.now().withZoneSameInstant(ZoneId.of("UTC"))),formatter)
     return userRepository.saveAndFlush(userExist);
     }
 }
