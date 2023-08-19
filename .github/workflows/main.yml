@@ -1,0 +1,21 @@
+
+name: sendRequestToDeploy
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build:
+    name: sendrequest
+    runs-on: ubuntu-latest
+    steps:
+      - uses: convictional/trigger-workflow-and-wait@v1.3.0
+        with:
+          owner: BingChilling-INT221
+          repo: kw1_BingChilling_Infrastructure
+          github_token: ${{ secrets.G_ACCESS_TOKEN }}
+          workflow_file_name: deploy_vpn.yml
+      - name: Sended
+        run: |
+          echo "Sended"
+          sleep 10s

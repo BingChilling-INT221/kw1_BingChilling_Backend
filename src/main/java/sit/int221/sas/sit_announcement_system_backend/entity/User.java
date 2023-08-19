@@ -28,9 +28,12 @@ public class User {
     private String email ;
     @Enumerated(EnumType.STRING)
     private Role role ;
-    @Column(name = "createdOn",nullable = true)
+
+    @Column(name = "createdOn",nullable = true, insertable=false)
+    @Temporal(TemporalType.TIMESTAMP)
     private ZonedDateTime createdOn;
-    @Column(name = "updateOn",nullable = true)
+    @Column(name = "updateOn",nullable = true ,insertable=false)
+    @Temporal(TemporalType.TIMESTAMP)
     private ZonedDateTime updatedOn;
 
 }

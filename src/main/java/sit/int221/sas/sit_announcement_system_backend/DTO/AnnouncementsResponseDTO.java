@@ -19,6 +19,6 @@ public class AnnouncementsResponseDTO {
     private AnnouncementDisplay announcementDisplay;
 
     private String announcementCategory;
-
+    private Integer viewCount;
 
 }

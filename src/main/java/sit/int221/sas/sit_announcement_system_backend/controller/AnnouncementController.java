@@ -28,11 +28,11 @@ public class AnnouncementController<T> {
 
     @GetMapping("")
     public ResponseEntity<List<AnnouncementsResponseDTO>> getAnnouncements(@RequestParam(required = false) String mode) {
-        if (mode != null && (mode.equalsIgnoreCase("active") || mode.equalsIgnoreCase("close"))) {
+//        if (mode != null && (mode.equalsIgnoreCase("active") || mode.equalsIgnoreCase("close"))) {
                 return ResponseEntity.status(HttpStatus.OK).body(listMapper.mapList(announcementService.getAnnouncements(mode), AnnouncementsResponseDTO.class, modelMapper));
-        } else {
-            return ResponseEntity.status(HttpStatus.OK).body(listMapper.mapList(announcementService.getAnnouncements(mode), AnnouncementsResponseDTO.class, modelMapper));
-        }
+//        } else {
+//            return ResponseEntity.status(HttpStatus.OK).body(listMapper.mapList(announcementService.getAnnouncements(mode), AnnouncementsResponseDTO.class, modelMapper));
+//        }
 
     }
 
@@ -50,7 +50,11 @@ public class AnnouncementController<T> {
     }*/
 
     @GetMapping("/{id}")
-    public ResponseEntity<AnnouncementsResponseDetailDTO> getAnnouncementById(@PathVariable Integer id) {
+    public ResponseEntity<AnnouncementsResponseDetailDTO> getAnnouncementById(@PathVariable Integer id,
+                                                                               @RequestParam(defaultValue = "false") Boolean count) {
+        if (count) {
+            announcementService.updateViewCount(id);
+        }
         return ResponseEntity.status(HttpStatus.OK).body(modelMapper.map(announcementService.getAnnouncementById(id), AnnouncementsResponseDetailDTO.class));
     }
 
@@ -61,18 +65,18 @@ public class AnnouncementController<T> {
                                         @RequestParam (defaultValue = "5") Integer size,
                                         @RequestParam (required = false) String mode,
                                         @RequestParam (required = false) Integer category){
-        if( mode != null ){
-            if(mode.toLowerCase().equals("active")||mode.toLowerCase().equals("close") ) {
-                return ResponseEntity.status(HttpStatus.OK).body(listMapper.toPageDTO(announcementService.getPages(page, size, mode, category), AnnouncementsResponseDTO.class, modelMapper));
-            }
-            else {
-                return ResponseEntity.status(HttpStatus.OK).body(listMapper.toPageDTO(announcementService.getPages(page, size, mode, category), AnnouncementsResponseDTO.class, modelMapper));
-            }
-            }
-        else {
+//        if( mode != null ){
+//            if(mode.toLowerCase().equals("active")||mode.toLowerCase().equals("close") ) {
+//                return ResponseEntity.status(HttpStatus.OK).body(listMapper.toPageDTO(announcementService.getPages(page, size, mode, category), AnnouncementsResponseDTO.class, modelMapper));
+//            }
+//            else {
+//                return ResponseEntity.status(HttpStatus.OK).body(listMapper.toPageDTO(announcementService.getPages(page, size, mode, category), AnnouncementsResponseDTO.class, modelMapper));
+//            }
+//            }
+//        else {
             return ResponseEntity.status(HttpStatus.OK).body(listMapper.toPageDTO(announcementService.getPages(page, size, mode, category), AnnouncementsResponseDTO.class, modelMapper));
 
-        }
+//        }
     }
 
 
@@ -93,6 +97,7 @@ public class AnnouncementController<T> {
         return  ResponseEntity.status(HttpStatus.OK).body(modelMapper.map(announcementService.updateAnnouncement(id,announcmentDTO), AnnouncementsResponseDetailDTO.class));
 
     }
+
     @PutMapping("/{id}/views")
     public ResponseEntity<Integer> updateAnnouncementViews(@PathVariable Integer id){
         return  ResponseEntity.status(HttpStatus.OK).body(announcementService.updateViewCount(id));
@@ -101,5 +106,5 @@ public class AnnouncementController<T> {
 //    @GetMapping("/{id}/views")
 //    public ResponseEntity<Integer> getViews(@PathVariable Integer id){
 //        return ResponseEntity.status(HttpStatus.OK).body(announcementService.getViewsCount(id));
-//    }
+
 }
