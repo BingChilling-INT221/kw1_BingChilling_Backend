@@ -19,18 +19,21 @@ public class UserRequestDTO {
     @NotNull(message = "must not be null")
     @NotBlank(message = "must not be blank")
     @Size(min = 1, max = 45)
-
     private String username ;
+
     @NotNull(message = "must not be null")
     @NotBlank(message = "must not be blank")
     @Size(min = 1, max = 100)
     private String name ;
+
     @NotNull(message = "must not be null")
     @NotBlank(message = "must not be blank")
     @Size(min = 1, max = 150)
     private String email ;
 
     //เหลือ check Enum
+    @NotNull(message = "must not be null")
+    @NotBlank(message = "must not be blank")
     private String role ;
 //    public Role getRole() {
 //        if(role!=null || role) {

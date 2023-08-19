@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import sit.int221.sas.sit_announcement_system_backend.utils.Role;
 
 import java.time.ZonedDateTime;
@@ -18,8 +20,8 @@ import java.time.ZonedDateTime;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "iduser", nullable = true)
-    private Integer idUser ;
+    @Column(name = "id", nullable = true)
+    private Integer id ;
     @Column(name="username",unique = true, nullable = false,length = 45)
     private String username ;
     @Column(name="name",unique = true , nullable = false,length = 100)
@@ -28,12 +30,11 @@ public class User {
     private String email ;
     @Enumerated(EnumType.STRING)
     private Role role ;
-
-    @Column(name = "createdOn",nullable = true, insertable=false)
-    @Temporal(TemporalType.TIMESTAMP)
+    @CreationTimestamp
+    @Column(name = "createdOn", nullable = true, insertable = false)
     private ZonedDateTime createdOn;
-    @Column(name = "updateOn",nullable = true ,insertable=false)
-    @Temporal(TemporalType.TIMESTAMP)
+    @UpdateTimestamp
+    @Column(name = "updatedOn", nullable = true, insertable = false)
     private ZonedDateTime updatedOn;
 
 }

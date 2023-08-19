@@ -16,6 +16,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import static java.time.ZoneOffset.UTC;
 
@@ -29,32 +30,30 @@ public class UserService {
     }
 
     public User getDetailUser(Integer userid){
-       return userRepository.findById(userid).orElseThrow(()->new NotfoundById((userid+" doesn't not exist"),"id"));
+       return userRepository.findById(userid).orElseThrow(()->new NotfoundById((userid+" does not exist"),"id"));
     }
 
-    public User creatUser (UserRequestDTO user){
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    public User creatUser (UserRequestDTO user) throws InterruptedException {
         User userObj = new User() ;
-        userObj.setUsername(user.getUsername());
-        userObj.setName(user.getName());
-        userObj.setEmail(user.getEmail());
-        userObj.setRole(Role.valueOf(user.getRole()));
-       // userObj.setCreatedOn(ZonedDateTime.parse(formatter.format(ZonedDateTime.now(UTC)),formatter));
-      //  userObj.setUpdatedOn(ZonedDateTime.parse(formatter.format(ZonedDateTime.now(UTC)),formatter));
-       return   userRepository.saveAndFlush(userObj);
+        userObj.setUsername(user.getUsername().trim());
+        userObj.setName(user.getName().trim());
+        userObj.setEmail(user.getEmail().trim());
+        userObj.setRole(Role.valueOf(user.getRole().trim()));
+        return userRepository.saveAndFlush(userObj);
 
     }
 
-    public User updateUser(Integer userid,UserRequestDTO user){
-        LocalDateTime localDateTimeNow = LocalDateTime.now();
-        User userExist = userRepository.findById(userid).orElseThrow(()->new NotfoundById((userid+" doesn't not exist"),"id"));
-        userExist.setUsername(user.getUsername());
-        userExist.setName(user.getName());
-        userExist.setEmail(user.getEmail());
-        userExist.setRole(Role.valueOf(user.getRole()));
-        //userExist.setUpdatedOn(localDateTimeNow.atZone(ZoneId.of("UTC")));
-//        //ZonedDateTime.parse(formatter.format(ZonedDateTime.now().withZoneSameInstant(ZoneId.of("UTC"))),formatter)
+    public User updateUser(Integer userid,UserRequestDTO user) throws InterruptedException{
+        User userExist = userRepository.findById(userid).orElseThrow(()->new NotfoundById((userid+" does not exist"),"id"));
+        userExist.setUsername(user.getUsername().trim());
+        userExist.setName(user.getName().trim());
+        userExist.setEmail(user.getEmail().trim());
+        userExist.setRole(Role.valueOf(user.getRole().trim()));
     return userRepository.saveAndFlush(userExist);
+    }
+
+    public void deleteUser(Integer userid){
+        userRepository.findById(userid).orElseThrow(()-> new NotfoundById((userid+"does not exist"),"id")) ;
+        userRepository.deleteById(userid);
     }
 }
