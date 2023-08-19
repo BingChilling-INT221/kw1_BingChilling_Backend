@@ -14,7 +14,13 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/users")
 //แก้ Cross origin ให้กำหนด port
-@CrossOrigin(origins = "{http://intproj22.sit.kmutt.ac.th:80/kw1,http://intproj22.sit.kmutt.ac.th:80}")
+@CrossOrigin(origins = {
+        "http://intproj22.sit.kmutt.ac.th:80/kw1",
+        "http://intproj22.sit.kmutt.ac.th:80",
+        " http://ip22kw1.sit.kmutt.ac.th:80",
+        "http://localhost:80",
+        "http://intproj22.sit.kmutt.ac.th:80/kw1/admin/announcement"
+})
 public class UserController {
     @Autowired
     private UserService userService;
