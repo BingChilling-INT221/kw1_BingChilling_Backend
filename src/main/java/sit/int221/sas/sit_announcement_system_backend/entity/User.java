@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.SourceType;
 import org.hibernate.annotations.UpdateTimestamp;
 import sit.int221.sas.sit_announcement_system_backend.utils.Role;
 
@@ -30,6 +31,7 @@ public class User {
     private String email ;
     @Enumerated(EnumType.STRING)
     private Role role ;
+    //เอาเวลาจากเครื่อง Server
     @CreationTimestamp
     @Column(name = "createdOn", nullable = true, insertable = false)
     private ZonedDateTime createdOn;

@@ -9,7 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import sit.int221.sas.sit_announcement_system_backend.DTO.AnnouncementsRequestDTO;
 import sit.int221.sas.sit_announcement_system_backend.entity.Announcement;
-import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.CustomException;
+import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.FindCategoryByIdException;
+import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.NotfoundById;
 import sit.int221.sas.sit_announcement_system_backend.repository.AnnouncementRepository;
 import sit.int221.sas.sit_announcement_system_backend.repository.CategoryRepository;
 
@@ -45,7 +46,7 @@ public class AnnouncementService {
 
 
     public Announcement getAnnouncementById(Integer announcementid) {
-    return announcementRepository.findById(announcementid).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Announcement id " + announcementid + " does not exist"));
+    return announcementRepository.findById(announcementid).orElseThrow(() -> new NotfoundById(( "Announcement id " + announcementid + " does not exist"),"id"));
 //        announcement.setViewCount(announcement.getViewCount()+1);
 //        announcementRepository.saveAndFlush(announcement);
 //        return announcement ;
@@ -57,7 +58,7 @@ public class AnnouncementService {
     }
 
     public void deleteAnnouncement(Integer id) {
-        announcementRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, " Announcement id " + id + " does not exist, Can not delete !"));
+        announcementRepository.findById(id).orElseThrow(() -> new NotfoundById(( "Announcement id " + id + " does not exist"),"id"));
         announcementRepository.deleteById(id);
     }
 
@@ -65,7 +66,7 @@ public class AnnouncementService {
     public Announcement updateAnnouncement(Integer id, AnnouncementsRequestDTO announcement) {
         try {
             Announcement existAnnouncement = announcementRepository.findById(id).orElseThrow(
-                    () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Announcement id" + id + " does not exist, Can not update !"));
+                    () -> new NotfoundById(( "Announcement id " + id + " does not exist"),"id"));
             return getAnnouncement(announcement, existAnnouncement);
         } catch (RuntimeException e) {
             throw new RuntimeException(e);
@@ -82,7 +83,7 @@ public class AnnouncementService {
         if (announcement.getAnnouncementDisplay() != null) {
             RealAnnouncement.setAnnouncementDisplay(announcement.getAnnouncementDisplay());
         }
-        RealAnnouncement.setAnnouncementCategory(categoryRepository.findById(announcement.getCategoryId()).orElseThrow(()->new CustomException("does not exists","categoryId")));
+        RealAnnouncement.setAnnouncementCategory(categoryRepository.findById(announcement.getCategoryId()).orElseThrow(()->new FindCategoryByIdException("does not exists","categoryId")));
         return announcementRepository.saveAndFlush(RealAnnouncement);
     }
 
@@ -115,7 +116,7 @@ public class AnnouncementService {
                return  announcementRepository.findAnnouncementByCloseDateAfterNowPage(localNow.atZone(ZoneId.of("UTC")),pageable);
            }
            else {
-               throw new CustomException("Not Found : "+mode+"mode .","categoryId");
+               throw new FindCategoryByIdException("Not Found : "+mode+"mode .","categoryId");
            }
         }
         else{
@@ -124,7 +125,7 @@ public class AnnouncementService {
 
     }
     public Integer updateViewCount(Integer id){
-        Announcement announcement = announcementRepository.findById(id).orElseThrow(()->new CustomException("does not exists","announcementId"));
+        Announcement announcement = announcementRepository.findById(id).orElseThrow(()->new FindCategoryByIdException("does not exists","announcementId"));
         announcement.setViewCount(announcement.getViewCount()+1);
         announcementRepository.saveAndFlush(announcement);
         return announcement.getViewCount();

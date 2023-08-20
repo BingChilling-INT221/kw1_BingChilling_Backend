@@ -5,8 +5,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
-import sit.int221.sas.sit_announcement_system_backend.execeptions.CheckDisplay;
-import sit.int221.sas.sit_announcement_system_backend.execeptions.CloseDateAfterPublishDate;
+import sit.int221.sas.sit_announcement_system_backend.execeptions.annoucementValidation.CheckDisplay;
+import sit.int221.sas.sit_announcement_system_backend.execeptions.annoucementValidation.CloseDateAfterPublishDate;
 import sit.int221.sas.sit_announcement_system_backend.utils.AnnouncementDisplay;
 
 import java.time.ZonedDateTime;
