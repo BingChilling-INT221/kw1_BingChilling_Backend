@@ -30,27 +30,30 @@ public class UserService {
     }
 
     public User getDetailUser(Integer userid){
-       return userRepository.findById(userid).orElseThrow(()->new NotfoundById((userid+" doesn't not exist"),"id"));
+       return userRepository.findById(userid).orElseThrow(()->new NotfoundById((userid+" does not exist"),"id"));
     }
 
     public User creatUser (UserRequestDTO user) throws InterruptedException {
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         User userObj = new User() ;
         userObj.setUsername(user.getUsername().trim());
         userObj.setName(user.getName().trim());
         userObj.setEmail(user.getEmail().trim());
         userObj.setRole(Role.valueOf(user.getRole().trim()));
         return userRepository.saveAndFlush(userObj);
+
     }
 
-    public User updateUser(Integer userid,UserRequestDTO user){
-        LocalDateTime localDateTimeNow = LocalDateTime.now();
-        User userExist = userRepository.findById(userid).orElseThrow(()->new NotfoundById((userid+" doesn't not exist"),"id"));
-        userExist.setUsername(user.getUsername());
-        userExist.setName(user.getName());
-        userExist.setEmail(user.getEmail());
-        userExist.setRole(Role.valueOf(user.getRole()));
+    public User updateUser(Integer userid,UserRequestDTO user) throws InterruptedException{
+        User userExist = userRepository.findById(userid).orElseThrow(()->new NotfoundById((userid+" does not exist"),"id"));
+        userExist.setUsername(user.getUsername().trim());
+        userExist.setName(user.getName().trim());
+        userExist.setEmail(user.getEmail().trim());
+        userExist.setRole(Role.valueOf(user.getRole().trim()));
     return userRepository.saveAndFlush(userExist);
+    }
+
+    public void deleteUser(Integer userid){
+        userRepository.findById(userid).orElseThrow(()-> new NotfoundById((userid+"does not exist"),"id")) ;
+        userRepository.deleteById(userid);
     }
 }

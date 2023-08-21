@@ -1,5 +1,6 @@
 package sit.int221.sas.sit_announcement_system_backend.controller;
 
+import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -36,16 +37,19 @@ public class UserController {
     }
 
     @PostMapping("")
-    public  User creatUser(@RequestBody UserRequestDTO userObj) throws InterruptedException {
-    //ถามเรื่อง db ควร notnull ไหม
+    public  User creatUser(@Valid  @RequestBody UserRequestDTO userObj) throws InterruptedException {
         return userService.creatUser(userObj);
     }
 
     @PutMapping("/{userid}")
-    public  User updateUser(@PathVariable Integer userid , @RequestBody UserRequestDTO userObj){
+    public  User updateUser(@PathVariable Integer userid ,@Valid @RequestBody UserRequestDTO userObj) throws InterruptedException {
         return userService.updateUser(userid,userObj);
     }
 
+    @DeleteMapping("/{id}")
+    public  void  delete(@PathVariable Integer id) {
+        userService.deleteUser(id);
+    }
 
 
 }

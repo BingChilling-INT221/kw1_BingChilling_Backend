@@ -6,11 +6,11 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class CustomException  extends RuntimeException {
+public class FindCategoryByIdException extends RuntimeException {
     private String additionalField1;
 
 
-    public CustomException(String message, String additionalField1) {
+    public FindCategoryByIdException(String message, String additionalField1) {
         super(message);
         this.additionalField1 = additionalField1;
 
