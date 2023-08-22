@@ -32,11 +32,11 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role ;
     //เอาเวลาจากเครื่อง Server
-    @CreationTimestamp
-    @Column(name = "createdOn", nullable = true, insertable = false)
+    @Column(name = "createdOn",  insertable = false , updatable = false)
     private ZonedDateTime createdOn;
-    @UpdateTimestamp
-    @Column(name = "updatedOn", nullable = true, insertable = false)
+
+    @Column(name = "updatedOn", insertable = false, updatable = false)
     private ZonedDateTime updatedOn;
+
 
 }

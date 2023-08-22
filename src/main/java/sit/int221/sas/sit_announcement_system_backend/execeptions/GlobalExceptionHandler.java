@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
-import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.FindCategoryByIdException;
+import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.SetFiledErrorException;
 import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.NotfoundById;
 
 @RestControllerAdvice
@@ -32,9 +32,9 @@ public class GlobalExceptionHandler {
 //ปัญหามีอยู่ว่า หากมีเออเร่อก่อน ที่จะเช็คตาม Custom จะทำไง ?
     // ตั้งชื่อ Error ไม่สื่อ
 
-    @ExceptionHandler(FindCategoryByIdException.class)
+    @ExceptionHandler(SetFiledErrorException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseEntity<ErrorResponse> handleNullPointer (FindCategoryByIdException e, WebRequest request){
+    public ResponseEntity<ErrorResponse> handleNullPointer (SetFiledErrorException e, WebRequest request){
         ErrorResponse er = new ErrorResponse(HttpStatus.NOT_FOUND.value(),e.getMessage(),request.getDescription(false)) ;
         er.addValidationError(e.getAdditionalField1(),e.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(er);

@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import sit.int221.sas.sit_announcement_system_backend.DTO.AnnouncementsRequestDTO;
 import sit.int221.sas.sit_announcement_system_backend.entity.Announcement;
-import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.FindCategoryByIdException;
 import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.NotfoundById;
+import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.SetFiledErrorException;
 import sit.int221.sas.sit_announcement_system_backend.repository.AnnouncementRepository;
 import sit.int221.sas.sit_announcement_system_backend.repository.CategoryRepository;
 
@@ -83,7 +83,7 @@ public class AnnouncementService {
         if (announcement.getAnnouncementDisplay() != null) {
             RealAnnouncement.setAnnouncementDisplay(announcement.getAnnouncementDisplay());
         }
-        RealAnnouncement.setAnnouncementCategory(categoryRepository.findById(announcement.getCategoryId()).orElseThrow(()->new FindCategoryByIdException("does not exists","categoryId")));
+        RealAnnouncement.setAnnouncementCategory(categoryRepository.findById(announcement.getCategoryId()).orElseThrow(()->new SetFiledErrorException("does not exists","categoryId")));
         return announcementRepository.saveAndFlush(RealAnnouncement);
     }
 
@@ -116,7 +116,7 @@ public class AnnouncementService {
                return  announcementRepository.findAnnouncementByCloseDateAfterNowPage(localNow.atZone(ZoneId.of("UTC")),pageable);
            }
            else {
-               throw new FindCategoryByIdException("Not Found : "+mode+"mode .","categoryId");
+               throw new SetFiledErrorException("Not Found : "+mode+"mode .","categoryId");
            }
         }
         else{
@@ -125,7 +125,7 @@ public class AnnouncementService {
 
     }
     public Integer updateViewCount(Integer id){
-        Announcement announcement = announcementRepository.findById(id).orElseThrow(()->new FindCategoryByIdException("does not exists","announcementId"));
+        Announcement announcement = announcementRepository.findById(id).orElseThrow(()->new SetFiledErrorException("does not exists","announcementId"));
         announcement.setViewCount(announcement.getViewCount()+1);
         announcementRepository.saveAndFlush(announcement);
         return announcement.getViewCount();
