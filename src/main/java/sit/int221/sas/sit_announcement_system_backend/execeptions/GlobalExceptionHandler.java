@@ -8,8 +8,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.AuthenticationErrorException;
+import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.NotfoundByfield;
 import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.SetFiledErrorException;
-import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.NotfoundById;
+
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -33,19 +35,27 @@ public class GlobalExceptionHandler {
     // ตั้งชื่อ Error ไม่สื่อ
 
     @ExceptionHandler(SetFiledErrorException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<ErrorResponse> handleNullPointer (SetFiledErrorException e, WebRequest request){
-        ErrorResponse er = new ErrorResponse(HttpStatus.NOT_FOUND.value(),e.getMessage(),request.getDescription(false)) ;
+        ErrorResponse er = new ErrorResponse(HttpStatus.BAD_REQUEST.value(),e.getMessage(),request.getDescription(false)) ;
         er.addValidationError(e.getAdditionalField1(),e.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(er);
     }
 
-    @ExceptionHandler(NotfoundById.class)
+    @ExceptionHandler(NotfoundByfield.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public  ResponseEntity<ErrorResponse> handleNotFound(NotfoundById e , WebRequest request){
+    public  ResponseEntity<ErrorResponse> handleNotFound(NotfoundByfield e , WebRequest request){
     ErrorResponse er = new ErrorResponse(HttpStatus.NOT_FOUND.value(),e.getMessage(),request.getDescription(false)) ;
     er.addValidationError(e.getField(),e.getMessage());
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(er) ;
+    }
+
+    @ExceptionHandler(AuthenticationErrorException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public  ResponseEntity<ErrorResponse> handleNotFound(AuthenticationErrorException e , WebRequest request){
+        ErrorResponse er = new ErrorResponse(HttpStatus.UNAUTHORIZED.value(),e.getMessage(),request.getDescription(false)) ;
+        er.addValidationError("Login",e.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(er) ;
     }
 
 

@@ -3,9 +3,14 @@ package sit.int221.sas.sit_announcement_system_backend.controller;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import sit.int221.sas.sit_announcement_system_backend.DTO.UsersDTO.UserLoginRequestDTO;
 import sit.int221.sas.sit_announcement_system_backend.DTO.UsersDTO.UserRequestDTO;
+import sit.int221.sas.sit_announcement_system_backend.DTO.UsersDTO.UserResponseDTO;
 import sit.int221.sas.sit_announcement_system_backend.entity.User;
+import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.AuthenticationErrorException;
 import sit.int221.sas.sit_announcement_system_backend.service.UserService;
 import sit.int221.sas.sit_announcement_system_backend.utils.ListMapper;
 
@@ -27,23 +32,23 @@ public class UserController {
     @Autowired
     private ModelMapper modelMapper ;
     @GetMapping("")
-    public List<User> getUsers(){
-        return  userService.getAllUser();
+    public List<UserResponseDTO> getUsers(){
+        return   listMapper.mapList(userService.getAllUser(),UserResponseDTO.class,modelMapper) ;
     }
 
     @GetMapping("/{userid}")
-    public User getUserDetail(@PathVariable Integer userid){
-        return  userService.getDetailUser(userid) ;
+    public UserResponseDTO getUserDetail(@PathVariable Integer userid){
+        return modelMapper.map(userService.getDetailUser(userid),UserResponseDTO.class);
     }
 
     @PostMapping("")
-    public  User creatUser(@Valid  @RequestBody UserRequestDTO userObj) throws InterruptedException {
-        return userService.creatUser(userObj);
+    public UserResponseDTO creatUser(@Valid  @RequestBody UserRequestDTO userObj) throws InterruptedException {
+        return modelMapper.map(userService.createUser(userObj),UserResponseDTO.class);
     }
 
     @PutMapping("/{userid}")
-    public  User updateUser(@PathVariable Integer userid ,@Valid @RequestBody UserRequestDTO userObj) throws InterruptedException {
-        return userService.updateUser(userid,userObj);
+    public UserResponseDTO updateUser(@PathVariable Integer userid ,@Valid @RequestBody UserRequestDTO userObj) throws InterruptedException {
+        return  modelMapper.map(userService.updateUser(userid,userObj),UserResponseDTO.class);
     }
 
     @DeleteMapping("/{id}")
@@ -51,5 +56,9 @@ public class UserController {
         userService.deleteUser(id);
     }
 
+    @PostMapping("/match")
+    public void   matchPassword(@RequestBody UserLoginRequestDTO userLogin){
+        userService.matchPassword(userLogin.getUsername(),userLogin.getPassword()) ;
+    }
 
 }

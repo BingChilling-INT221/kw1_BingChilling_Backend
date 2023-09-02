@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import sit.int221.sas.sit_announcement_system_backend.DTO.AnnouncementsRequestDTO;
 import sit.int221.sas.sit_announcement_system_backend.entity.Announcement;
-import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.NotfoundById;
+import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.NotfoundByfield;
 import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.SetFiledErrorException;
 import sit.int221.sas.sit_announcement_system_backend.repository.AnnouncementRepository;
 import sit.int221.sas.sit_announcement_system_backend.repository.CategoryRepository;
@@ -46,7 +46,7 @@ public class AnnouncementService {
 
 
     public Announcement getAnnouncementById(Integer announcementid) {
-    return announcementRepository.findById(announcementid).orElseThrow(() -> new NotfoundById(( "Announcement id " + announcementid + " does not exist"),"id"));
+    return announcementRepository.findById(announcementid).orElseThrow(() -> new NotfoundByfield(( "Announcement id " + announcementid + " does not exist"),"id"));
 //        announcement.setViewCount(announcement.getViewCount()+1);
 //        announcementRepository.saveAndFlush(announcement);
 //        return announcement ;
@@ -58,7 +58,7 @@ public class AnnouncementService {
     }
 
     public void deleteAnnouncement(Integer id) {
-        announcementRepository.findById(id).orElseThrow(() -> new NotfoundById(( "Announcement id " + id + " does not exist"),"id"));
+        announcementRepository.findById(id).orElseThrow(() -> new NotfoundByfield(( "Announcement id " + id + " does not exist"),"id"));
         announcementRepository.deleteById(id);
     }
 
@@ -66,7 +66,7 @@ public class AnnouncementService {
     public Announcement updateAnnouncement(Integer id, AnnouncementsRequestDTO announcement) {
         try {
             Announcement existAnnouncement = announcementRepository.findById(id).orElseThrow(
-                    () -> new NotfoundById(( "Announcement id " + id + " does not exist"),"id"));
+                    () -> new NotfoundByfield(( "Announcement id " + id + " does not exist"),"id"));
             return getAnnouncement(announcement, existAnnouncement);
         } catch (RuntimeException e) {
             throw new RuntimeException(e);
