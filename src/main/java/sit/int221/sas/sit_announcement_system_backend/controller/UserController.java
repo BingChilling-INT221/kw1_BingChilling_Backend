@@ -61,7 +61,7 @@ public class UserController {
     }
 
     @PostMapping("/match")
-    public void   matchPassword(@RequestBody UserLoginRequestDTO userLogin){
+    public void   matchPassword(@Valid @RequestBody UserLoginRequestDTO userLogin){
         userService.matchPassword(userLogin.getUsername(),userLogin.getPassword()) ;
     }
 

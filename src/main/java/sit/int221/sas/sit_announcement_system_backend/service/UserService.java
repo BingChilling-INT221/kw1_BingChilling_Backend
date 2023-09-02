@@ -58,10 +58,11 @@ public class UserService {
         userRepository.deleteById(userid);
     }
 
-    public void matchPassword(String username, String raw_password){
-        User userExist = userRepository.findByUsername(username.trim()).orElseThrow(()->new NotfoundByfield(username+" DOES NOT exists","username")) ;
-        if(!this.arg2SpringSecurity.matches(raw_password.trim(), userExist.getPassword())){
-            throw new AuthenticationErrorException("Password Not Matched");
+    public void matchPassword(String username, String raw_password) {
+
+            User userExist = userRepository.findByUsername(username.trim()).orElseThrow(() -> new NotfoundByfield(username + " DOES NOT exists", "username"));
+            if (!this.arg2SpringSecurity.matches(raw_password.trim(), userExist.getPassword())) {
+                throw new AuthenticationErrorException("Password Not Matched");
+            }
         }
     }
-}
