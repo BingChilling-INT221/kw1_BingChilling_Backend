@@ -11,7 +11,11 @@ import java.util.List;
 @RequestMapping("api/categories")
 @CrossOrigin(origins = {
         "http://intproj22.sit.kmutt.ac.th/",
-        "http://localhost:5173/"
+        "https://intproj22.sit.kmutt.ac.th/",
+        "http://localhost:5173/",
+        "https://localhost:5173/",
+        "http://ip22kw1.sit.kmutt.ac.th/",
+        "https://ip22kw1.sit.kmutt.ac.th/",
 })
 public class CategoryController {
     @Autowired
