@@ -6,8 +6,10 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AuthenticationErrorException extends RuntimeException {
-    public AuthenticationErrorException(String message) {
+    private String field ;
+    public AuthenticationErrorException(String message,String field) {
         super(message);
+        this.field = field ;
 
     }
 }

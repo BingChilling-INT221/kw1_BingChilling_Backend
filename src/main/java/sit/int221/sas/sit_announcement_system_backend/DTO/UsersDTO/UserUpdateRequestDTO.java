@@ -1,42 +1,54 @@
 package sit.int221.sas.sit_announcement_system_backend.DTO.UsersDTO;
 
-
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.UniqueConstraint;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.validation.GroupSequence;
 import jakarta.validation.constraints.*;
+import jakarta.validation.groups.Default;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.validator.constraints.UniqueElements;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.BindingResult;
 import sit.int221.sas.sit_announcement_system_backend.execeptions.usersValidation.CheckRole;
 import sit.int221.sas.sit_announcement_system_backend.execeptions.usersValidation.CheckUnique;
-import sit.int221.sas.sit_announcement_system_backend.utils.AnnouncementDisplay;
 import sit.int221.sas.sit_announcement_system_backend.utils.Role;
 
 @Getter
 @Setter
-public class UserRequestDTO {
+public class UserUpdateRequestDTO {
+//    @JsonIgnore
+//    @Autowired
+//    private BindingResult bindingResult; // Inject BindingResult
+//    public BindingResult getBindingResult() {
+//        return bindingResult;
+//    }
     @NotNull(message = "must not be null")
     @NotBlank(message = "must not be blank")
     @Size(min = 1, max = 45)
     @CheckUnique(columnName = "username")
     private String username ;
+    public String getUsername(){
+        return username.trim();
+    }
+
 
     @NotNull(message = "must not be null")
     @NotBlank(message = "must not be blank")
     @Size(min = 1, max = 100)
-    @CheckUnique(columnName = "name")
+     @CheckUnique(columnName = "name" )
     private String name ;
-
+    public String getName() {
+     return  name.trim() ;
+    }
     @NotNull(message = "must not be null")
     @NotBlank(message = "must not be blank")
     @Size(min = 1, max = 150)
     @Email(regexp = "[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,3}",
             flags = Pattern.Flag.CASE_INSENSITIVE)
-    @CheckUnique(columnName = "email")
+    @CheckUnique(columnName = "email" )
     private String email ;
-
+    public String getEmail(){
+        return email.trim();
+    }
     //เหลือ check Enum
     @NotNull(message = "must not be null")
     @NotBlank(message = "must not be blank")
@@ -51,10 +63,4 @@ public class UserRequestDTO {
             return Role.announcer;
         }
     }
-
-   @NotNull(message = "must not be null")
-   @NotBlank(message = "must not be blank")
-   @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?!\\s)[a-zA-Z0-9!@#$%^&*]{8,12}$",
-           message = "Password must be 8-12 characters long, containing at least 1 uppercase letter, 1 lowercase letter, 1 special character, and 1 digit, and must not contain spaces.")
-    private String password ;
 }

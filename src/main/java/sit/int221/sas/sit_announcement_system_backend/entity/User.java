@@ -27,7 +27,7 @@ import java.time.ZonedDateTime;
 //        @UniqueConstraint( columnNames={"email"} )
 //}
 )
-
+//ใส่ตรง @ ตรงนี้ไม่ได้ทำให้ หา repo ไม่เจอ
 public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

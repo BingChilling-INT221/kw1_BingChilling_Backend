@@ -3,19 +3,12 @@ package sit.int221.sas.sit_announcement_system_backend.controller;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import sit.int221.sas.sit_announcement_system_backend.DTO.UsersDTO.UserLoginRequestDTO;
-import sit.int221.sas.sit_announcement_system_backend.DTO.UsersDTO.UserRequestDTO;
-import sit.int221.sas.sit_announcement_system_backend.DTO.UsersDTO.UserResponseDTO;
-import sit.int221.sas.sit_announcement_system_backend.entity.User;
-import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.AuthenticationErrorException;
+import sit.int221.sas.sit_announcement_system_backend.DTO.UsersDTO.*;
 import sit.int221.sas.sit_announcement_system_backend.service.UserService;
 import sit.int221.sas.sit_announcement_system_backend.utils.ListMapper;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/users")
@@ -40,19 +33,19 @@ public class UserController {
         return   listMapper.mapList(userService.getAllUser(),UserResponseDTO.class,modelMapper) ;
     }
 
-    @GetMapping("/{userid}")
-    public UserResponseDTO getUserDetail(@PathVariable Integer userid){
-        return modelMapper.map(userService.getDetailUser(userid),UserResponseDTO.class);
+    @GetMapping("/{id}")
+    public UserResponseDTO getUserDetail(@PathVariable Integer id){
+        return modelMapper.map(userService.getDetailUser(id),UserResponseDTO.class);
     }
 
     @PostMapping("")
-    public UserResponseDTO creatUser(@Valid  @RequestBody UserRequestDTO userObj) throws InterruptedException {
+    public UserResponseDTO creatUser(@Valid  @RequestBody UseRequestRegisterDTO userObj) throws InterruptedException {
         return modelMapper.map(userService.createUser(userObj),UserResponseDTO.class);
     }
 
-    @PutMapping("/{userid}")
-    public UserResponseDTO updateUser(@PathVariable Integer userid ,@Valid @RequestBody UserRequestDTO userObj) throws InterruptedException {
-        return  modelMapper.map(userService.updateUser(userid,userObj),UserResponseDTO.class);
+    @PutMapping("/{id}")
+    public UserResponseDTO updateUser(@PathVariable Integer id ,@Valid @RequestBody UserUpdateRequestDTO userObj) throws InterruptedException {
+        return  modelMapper.map(userService.updateUser(id,userObj),UserResponseDTO.class);
     }
 
     @DeleteMapping("/{id}")

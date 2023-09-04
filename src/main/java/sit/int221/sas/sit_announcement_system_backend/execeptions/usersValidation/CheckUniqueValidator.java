@@ -8,14 +8,18 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.mapping.UniqueKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.servlet.HandlerMapping;
 import sit.int221.sas.sit_announcement_system_backend.entity.User;
 
 import sit.int221.sas.sit_announcement_system_backend.repository.UserRepo.CustomUserRepository;
@@ -26,20 +30,36 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
+@Getter
+@Setter
 @Transactional
 public class CheckUniqueValidator implements ConstraintValidator<CheckUnique, String> {
     @Autowired
+    private HttpServletRequest request;
+//    private  Integer idError;
+//    private List<String> userExists ;
+    @Autowired
     private UserRepository userRepository;
+
     @Override
     public void initialize(CheckUnique constraintAnnotation) {
     }
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-            User user = userRepository.findUsersByUsernameAndNameAndEmail(value);
-            return user == null;
-
+        Map map = (Map) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+        Object id = map.get("id");
+            User user = userRepository.findUsersByUsernameAndNameAndEmail(value).orElse(null);
+            User userExist = userRepository.findById(Integer.parseInt(id.toString())).get();
+            if(user != null){
+                return user.getId().equals(userExist.getId());
+            }
+        return true;
     }
+
+
 
 
 }

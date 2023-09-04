@@ -19,7 +19,7 @@ public interface UserRepository extends JpaRepository<User,Integer>,CustomUserRe
             "WHERE (:filed is null OR u.username = :filed) " +
             "OR  u.name = :filed " +
             "OR  u.email = :filed ")
-    User findUsersByUsernameAndNameAndEmail(
+    Optional<User> findUsersByUsernameAndNameAndEmail(
             @Param("filed") String filed
     );
 }

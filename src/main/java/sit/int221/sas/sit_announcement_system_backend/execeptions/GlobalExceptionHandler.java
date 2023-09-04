@@ -38,7 +38,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<ErrorResponse> handleNullPointer (SetFiledErrorException e, WebRequest request){
         ErrorResponse er = new ErrorResponse(HttpStatus.BAD_REQUEST.value(),e.getMessage(),request.getDescription(false)) ;
-        er.addValidationError(e.getAdditionalField1(),e.getMessage());
+        er.addValidationError(e.getField(),e.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(er);
     }
 
@@ -54,7 +54,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public  ResponseEntity<ErrorResponse> handleNotFound(AuthenticationErrorException e , WebRequest request){
         ErrorResponse er = new ErrorResponse(HttpStatus.UNAUTHORIZED.value(),e.getMessage(),request.getDescription(false)) ;
-        er.addValidationError("Login",e.getMessage());
+        er.addValidationError(e.getField(), e.getMessage());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(er) ;
     }
 

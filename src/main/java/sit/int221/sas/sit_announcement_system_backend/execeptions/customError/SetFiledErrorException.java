@@ -7,12 +7,12 @@ import lombok.Setter;
 @Getter
 @Setter
 public class SetFiledErrorException extends RuntimeException {
-    private String additionalField1;
+    private String Field;
 
 
-    public SetFiledErrorException(String message, String additionalField1) {
+    public SetFiledErrorException(String message, String Field) {
         super(message);
-        this.additionalField1 = additionalField1;
+        this.Field = Field;
 
     }
 
