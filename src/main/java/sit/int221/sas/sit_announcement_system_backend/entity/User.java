@@ -32,23 +32,23 @@ public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = true)
-    private Integer id ;
-    @Column(name="username", nullable = false,length = 45)
-    private String username ;
-    @Column(name="name", nullable = false,length = 100)
-    private String name ;
-    @Column(name="email" , nullable = false,length = 150)
-    private String email ;
+    private Integer id;
+    @Column(name = "username", nullable = false, length = 45)
+    private String username;
+    @Column(name = "name", nullable = false, length = 100)
+    private String name;
+    @Column(name = "email", nullable = false, length = 150)
+    private String email;
     @Enumerated(EnumType.STRING)
-    private Role role ;
+    private Role role;
     //เอาเวลาจากเครื่อง Server
-    @Column(name = "createdOn",  insertable = false , updatable = false)
+    @Column(name = "createdOn", insertable = false, updatable = false)
     private ZonedDateTime createdOn;
 
     @Column(name = "updatedOn", insertable = false, updatable = false)
     private ZonedDateTime updatedOn;
 
-    @Column(name="password",nullable = false,length = 100)
-    private String password ;
+    @Column(name = "password", nullable = false, length = 100)
+    private String password;
 
 }

@@ -27,35 +27,36 @@ public class UserController {
     @Autowired
     private ListMapper listMapper;
     @Autowired
-    private ModelMapper modelMapper ;
+    private ModelMapper modelMapper;
+
     @GetMapping("")
-    public List<UserResponseDTO> getUsers(){
-        return   listMapper.mapList(userService.getAllUser(),UserResponseDTO.class,modelMapper) ;
+    public List<UserResponseDTO> getUsers() {
+        return listMapper.mapList(userService.getAllUser(), UserResponseDTO.class, modelMapper);
     }
 
     @GetMapping("/{id}")
-    public UserResponseDTO getUserDetail(@PathVariable Integer id){
-        return modelMapper.map(userService.getDetailUser(id),UserResponseDTO.class);
+    public UserResponseDTO getUserDetail(@PathVariable Integer id) {
+        return modelMapper.map(userService.getDetailUser(id), UserResponseDTO.class);
     }
 
     @PostMapping("")
-    public UserResponseDTO creatUser(@Valid  @RequestBody UseRequestRegisterDTO userObj) throws InterruptedException {
-        return modelMapper.map(userService.createUser(userObj),UserResponseDTO.class);
+    public UserResponseDTO creatUser(@Valid @RequestBody UseRequestRegisterDTO userObj) throws InterruptedException {
+        return modelMapper.map(userService.createUser(userObj), UserResponseDTO.class);
     }
 
     @PutMapping("/{id}")
-    public UserResponseDTO updateUser(@PathVariable Integer id ,@Valid @RequestBody UserUpdateRequestDTO userObj) throws InterruptedException {
-        return  modelMapper.map(userService.updateUser(id,userObj),UserResponseDTO.class);
+    public UserResponseDTO updateUser(@PathVariable Integer id, @Valid @RequestBody UserUpdateRequestDTO userObj) throws InterruptedException {
+        return modelMapper.map(userService.updateUser(id, userObj), UserResponseDTO.class);
     }
 
     @DeleteMapping("/{id}")
-    public  void  delete(@PathVariable Integer id) {
+    public void delete(@PathVariable Integer id) {
         userService.deleteUser(id);
     }
 
     @PostMapping("/match")
-    public void   matchPassword(@Valid @RequestBody UserLoginRequestDTO userLogin){
-        userService.matchPassword(userLogin.getUsername(),userLogin.getPassword()) ;
+    public void matchPassword(@Valid @RequestBody UserLoginRequestDTO userLogin) {
+        userService.matchPassword(userLogin.getUsername(), userLogin.getPassword());
     }
 
 }

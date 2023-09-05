@@ -40,14 +40,15 @@ public class AnnouncementsRequestDTO {
     @Enumerated(EnumType.STRING)
     @CheckDisplay
     private String announcementDisplay;
+
     public AnnouncementDisplay getAnnouncementDisplay() {
-     if(announcementDisplay!=null) {
-       return   AnnouncementDisplay.valueOf(announcementDisplay);
-     }
-     else {
-         return AnnouncementDisplay.N;
-     }
+        if (announcementDisplay != null) {
+            return AnnouncementDisplay.valueOf(announcementDisplay);
+        } else {
+            return AnnouncementDisplay.N;
+        }
     }
+
     @Column(name = "announcementCategory", nullable = false)
     @NotNull(message = "must not be null")
     private Integer categoryId;

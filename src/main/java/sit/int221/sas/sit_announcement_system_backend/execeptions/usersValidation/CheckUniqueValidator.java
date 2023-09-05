@@ -39,7 +39,7 @@ import java.util.Optional;
 public class CheckUniqueValidator implements ConstraintValidator<CheckUnique, String> {
     @Autowired
     private HttpServletRequest request;
-//    private  Integer idError;
+    //    private  Integer idError;
 //    private List<String> userExists ;
     @Autowired
     private UserRepository userRepository;
@@ -47,23 +47,25 @@ public class CheckUniqueValidator implements ConstraintValidator<CheckUnique, St
     @Override
     public void initialize(CheckUnique constraintAnnotation) {
     }
+
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-            if(value==null){return true ;}
-            User user = userRepository.findUsersByUsernameAndNameAndEmail(value).orElse(null);
-            if(user != null){
-                Map map = (Map) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
-                Object id = map.get("id");
-                if(id != null){
-                    User userExist = userRepository.findById(Integer.parseInt(id.toString())).get();
-                    return user.getId().equals(userExist.getId());
-                }
-                else {return false ;}
+        if (value == null) {
+            return true;
+        }
+        User user = userRepository.findUsersByUsernameAndNameAndEmail(value).orElse(null);
+        if (user != null) {
+            Map map = (Map) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+            Object id = map.get("id");
+            if (id != null) {
+                User userExist = userRepository.findById(Integer.parseInt(id.toString())).get();
+                return user.getId().equals(userExist.getId());
+            } else {
+                return false;
             }
+        }
         return true;
     }
-
-
 
 
 }
@@ -84,12 +86,6 @@ public class CheckUniqueValidator implements ConstraintValidator<CheckUnique, St
 //    public boolean isValid(Serializable target, ConstraintValidatorContext context) {
 //
 //    }
-
-
-
-
-
-
 
 
 //    Class<?> entityClass = target.getClass();

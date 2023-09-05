@@ -24,8 +24,8 @@ public class GlobalExceptionHandler {
         ErrorResponse er = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), request.getDescription(false));
         ex.getBindingResult().getAllErrors().forEach((error) -> {
             //String fieldName = error.getObjectName();
-            String fieldName = error.getArguments()[error.getArguments().length-1].toString();
-            if (error instanceof FieldError)  fieldName = ((FieldError) error).getField();
+            String fieldName = error.getArguments()[error.getArguments().length - 1].toString();
+            if (error instanceof FieldError) fieldName = ((FieldError) error).getField();
             String errorMessage = error.getDefaultMessage();
             er.addValidationError(fieldName, errorMessage);
         });
@@ -36,26 +36,26 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(SetFiledErrorException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<ErrorResponse> handleNullPointer (SetFiledErrorException e, WebRequest request){
-        ErrorResponse er = new ErrorResponse(HttpStatus.BAD_REQUEST.value(),e.getMessage(),request.getDescription(false)) ;
-        er.addValidationError(e.getField(),e.getMessage());
+    public ResponseEntity<ErrorResponse> handleNullPointer(SetFiledErrorException e, WebRequest request) {
+        ErrorResponse er = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), e.getMessage(), request.getDescription(false));
+        er.addValidationError(e.getField(), e.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(er);
     }
 
     @ExceptionHandler(NotfoundByfield.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public  ResponseEntity<ErrorResponse> handleNotFound(NotfoundByfield e , WebRequest request){
-    ErrorResponse er = new ErrorResponse(HttpStatus.NOT_FOUND.value(),e.getMessage(),request.getDescription(false)) ;
-    er.addValidationError(e.getField(),e.getMessage());
-    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(er) ;
+    public ResponseEntity<ErrorResponse> handleNotFound(NotfoundByfield e, WebRequest request) {
+        ErrorResponse er = new ErrorResponse(HttpStatus.NOT_FOUND.value(), e.getMessage(), request.getDescription(false));
+        er.addValidationError(e.getField(), e.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(er);
     }
 
     @ExceptionHandler(AuthenticationErrorException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public  ResponseEntity<ErrorResponse> handleNotFound(AuthenticationErrorException e , WebRequest request){
-        ErrorResponse er = new ErrorResponse(HttpStatus.UNAUTHORIZED.value(),e.getMessage(),request.getDescription(false)) ;
+    public ResponseEntity<ErrorResponse> handleNotFound(AuthenticationErrorException e, WebRequest request) {
+        ErrorResponse er = new ErrorResponse(HttpStatus.UNAUTHORIZED.value(), e.getMessage(), request.getDescription(false));
         er.addValidationError(e.getField(), e.getMessage());
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(er) ;
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(er);
     }
 
 

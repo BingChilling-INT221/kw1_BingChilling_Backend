@@ -11,8 +11,11 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface CloseDateAfterPublishDate {
     String message() default "must be later than publish date";
+
     String filed() default "closeDate";
+
     Class<?>[] groups() default {};
+
     Class<? extends Payload>[] payload() default {};
 
 }

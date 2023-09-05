@@ -14,8 +14,10 @@ public class CheckDisplayValidator implements ConstraintValidator<CheckDisplay, 
 
     @Override
     public boolean isValid(String getAnnouncementDisplay, ConstraintValidatorContext context) {
-        if(getAnnouncementDisplay==null){return true;}
-        return  (getAnnouncementDisplay.equals(AnnouncementDisplay.N.toString()))|| (getAnnouncementDisplay.equals(AnnouncementDisplay.Y.toString())) ;
+        if (getAnnouncementDisplay == null) {
+            return true;
+        }
+        return (getAnnouncementDisplay.equals(AnnouncementDisplay.N.toString())) || (getAnnouncementDisplay.equals(AnnouncementDisplay.Y.toString()));
 
 
     }

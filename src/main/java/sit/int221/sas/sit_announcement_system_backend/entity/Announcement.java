@@ -22,19 +22,19 @@ public class Announcement {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Integer id;
-    @Column(name="announcementTitle", nullable = false,length = 200)
+    @Column(name = "announcementTitle", nullable = false, length = 200)
     private String announcementTitle;
-    @Column(name="announcementDescription", nullable = false,length = 10000)
+    @Column(name = "announcementDescription", nullable = false, length = 10000)
 
     private String announcementDescription;
 
 
     @ManyToOne
-    @JoinColumn(name = "announcementCategory",nullable =false)
-    private Category announcementCategory ;
+    @JoinColumn(name = "announcementCategory", nullable = false)
+    private Category announcementCategory;
 //    public String getAnnouncementCategory(){
 
-//        return category.getCategoryName();
+    //        return category.getCategoryName();
 //    }
     @Column(name = "publishDate", nullable = true)
     private ZonedDateTime publishDate;
@@ -49,7 +49,8 @@ public class Announcement {
     public Announcement() {
         this.announcementDisplay = AnnouncementDisplay.N;
     }
+
     @Column(name = "viewCount", insertable = false)
-    private Integer viewCount ;
+    private Integer viewCount;
 
 }

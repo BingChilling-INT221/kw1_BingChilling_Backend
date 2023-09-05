@@ -8,10 +8,10 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UserLoginRequestDTO {
-//    @NotNull(message = "must not be null")
+    //    @NotNull(message = "must not be null")
     @NotBlank(message = "must not be blank")
-    private String username ;
-//    @NotNull(message = "must not be null")
+    private String username;
+    //    @NotNull(message = "must not be null")
     @NotBlank(message = "must not be blank")
-    private String password ;
+    private String password;
 }

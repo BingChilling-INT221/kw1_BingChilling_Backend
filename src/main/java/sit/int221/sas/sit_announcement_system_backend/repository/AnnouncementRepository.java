@@ -14,7 +14,8 @@ import java.util.List;
 public interface AnnouncementRepository extends JpaRepository<Announcement, Integer> {
 
     @Query(value = "SELECT a.viewCount FROM Announcement a WHERE a.id = :id")
-    Integer viewcountById(Integer id) ;
+re    Integer viewcountById(Integer id);
+
     //ธรรมดา
     @Query(value = "SELECT a FROM Announcement a WHERE  a.announcementDisplay='Y' AND ((a.publishDate IS NULL OR :now >= a.publishDate) AND (a.closeDate IS NULL OR :now < a.closeDate)) ORDER BY a.id DESC ")
     List<Announcement> findAnnouncementByValidateDatetimeList(@Param("now") ZonedDateTime now);
@@ -44,6 +45,7 @@ public interface AnnouncementRepository extends JpaRepository<Announcement, Inte
 
 
     List<Announcement> findAllByOrderByIdDesc();
+
     Page<Announcement> findAllByOrderByIdDesc(Pageable page);
 
 
