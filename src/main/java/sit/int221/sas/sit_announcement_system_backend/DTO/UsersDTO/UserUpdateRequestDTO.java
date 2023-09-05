@@ -21,7 +21,7 @@ public class UserUpdateRequestDTO {
 //    public BindingResult getBindingResult() {
 //        return bindingResult;
 //    }
-    @NotNull(message = "must not be null")
+//    @NotNull(message = "must not be null")
     @NotBlank(message = "must not be blank")
     @Size(min = 1, max = 45)
     @CheckUnique(columnName = "username")
@@ -31,7 +31,7 @@ public class UserUpdateRequestDTO {
     }
 
 
-    @NotNull(message = "must not be null")
+//    @NotNull(message = "must not be null")
     @NotBlank(message = "must not be blank")
     @Size(min = 1, max = 100)
      @CheckUnique(columnName = "name" )
@@ -39,11 +39,11 @@ public class UserUpdateRequestDTO {
     public String getName() {
      return  name.trim() ;
     }
-    @NotNull(message = "must not be null")
+//    @NotNull(message = "must not be null")
     @NotBlank(message = "must not be blank")
     @Size(min = 1, max = 150)
-    @Email(regexp = "[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,3}",
-            flags = Pattern.Flag.CASE_INSENSITIVE)
+    @Email(message = "Email should be valid",regexp = "[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,3}",
+            flags = Pattern.Flag.CASE_INSENSITIVE )
     @CheckUnique(columnName = "email" )
     private String email ;
     public String getEmail(){

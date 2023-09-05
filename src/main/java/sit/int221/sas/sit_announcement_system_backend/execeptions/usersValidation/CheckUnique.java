@@ -16,7 +16,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 public @interface CheckUnique {
     String columnName();
  //   Class<?> classname();
-    String message() default "{columnName} must be unique";
+    String message() default "does not unique";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 

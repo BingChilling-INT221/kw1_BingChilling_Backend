@@ -49,12 +49,16 @@ public class CheckUniqueValidator implements ConstraintValidator<CheckUnique, St
     }
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
+            if(value==null){return true ;}
             User user = userRepository.findUsersByUsernameAndNameAndEmail(value).orElse(null);
             if(user != null){
                 Map map = (Map) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
                 Object id = map.get("id");
-                User userExist = userRepository.findById(Integer.parseInt(id.toString())).get();
-                return user.getId().equals(userExist.getId());
+                if(id != null){
+                    User userExist = userRepository.findById(Integer.parseInt(id.toString())).get();
+                    return user.getId().equals(userExist.getId());
+                }
+                else {return false ;}
             }
         return true;
     }

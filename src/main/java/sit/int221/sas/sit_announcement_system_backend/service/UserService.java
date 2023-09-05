@@ -17,7 +17,8 @@ import java.util.List;
 
 @Service
 public class UserService {
-   private final Argon2PasswordEncoder arg2SpringSecurity = new Argon2PasswordEncoder(16, 100, 1, 60000, 10);
+//   private final Argon2PasswordEncoder arg2SpringSecurity = new Argon2PasswordEncoder(16, 100, 1, 60000, 10);
+private final Argon2PasswordEncoder arg2SpringSecurity = new Argon2PasswordEncoder(16, 30, 1, 16, 2);
     @Autowired
     private UserRepository userRepository ;
 
