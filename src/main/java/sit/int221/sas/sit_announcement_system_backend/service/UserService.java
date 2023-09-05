@@ -25,6 +25,7 @@ private final Argon2PasswordEncoder arg2SpringSecurity = new Argon2PasswordEncod
 
     public List<User> getAllUser(){
 
+
         return userRepository.findAll(Sort.by("role").ascending().and(Sort.by("username")));
     }
 
