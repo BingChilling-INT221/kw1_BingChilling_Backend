@@ -46,7 +46,7 @@ public class UseRequestRegisterDTO {
 
 //    @NotNull(message = "must not be null")
     @NotBlank(message = "must not be blank")
-    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,14}$",
-            message = "must not be blank\",\"must be 8-14 characters long, at least 1 of uppercase, lowercase, number and special characters")
+    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&#])[A-Za-z\\d@$!%*?&#]{8,14}$",
+            message = "must be 8-14 characters long, at least 1 of uppercase, lowercase, number and special characters")
     private String password ;
 }
