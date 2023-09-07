@@ -39,7 +39,7 @@ import java.util.Optional;
 public class CheckUniqueValidator implements ConstraintValidator<CheckUnique, String> {
     @Autowired
     private HttpServletRequest request;
-//    private  Integer idError;
+    //    private  Integer idError;
 //    private List<String> userExists ;
     @Autowired
     private UserRepository userRepository;
@@ -47,8 +47,10 @@ public class CheckUniqueValidator implements ConstraintValidator<CheckUnique, St
     @Override
     public void initialize(CheckUnique constraintAnnotation) {
     }
+
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
+
         if (value != null) {
             System.out.println(value);
             Map map = (Map) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
@@ -79,6 +81,7 @@ public class CheckUniqueValidator implements ConstraintValidator<CheckUnique, St
 //            }
 //        return true;
 
+
     }
 
 
@@ -100,12 +103,6 @@ public class CheckUniqueValidator implements ConstraintValidator<CheckUnique, St
 //    public boolean isValid(Serializable target, ConstraintValidatorContext context) {
 //
 //    }
-
-
-
-
-
-
 
 
 //    Class<?> entityClass = target.getClass();

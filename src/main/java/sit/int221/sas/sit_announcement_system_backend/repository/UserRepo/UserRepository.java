@@ -11,9 +11,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public interface UserRepository extends JpaRepository<User,Integer>,CustomUserRepository {
+public interface UserRepository extends JpaRepository<User, Integer>, CustomUserRepository {
 
-    Optional<User> findByUsername(String username) ;
+    Optional<User> findByUsername(String username);
 
     @Query("SELECT u FROM User u " +
             "WHERE  u.username = :filed " +

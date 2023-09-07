@@ -36,7 +36,7 @@ public class AnnouncementController<T> {
     @GetMapping("")
     public ResponseEntity<List<AnnouncementsResponseDTO>> getAnnouncements(@RequestParam(required = false) String mode) {
 //        if (mode != null && (mode.equalsIgnoreCase("active") || mode.equalsIgnoreCase("close"))) {
-                return ResponseEntity.status(HttpStatus.OK).body(listMapper.mapList(announcementService.getAnnouncements(mode), AnnouncementsResponseDTO.class, modelMapper));
+        return ResponseEntity.status(HttpStatus.OK).body(listMapper.mapList(announcementService.getAnnouncements(mode), AnnouncementsResponseDTO.class, modelMapper));
 //        } else {
 //            return ResponseEntity.status(HttpStatus.OK).body(listMapper.mapList(announcementService.getAnnouncements(mode), AnnouncementsResponseDTO.class, modelMapper));
 //        }
@@ -58,7 +58,7 @@ public class AnnouncementController<T> {
 
     @GetMapping("/{id}")
     public ResponseEntity<AnnouncementsResponseDetailDTO> getAnnouncementById(@PathVariable Integer id,
-                                                                               @RequestParam(defaultValue = "false") Boolean count) {
+                                                                              @RequestParam(defaultValue = "false") Boolean count) {
         if (count) {
             announcementService.updateViewCount(id);
         }
@@ -68,10 +68,10 @@ public class AnnouncementController<T> {
 
     @GetMapping("/pages")
 
-    public ResponseEntity<PageDto> getAnnouncementPage (@RequestParam (defaultValue = "0")Integer page,
-                                        @RequestParam (defaultValue = "5") Integer size,
-                                        @RequestParam (required = false) String mode,
-                                        @RequestParam (required = false) Integer category){
+    public ResponseEntity<PageDto> getAnnouncementPage(@RequestParam(defaultValue = "0") Integer page,
+                                                       @RequestParam(defaultValue = "5") Integer size,
+                                                       @RequestParam(required = false) String mode,
+                                                       @RequestParam(required = false) Integer category) {
 //        if( mode != null ){
 //            if(mode.toLowerCase().equals("active")||mode.toLowerCase().equals("close") ) {
 //                return ResponseEntity.status(HttpStatus.OK).body(listMapper.toPageDTO(announcementService.getPages(page, size, mode, category), AnnouncementsResponseDTO.class, modelMapper));
@@ -81,14 +81,14 @@ public class AnnouncementController<T> {
 //            }
 //            }
 //        else {
-            return ResponseEntity.status(HttpStatus.OK).body(listMapper.toPageDTO(announcementService.getPages(page, size, mode, category), AnnouncementsResponseDTO.class, modelMapper));
+        return ResponseEntity.status(HttpStatus.OK).body(listMapper.toPageDTO(announcementService.getPages(page, size, mode, category), AnnouncementsResponseDTO.class, modelMapper));
 
 //        }
     }
 
 
     @PostMapping("")
-    public ResponseEntity<AnnouncementsResponsehaveidDTO> createAnnouncement(@Valid @RequestBody AnnouncementsRequestDTO announcementDTO){
+    public ResponseEntity<AnnouncementsResponsehaveidDTO> createAnnouncement(@Valid @RequestBody AnnouncementsRequestDTO announcementDTO) {
 
         return ResponseEntity.status(HttpStatus.OK).body(modelMapper.map(announcementService.createAnnoucement(announcementDTO), AnnouncementsResponsehaveidDTO.class));
     }
@@ -100,14 +100,14 @@ public class AnnouncementController<T> {
 
     @PutMapping("/{id}")
 
-    public ResponseEntity<AnnouncementsResponseDetailDTO> updateAnnouncement(@PathVariable Integer id,@Valid @RequestBody AnnouncementsRequestDTO announcmentDTO){
-        return  ResponseEntity.status(HttpStatus.OK).body(modelMapper.map(announcementService.updateAnnouncement(id,announcmentDTO), AnnouncementsResponseDetailDTO.class));
+    public ResponseEntity<AnnouncementsResponseDetailDTO> updateAnnouncement(@PathVariable Integer id, @Valid @RequestBody AnnouncementsRequestDTO announcmentDTO) {
+        return ResponseEntity.status(HttpStatus.OK).body(modelMapper.map(announcementService.updateAnnouncement(id, announcmentDTO), AnnouncementsResponseDetailDTO.class));
 
     }
 
     @PutMapping("/{id}/views")
-    public ResponseEntity<Integer> updateAnnouncementViews(@PathVariable Integer id){
-        return  ResponseEntity.status(HttpStatus.OK).body(announcementService.updateViewCount(id));
+    public ResponseEntity<Integer> updateAnnouncementViews(@PathVariable Integer id) {
+        return ResponseEntity.status(HttpStatus.OK).body(announcementService.updateViewCount(id));
     }
 
 //    @GetMapping("/{id}/views")

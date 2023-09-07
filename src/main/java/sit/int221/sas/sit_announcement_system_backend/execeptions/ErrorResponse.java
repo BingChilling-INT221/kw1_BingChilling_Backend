@@ -15,7 +15,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ErrorResponse {
-    private DateTimeException timestamp  ;
+    private DateTimeException timestamp;
     private final int status;
     private final String message;
     private final String instance;

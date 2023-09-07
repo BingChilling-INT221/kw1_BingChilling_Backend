@@ -15,9 +15,12 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 public @interface CheckUnique {
     String columnName();
- //   Class<?> classname();
+
+    //   Class<?> classname();
     String message() default "does not unique";
+
     Class<?>[] groups() default {};
+
     Class<? extends Payload>[] payload() default {};
 
 }

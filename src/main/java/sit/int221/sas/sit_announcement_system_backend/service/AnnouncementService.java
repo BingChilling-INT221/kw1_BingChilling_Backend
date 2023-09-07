@@ -32,10 +32,10 @@ public class AnnouncementService {
         if (mode != null) {
             if (mode.equalsIgnoreCase("active")) {
                 return announcementRepository.findAnnouncementByValidateDatetimeList(localNow.atZone(ZoneId.of("UTC")));
-            } else if (mode.equalsIgnoreCase("close"))  {
+            } else if (mode.equalsIgnoreCase("close")) {
                 return announcementRepository.findAnnouncementByCloseDateAfterNowList(localNow.atZone(ZoneId.of("UTC")));
             } else {
-                throw new  ResponseStatusException(HttpStatus.NOT_FOUND,"Not Found : "+mode+" mode .");
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Not Found : " + mode + " mode .");
             }
         } else {
             return announcementRepository.findAllByOrderByIdDesc();
@@ -46,7 +46,7 @@ public class AnnouncementService {
 
 
     public Announcement getAnnouncementById(Integer announcementid) {
-    return announcementRepository.findById(announcementid).orElseThrow(() -> new NotfoundByfield(( "Announcement id " + announcementid + " does not exist"),"id"));
+        return announcementRepository.findById(announcementid).orElseThrow(() -> new NotfoundByfield(("Announcement id " + announcementid + " does not exist"), "id"));
 //        announcement.setViewCount(announcement.getViewCount()+1);
 //        announcementRepository.saveAndFlush(announcement);
 //        return announcement ;
@@ -58,7 +58,7 @@ public class AnnouncementService {
     }
 
     public void deleteAnnouncement(Integer id) {
-        announcementRepository.findById(id).orElseThrow(() -> new NotfoundByfield(( "Announcement id " + id + " does not exist"),"id"));
+        announcementRepository.findById(id).orElseThrow(() -> new NotfoundByfield(("Announcement id " + id + " does not exist"), "id"));
         announcementRepository.deleteById(id);
     }
 
@@ -66,7 +66,7 @@ public class AnnouncementService {
     public Announcement updateAnnouncement(Integer id, AnnouncementsRequestDTO announcement) {
         try {
             Announcement existAnnouncement = announcementRepository.findById(id).orElseThrow(
-                    () -> new NotfoundByfield(( "Announcement id " + id + " does not exist"),"id"));
+                    () -> new NotfoundByfield(("Announcement id " + id + " does not exist"), "id"));
             return getAnnouncement(announcement, existAnnouncement);
         } catch (RuntimeException e) {
             throw new RuntimeException(e);
@@ -83,50 +83,43 @@ public class AnnouncementService {
         if (announcement.getAnnouncementDisplay() != null) {
             RealAnnouncement.setAnnouncementDisplay(announcement.getAnnouncementDisplay());
         }
-        RealAnnouncement.setAnnouncementCategory(categoryRepository.findById(announcement.getCategoryId()).orElseThrow(()->new SetFiledErrorException("does not exists","categoryId")));
+        RealAnnouncement.setAnnouncementCategory(categoryRepository.findById(announcement.getCategoryId()).orElseThrow(() -> new SetFiledErrorException("does not exists", "categoryId")));
         return announcementRepository.saveAndFlush(RealAnnouncement);
     }
 
 
-
-    public Page<Announcement> getPages(Integer page, Integer size,String mode,Integer category){
+    public Page<Announcement> getPages(Integer page, Integer size, String mode, Integer category) {
 //        page= page!=null?page:0 ;
 //        size=size!=null?size:size(getAnnouncements(null));
-        Pageable pageable = PageRequest.of(page,size);
+        Pageable pageable = PageRequest.of(page, size);
         LocalDateTime localNow = LocalDateTime.now();
-        if( category != null && mode != null){
-            if(mode.equalsIgnoreCase("active")){
-                return announcementRepository.findAnnouncementByValidateDatetimePageWithId(localNow.atZone(ZoneId.of("UTC")),category,pageable);
+        if (category != null && mode != null) {
+            if (mode.equalsIgnoreCase("active")) {
+                return announcementRepository.findAnnouncementByValidateDatetimePageWithId(localNow.atZone(ZoneId.of("UTC")), category, pageable);
+            } else if (mode.equalsIgnoreCase("close")) {
+                return announcementRepository.findAnnouncementByCloseDateAfterNowPageWithId(localNow.atZone(ZoneId.of("UTC")), category, pageable);
+            } else {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Not Found : " + mode + "mode .");
             }
-            else if (mode.equalsIgnoreCase("close")) {
-                return announcementRepository.findAnnouncementByCloseDateAfterNowPageWithId(localNow.atZone(ZoneId.of("UTC")),category,pageable) ;
+        } else if (category != null && mode == null) {
+            return announcementRepository.findAnnouncementByAnnouncementCategory_CategoryIdOrderByIdDesc(category, pageable);
+        } else if (category == null && mode != null) {
+            if (mode.equalsIgnoreCase("active")) {
+                return announcementRepository.findAnnouncementByValidateDatetimePage(localNow.atZone(ZoneId.of("UTC")), pageable);
+            } else if (mode.equalsIgnoreCase("close")) {
+                return announcementRepository.findAnnouncementByCloseDateAfterNowPage(localNow.atZone(ZoneId.of("UTC")), pageable);
+            } else {
+                throw new SetFiledErrorException("Not Found : " + mode + "mode .", "categoryId");
             }
-            else {
-                throw new  ResponseStatusException(HttpStatus.NOT_FOUND,"Not Found : "+mode+"mode .");
-            }
-        }
-       else if(category != null && mode==null) {
-            return announcementRepository.findAnnouncementByAnnouncementCategory_CategoryIdOrderByIdDesc(category,pageable) ;
-        }
-       else if(category==null && mode!=null){
-           if(mode.equalsIgnoreCase("active")){
-              return  announcementRepository.findAnnouncementByValidateDatetimePage(localNow.atZone(ZoneId.of("UTC")),pageable);
-           }
-           else if (mode.equalsIgnoreCase("close")) {
-               return  announcementRepository.findAnnouncementByCloseDateAfterNowPage(localNow.atZone(ZoneId.of("UTC")),pageable);
-           }
-           else {
-               throw new SetFiledErrorException("Not Found : "+mode+"mode .","categoryId");
-           }
-        }
-        else{
+        } else {
             return announcementRepository.findAllByOrderByIdDesc(pageable);
         }
 
     }
-    public Integer updateViewCount(Integer id){
-        Announcement announcement = announcementRepository.findById(id).orElseThrow(()->new SetFiledErrorException("does not exists","announcementId"));
-        announcement.setViewCount(announcement.getViewCount()+1);
+
+    public Integer updateViewCount(Integer id) {
+        Announcement announcement = announcementRepository.findById(id).orElseThrow(() -> new SetFiledErrorException("does not exists", "announcementId"));
+        announcement.setViewCount(announcement.getViewCount() + 1);
         announcementRepository.saveAndFlush(announcement);
         return announcement.getViewCount();
     }

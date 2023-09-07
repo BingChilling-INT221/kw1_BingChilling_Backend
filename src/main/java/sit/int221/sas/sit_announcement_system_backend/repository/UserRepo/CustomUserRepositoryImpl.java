@@ -7,11 +7,11 @@ import sit.int221.sas.sit_announcement_system_backend.entity.User;
 
 public class CustomUserRepositoryImpl implements CustomUserRepository {
     @PersistenceContext
-    private EntityManager entityManager ;
+    private EntityManager entityManager;
 
     @Override
     @Transactional //method needs to be executed within a transaction
-    public User RefreshUser(User user){
+    public User RefreshUser(User user) {
         try {
             entityManager.persist(user);
             entityManager.refresh(user);

@@ -14,7 +14,9 @@ public class CloseDateAfterPublishDateValidator implements ConstraintValidator<C
     @Override
     public boolean isValid(AnnouncementsRequestDTO announcementsRequestDTO, ConstraintValidatorContext context) {
 
-        if(announcementsRequestDTO.getPublishDate() == null || announcementsRequestDTO.getCloseDate() == null){return true;}
+        if (announcementsRequestDTO.getPublishDate() == null || announcementsRequestDTO.getCloseDate() == null) {
+            return true;
+        }
         return announcementsRequestDTO.getCloseDate().isAfter(announcementsRequestDTO.getPublishDate());
     }
 

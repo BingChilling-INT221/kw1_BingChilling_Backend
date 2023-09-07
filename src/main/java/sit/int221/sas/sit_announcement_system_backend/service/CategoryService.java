@@ -15,26 +15,24 @@ public class CategoryService {
     public List<Category> getCategories() {
         try {
             return categoryRepository.findAll();
-        }
-        catch (RuntimeException e){
-            throw  new RuntimeException();
+        } catch (RuntimeException e) {
+            throw new RuntimeException();
         }
     }
 
     public Category getCategoryById(Integer id) {
-        return categoryRepository.findById(id).orElseThrow(()->new RuntimeException());
+        return categoryRepository.findById(id).orElseThrow(() -> new RuntimeException());
     }
 
     public Category addCategory(Category category) {
         try {
             return categoryRepository.saveAndFlush(category);
-        }
-        catch (RuntimeException e){
-            throw  new RuntimeException();
+        } catch (RuntimeException e) {
+            throw new RuntimeException();
         }
     }
 
-    public void deleteCategory(Integer categoryId){
-         categoryRepository.deleteById(categoryId);
+    public void deleteCategory(Integer categoryId) {
+        categoryRepository.deleteById(categoryId);
     }
 }

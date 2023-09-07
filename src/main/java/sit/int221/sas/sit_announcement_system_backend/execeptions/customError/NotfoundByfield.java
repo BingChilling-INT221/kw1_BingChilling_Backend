@@ -9,11 +9,12 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @Getter
 @Setter
 @ResponseStatus(value = HttpStatus.NOT_FOUND)
-public class NotfoundByfield extends RuntimeException  {
-    private String field ;
+public class NotfoundByfield extends RuntimeException {
+    private String field;
+
     public NotfoundByfield(String message, String additionalField1) {
         super(message);
-        this.field= additionalField1;
+        this.field = additionalField1;
 
     }
 }

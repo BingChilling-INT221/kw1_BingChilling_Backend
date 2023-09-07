@@ -11,6 +11,8 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface CheckRole {
     String message() default "please enter role specific in choice";
+
     Class<?>[] groups() default {};
+
     Class<? extends Payload>[] payload() default {};
 }
