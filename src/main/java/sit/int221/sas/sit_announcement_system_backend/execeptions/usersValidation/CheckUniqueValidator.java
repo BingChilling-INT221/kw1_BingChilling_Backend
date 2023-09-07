@@ -49,21 +49,37 @@ public class CheckUniqueValidator implements ConstraintValidator<CheckUnique, St
     }
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-            if(value==null){return true ;}
-            User user = userRepository.findUsersByUsernameAndNameAndEmail(value).orElse(null);
-            if(user != null){
-                Map map = (Map) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
-                Object id = map.get("id");
-                if(id != null){
-                    User userExist = userRepository.findById(Integer.parseInt(id.toString())).get();
-                    return user.getId().equals(userExist.getId());
-                }
-                else {return false ;}
+        if (value != null) {
+            System.out.println(value);
+            Map map = (Map) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+            Object id = map.get("id");
+            User result;
+            System.out.println("-------deds");
+            if (id != null) {
+                result = userRepository.findUsersByUsernameAndNameAndEmail(value, Integer.parseInt(id.toString())).orElse(null);
+            } else {
+                result = userRepository.findUsersByUsernameAndNameAndEmail(value, null).orElse(null);
             }
-        return true;
+            return result == null;
+        } else {
+            return true;
+        }
+
+
+        //            if(value==null){return true ;}
+//            User user = userRepository.findUsersByUsernameAndNameAndEmail(value).orElse(null);
+//            if(user != null){
+//                Map map = (Map) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+//                Object id = map.get("id");
+//                if(id != null){
+//                    User userExist = userRepository.findById(Integer.parseInt(id.toString())).get();
+//                    return user.getId().equals(userExist.getId());
+//                }
+//                else {return false ;}
+//            }
+//        return true;
+
     }
-
-
 
 
 }

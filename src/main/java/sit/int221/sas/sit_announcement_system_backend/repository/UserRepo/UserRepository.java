@@ -16,10 +16,11 @@ public interface UserRepository extends JpaRepository<User,Integer>,CustomUserRe
     Optional<User> findByUsername(String username) ;
 
     @Query("SELECT u FROM User u " +
-            "WHERE (:filed is null OR u.username = :filed) " +
+            "WHERE  u.username = :filed " +
             "OR  u.name = :filed " +
-            "OR  u.email = :filed ")
+            "OR  u.email = :filed " +
+            "AND (:id is null  OR u.id <> :id) " )
     Optional<User> findUsersByUsernameAndNameAndEmail(
-            @Param("filed") String filed
+            @Param("filed") String filed,@Param("id") Integer id
     );
 }
