@@ -57,9 +57,9 @@ public class CheckUniqueValidator implements ConstraintValidator<CheckUnique, St
             Object id = map.get("id");
             User result;
             if (id != null) {
-                result = userRepository.findUsersByUsernameAndNameAndEmail(value, Integer.parseInt(id.toString())).orElse(null);
+                result = userRepository.findUsersByUsernameAndNameAndEmail(value.trim(), Integer.parseInt(id.toString())).orElse(null);
             } else {
-                result = userRepository.findUsersByUsernameAndNameAndEmail(value, null).orElse(null);
+                result = userRepository.findUsersByUsernameAndNameAndEmail(value.trim(), null).orElse(null);
             }
             return result == null;
         } else {
