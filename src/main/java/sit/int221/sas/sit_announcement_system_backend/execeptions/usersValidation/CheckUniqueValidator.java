@@ -52,7 +52,6 @@ public class CheckUniqueValidator implements ConstraintValidator<CheckUnique, St
     public boolean isValid(String value, ConstraintValidatorContext context) {
 
         if (value != null) {
-            System.out.println(value);
             Map map = (Map) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
             Object id = map.get("id");
             User result;

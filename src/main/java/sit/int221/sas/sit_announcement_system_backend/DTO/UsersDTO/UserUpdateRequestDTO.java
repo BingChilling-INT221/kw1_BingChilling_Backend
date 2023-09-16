@@ -45,9 +45,9 @@ public class UserUpdateRequestDTO {
     //    @NotNull(message = "must not be null")
     @NotBlank(message = "must not be blank")
     @Size(min = 1, max = 150)
+    @CheckUnique(columnName = "email")
     @Email(message = "Email should be valid", regexp = "[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,3}",
             flags = Pattern.Flag.CASE_INSENSITIVE)
-    @CheckUnique(columnName = "email")
     private String email;
 
     public String getEmail() {
