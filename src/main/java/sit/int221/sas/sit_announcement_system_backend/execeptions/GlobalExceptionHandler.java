@@ -1,5 +1,8 @@
 package sit.int221.sas.sit_announcement_system_backend.execeptions;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.SignatureException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -8,7 +11,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import sit.int221.sas.sit_announcement_system_backend.entity.JwtResponseOnlyAccessToken;
 import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.AuthenticationErrorException;
+import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.JWTErrorException;
 import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.NotfoundByfield;
 import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.SetFiledErrorException;
 
@@ -59,6 +64,20 @@ public class GlobalExceptionHandler {
     }
 
 
+
+    @ExceptionHandler({JwtException.class})
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ResponseEntity<ErrorResponse> handleJWTException(JwtException e, WebRequest request) {
+        ErrorResponse er = new ErrorResponse(HttpStatus.UNAUTHORIZED.value(), e.getMessage(), request.getDescription(false));
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(er);
+    }
+
+    @ExceptionHandler({SignatureException.class})
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ResponseEntity<ErrorResponse> handleSignatureException(SignatureException e, WebRequest request) {
+        ErrorResponse er = new ErrorResponse(HttpStatus.UNAUTHORIZED.value(), e.getMessage(), request.getDescription(false));
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(er);
+    }
     //    @ExceptionHandler(RuntimeException.class)
 //    @ResponseStatus(HttpStatus.NOT_FOUND)
 //    public ResponseEntity<ErrorResponse>  handlerAuthentication(RuntimeException e){
