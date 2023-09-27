@@ -23,12 +23,14 @@ import sit.int221.sas.sit_announcement_system_backend.entity.JwtResponseOnlyAcce
 @RestController
 @RequestMapping("api/token")
 @CrossOrigin(origins = {
-        "http://intproj22.sit.kmutt.ac.th/",
-        "https://intproj22.sit.kmutt.ac.th/",
-        "http://localhost:5173/",
-        "https://localhost:5173/",
-        "http://ip22kw1.sit.kmutt.ac.th/",
-        "https://ip22kw1.sit.kmutt.ac.th/",
+        "http://intproj22.sit.kmutt.ac.th",
+        "https://intproj22.sit.kmutt.ac.th",
+        "http://localhost:5173",
+        "https://localhost:5173",
+        "http://ip22kw1.sit.kmutt.ac.th",
+        "https://ip22kw1.sit.kmutt.ac.th",
+        "http://ip22kw1.sit.kmutt.ac.th:800",
+        "https://ip22kw1.sit.kmutt.ac.th:800",
 })
 public class JwtAuthenticationController {
     @Autowired
