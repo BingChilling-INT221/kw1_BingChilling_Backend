@@ -48,13 +48,13 @@ public class JwtTokenUtil {
 
     //generate token for user
     public String generateAccessToken(UserDetails userDetails) {
-        System.out.println("Gen Token");
+
         Map<String, Object> claims = new HashMap<>();
         claims.put("type","AccessToken");
         return doGenerateToken(claims, userDetails.getUsername());
     }
     public String generateRefreshToken(String accesstoken) {
-        System.out.println("Gen Refresh Token");
+
         Map<String,Object> claims = new HashMap<>() ;
         claims.put("type","RefreshToken");
         claims.put("accessToken",accesstoken) ;
@@ -88,17 +88,13 @@ public class JwtTokenUtil {
     }
 
     public  Boolean validateRefreshToken(String token,Claims claims,UserDetails userDetails){
-        System.out.println(" validate Re accessToken : "+claims.get("accessToken") );
-        System.out.println(" is Expired refreshtoken : "+getExpirationDateFromToken(token));
-        System.out.println(" validate Re  type: "+claims.get("type") );
-        System.out.println(" validate Re username : "+claims.get("username") );
+
      return  (!isTokenExpired(token)) &&   (claims.get("type").equals("RefreshToken") ) &&   (claims.get("username").equals(userDetails.getUsername())) ;
    //( isTokenExpired((String) claims.get("accessToken") ) )&&
     }
 
     public  Object getClaims(String token ){
         Claims claims = getAllClaimsFromToken(token);// Use the appropriate signing key
-        System.out.println("get claims");
         return claims ;
     }
 

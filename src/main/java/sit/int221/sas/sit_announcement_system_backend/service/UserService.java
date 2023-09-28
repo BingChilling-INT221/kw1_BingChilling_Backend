@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import sit.int221.sas.sit_announcement_system_backend.DTO.UsersDTO.UseRequestRegisterDTO;
 import sit.int221.sas.sit_announcement_system_backend.DTO.UsersDTO.UserUpdateRequestDTO;
 import sit.int221.sas.sit_announcement_system_backend.entity.User;
-import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.AuthenticationErrorException;
+import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.JwtErrorException;
 import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.NotfoundByfield;
 import sit.int221.sas.sit_announcement_system_backend.repository.UserRepo.UserRepository;
 
@@ -69,7 +69,7 @@ public class UserService {
 
         User userExist = userRepository.findByUsername(username.trim()).orElseThrow(() -> new NotfoundByfield(username + " DOES NOT exists", "username"));
         if (!this.arg2SpringSecurity.matches(raw_password.trim(), userExist.getPassword())) {
-            throw new AuthenticationErrorException("Password Not Matched", "Login");
+            throw new JwtErrorException("Password Not Matched", "Login");
         }
     }
 

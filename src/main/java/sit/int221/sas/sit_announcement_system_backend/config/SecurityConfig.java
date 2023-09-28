@@ -46,7 +46,7 @@ public class SecurityConfig {
                         // all other requests need to be authenticated
                         .anyRequest().authenticated())
 
-//                .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and()
+                .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and()
                 .httpBasic();
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
@@ -56,4 +56,13 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new Argon2PasswordEncoder(16, 30, 1, 16, 2);
     }
+
+//    @Bean
+//    public UsernamePasswordAuthenticationFilter customUsernamePasswordAuthenticationFilter() throws Exception {
+//        UsernamePasswordAuthenticationFilter filter = new UsernamePasswordAuthenticationFilter();
+//        filter.setAuthenticationManager(authenticationManager());
+//        filter.setFilterProcessesUrl("/custom-login"); // Custom login endpoint URL
+//        return filter;
+//    }
+
 }

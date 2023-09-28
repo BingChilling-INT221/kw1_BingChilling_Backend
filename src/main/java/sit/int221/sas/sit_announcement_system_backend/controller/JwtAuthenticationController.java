@@ -13,12 +13,15 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import sit.int221.sas.sit_announcement_system_backend.config.JwtTokenUtil;
 import sit.int221.sas.sit_announcement_system_backend.config.JwtUserDetailsService;
 import sit.int221.sas.sit_announcement_system_backend.entity.JwtRequest;
 import sit.int221.sas.sit_announcement_system_backend.entity.JwtResponse;
 import sit.int221.sas.sit_announcement_system_backend.entity.JwtResponseOnlyAccessToken;
+
+import javax.naming.AuthenticationException;
 
 @RestController
 @RequestMapping("api/token")
@@ -43,15 +46,12 @@ public class JwtAuthenticationController {
     private JwtUserDetailsService userDetailsService;
 
     @PostMapping( "")
-    public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception {
-        //check with database
+    public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest,HttpServletRequest request) throws Exception {
         authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
         final UserDetails userDetails = userDetailsService
                 .loadUserByUsername(authenticationRequest.getUsername());
         final String accessToken = jwtTokenUtil.generateAccessToken(userDetails);
         final String refreshToken = jwtTokenUtil.generateRefreshToken(accessToken);
-        System.out.println(" jwtTokenUtil.getExpirationDateFromToken(accessToken) : "+jwtTokenUtil.getExpirationDateFromToken(accessToken));
-        System.out.println(" jwtTokenUtil.getExpirationDateFromToken(refreshToken) : "+jwtTokenUtil.getExpirationDateFromToken(refreshToken) );
         return ResponseEntity.status(HttpStatus.OK).body(new JwtResponse(accessToken,refreshToken));
     }
     // get ก็สามารถส่ง  json data ได้
@@ -77,5 +77,6 @@ public class JwtAuthenticationController {
         } catch (BadCredentialsException e) {
             throw new Exception("INVALID_CREDENTIALS", e);
         }
+
     }
 }
