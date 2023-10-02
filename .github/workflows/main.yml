@@ -26,7 +26,7 @@ jobs:
           git pull
 
           # Start the Docker services defined in the specified compose file
-          docker compose -f ${{ env.compose_file }} up -d  # Replace with the actual compose file path
+          docker compose -f ${{ env.compose_file }} up -d   --build backend # Replace with the actual compose file path
 
           # Provide feedback that the deployment process has started
           echo "Backend deployment process initiated."
