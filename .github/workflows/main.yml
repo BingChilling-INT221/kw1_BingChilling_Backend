@@ -7,6 +7,7 @@ on:
       - main
 
 env:
+  infrastructure_dir: "/home/moniyom/kw1_BingChilling_Infrastructure/"
   backend_dir: "/home/moniyom/kw1_BingChilling_Backend/"
   compose_file: "/home/moniyom/kw1_BingChilling_Infrastructure/compose.yaml"
 
@@ -30,3 +31,7 @@ jobs:
 
           # Provide feedback that the deployment process has started
           echo "Backend deployment process initiated."
+      - name: Prune Docker
+        run: |
+          cd ${{ env.infrastructure_dir }}  # Navigate to the directory containing compose.yaml
+          docker system prune --all --volumes --force || echo "Prune command failed, but continuing..."
