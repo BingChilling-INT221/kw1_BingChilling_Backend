@@ -20,6 +20,7 @@ import sit.int221.sas.sit_announcement_system_backend.config.JwtUserDetailsServi
 import sit.int221.sas.sit_announcement_system_backend.entity.JwtRequest;
 import sit.int221.sas.sit_announcement_system_backend.entity.JwtResponse;
 import sit.int221.sas.sit_announcement_system_backend.entity.JwtResponseOnlyAccessToken;
+import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.JwtErrorException;
 
 import javax.naming.AuthenticationException;
 
@@ -49,6 +50,9 @@ public class JwtAuthenticationController {
 
     @PostMapping( "")
     public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest,HttpServletRequest request) throws Exception {
+        String error = (String) request.getAttribute("error");
+        if(request.getAttribute("error") !=null){throw new JwtErrorException(error,"token") ;
+        }
         authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
         final UserDetails userDetails = userDetailsService
                 .loadUserByUsername(authenticationRequest.getUsername());
@@ -59,6 +63,9 @@ public class JwtAuthenticationController {
     // get ก็สามารถส่ง  json data ได้
     @GetMapping( "")
     public ResponseEntity<?> refreshToken(HttpServletRequest request) throws Exception {
+        String error = (String) request.getAttribute("error");
+        if(request.getAttribute("error") !=null){throw new JwtErrorException(error,"token") ;
+        }
         final String requestTokenHeader = request.getHeader("Authorization");
        String jwtToken = requestTokenHeader.substring(7);
         Claims claims = (Claims) jwtTokenUtil.getClaims(jwtToken);

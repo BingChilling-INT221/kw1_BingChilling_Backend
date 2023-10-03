@@ -2,10 +2,13 @@ package sit.int221.sas.sit_announcement_system_backend.config;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
+import sit.int221.sas.sit_announcement_system_backend.execeptions.ErrorResponse;
+import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.JwtErrorException;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -17,6 +20,14 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint, Se
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
                          AuthenticationException authException) throws IOException {
-       response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+
+        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+    }
+
+    public void commence(HttpServletRequest request, HttpServletResponse response, JwtErrorException e) throws IOException {
+        ErrorResponse er = new ErrorResponse(HttpStatus.UNAUTHORIZED.value(), e.getMessage(), request.getRequestURI());
+        er.addValidationError(e.getField(), e.getMessage());
+        ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(er);
+
     }
 }
