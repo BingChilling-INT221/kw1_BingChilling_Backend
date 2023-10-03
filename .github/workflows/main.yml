@@ -1,21 +1,37 @@
+name: Deploy Backend to VPN Server
 
-name: sendRequestToDeploy
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
+
+env:
+  infrastructure_dir: "/home/moniyom/kw1_BingChilling_Infrastructure/"
+  backend_dir: "/home/moniyom/kw1_BingChilling_Backend/"
+  compose_file: "/home/moniyom/kw1_BingChilling_Infrastructure/compose.yaml"
+
 jobs:
-  build:
-    name: sendrequest
-    runs-on: ubuntu-latest
+  deploy_back:
+    runs-on: linux
     steps:
-      - uses: convictional/trigger-workflow-and-wait@v1.3.0
-        with:
-          owner: BingChilling-INT221
-          repo: kw1_BingChilling_Infrastructure
-          github_token: ${{ secrets.G_ACCESS_TOKEN }}
-          workflow_file_name: deploy_vpn.yml
-      - name: Sended
+      - name: Run Deployment Script
         run: |
-          echo "Sended"
-          sleep 10s
+          # Enable "exit on error" behavior
+          set -e
+
+          # Navigate to the backend directory
+          cd ${{ env.backend_dir}}  # Replace with the actual directory path
+
+          # Pull the latest changes from the repository
+          git pull
+
+          # Start the Docker services defined in the specified compose file
+          docker compose -f ${{ env.compose_file }} up -d   --build backend # Replace with the actual compose file path
+
+          # Provide feedback that the deployment process has started
+          echo "Backend deployment process initiated."
+      - name: Prune Docker
+        run: |
+          cd ${{ env.infrastructure_dir }}  # Navigate to the directory containing compose.yaml
+          docker system prune --all --volumes --force || echo "Prune command failed, but continuing..."
