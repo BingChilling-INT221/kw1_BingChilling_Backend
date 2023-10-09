@@ -20,7 +20,7 @@ public class JwtTokenUtil {
 
     @Autowired
     private JwtProperties jwtProperties;
-    public static final long JWT_TOKEN_VALIDITY = 60*1000;
+    public static final long JWT_TOKEN_VALIDITY = 60*60*1000;
 
 
 

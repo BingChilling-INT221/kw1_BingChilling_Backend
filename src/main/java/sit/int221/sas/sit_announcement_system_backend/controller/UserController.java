@@ -5,6 +5,10 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import sit.int221.sas.sit_announcement_system_backend.DTO.UsersDTO.*;
+import sit.int221.sas.sit_announcement_system_backend.config.JwtTokenUtil;
+import sit.int221.sas.sit_announcement_system_backend.entity.User;
+import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.JwtErrorException;
+import sit.int221.sas.sit_announcement_system_backend.service.AnnouncementService;
 import sit.int221.sas.sit_announcement_system_backend.service.UserService;
 import sit.int221.sas.sit_announcement_system_backend.utils.ListMapper;
 
@@ -27,6 +31,10 @@ public class UserController {
     @Autowired
     private UserService userService;
     @Autowired
+    private JwtTokenUtil jwtTokenUtil;
+    @Autowired
+    private AnnouncementService announcementService;
+    @Autowired
     private ListMapper listMapper;
     @Autowired
     private ModelMapper modelMapper;
@@ -42,7 +50,7 @@ public class UserController {
     }
 
     @PostMapping("")
-    public UserResponseDTO creatUser(@Valid @RequestBody UseRequestRegisterDTO userObj) throws InterruptedException {
+    public UserResponseDTO createUser(@Valid @RequestBody UseRequestRegisterDTO userObj) throws InterruptedException {
         return modelMapper.map(userService.createUser(userObj), UserResponseDTO.class);
     }
 
@@ -52,8 +60,14 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Integer id) {
+    public void delete(@RequestHeader(name = "Authorization") String header, @PathVariable Integer id) {
+        if(!header.startsWith("Bearer ")){ throw new JwtErrorException("Bearer error.","token"); }
+        String token = header.substring(7);
+        String username = jwtTokenUtil.getSubjectFromToken(token);
+        User newOwner = userService.getUserByUsername(username);
+        announcementService.updateAnnouncementsByAnnouncementOwner(id,newOwner);
         userService.deleteUser(id);
+
     }
 
     @PostMapping("/match")

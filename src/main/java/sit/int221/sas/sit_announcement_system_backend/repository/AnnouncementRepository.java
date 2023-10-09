@@ -6,12 +6,16 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import sit.int221.sas.sit_announcement_system_backend.entity.Announcement;
+import sit.int221.sas.sit_announcement_system_backend.entity.User;
 import sit.int221.sas.sit_announcement_system_backend.utils.AnnouncementDisplay;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface AnnouncementRepository extends JpaRepository<Announcement, Integer> {
+
+    Optional<List<Announcement>> findByAnnouncementOwnerId(Integer announcementOwnerId);
 
     @Query(value = "SELECT a.viewCount FROM Announcement a WHERE a.id = :id")
     Integer viewcountById(Integer id);

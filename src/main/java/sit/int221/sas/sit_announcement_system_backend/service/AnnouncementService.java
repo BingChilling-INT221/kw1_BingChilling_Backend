@@ -9,10 +9,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import sit.int221.sas.sit_announcement_system_backend.DTO.AnnouncementsRequestDTO;
 import sit.int221.sas.sit_announcement_system_backend.entity.Announcement;
+import sit.int221.sas.sit_announcement_system_backend.entity.User;
 import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.NotfoundByfield;
 import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.SetFiledErrorException;
 import sit.int221.sas.sit_announcement_system_backend.repository.AnnouncementRepository;
 import sit.int221.sas.sit_announcement_system_backend.repository.CategoryRepository;
+import sit.int221.sas.sit_announcement_system_backend.repository.UserRepo.CustomUserRepository;
+import sit.int221.sas.sit_announcement_system_backend.repository.UserRepo.UserRepository;
 
 
 import java.time.LocalDateTime;
@@ -26,6 +29,20 @@ public class AnnouncementService {
     private AnnouncementRepository announcementRepository;
     @Autowired
     private CategoryRepository categoryRepository;
+
+    private List<Announcement> getAnnouncementsByOwner(Integer ownerId) {
+        return announcementRepository.findByAnnouncementOwnerId(ownerId).orElseThrow(() -> new NotfoundByfield("does not exits","announcementOwner"));
+    }
+    public List<Announcement> updateAnnouncementsByAnnouncementOwner(Integer ownerId,User newOwner) {
+        List<Announcement> announcements = getAnnouncementsByOwner(ownerId);
+        announcements.forEach(announcement -> announcement.setAnnouncementOwner(newOwner));
+        return announcementRepository.saveAllAndFlush(announcements);
+    }
+
+    public boolean isAuthorize(String username,Integer announcementId) {
+        Announcement announcement = announcementRepository.findById(announcementId).orElse(null);
+        return announcement != null &&  announcement.getAnnouncementOwner().getUsername().equals(username);
+    }
 
     public List<Announcement> getAnnouncements(String mode) {
         LocalDateTime localNow = LocalDateTime.now();

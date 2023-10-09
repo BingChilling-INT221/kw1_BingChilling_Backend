@@ -6,6 +6,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import sit.int221.sas.sit_announcement_system_backend.DTO.*;
@@ -44,6 +45,7 @@ public class AnnouncementController<T> {
 //        }
 
     }
+
 
    /* public ResponseEntity<List<T>> getAnnouncements(@RequestParam (required = false) String mode ) {
         if( mode != null){
@@ -96,18 +98,20 @@ public class AnnouncementController<T> {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority(@Role.ADMIN) or (hasAuthority(@Role.ANNOUNCER) and (@announcementService.isAuthorize(authentication.principal.username,#id)))")
     public void deleteAnnouncement(@PathVariable Integer id) {
         announcementService.deleteAnnouncement(id);
     }
 
     @PutMapping("/{id}")
-
+    @PreAuthorize("hasAuthority(@Role.ADMIN) or (hasAuthority(@Role.ANNOUNCER) and (@announcementService.isAuthorize(authentication.principal.username,#id)))")
     public ResponseEntity<AnnouncementsResponseDetailDTO> updateAnnouncement(@PathVariable Integer id, @Valid @RequestBody AnnouncementsRequestDTO announcmentDTO) {
         return ResponseEntity.status(HttpStatus.OK).body(modelMapper.map(announcementService.updateAnnouncement(id, announcmentDTO), AnnouncementsResponseDetailDTO.class));
 
     }
 
     @PutMapping("/{id}/views")
+    @PreAuthorize("hasAuthority(@Role.ADMIN) or (hasAuthority(@Role.ANNOUNCER) and (@announcementService.isAuthorize(authentication.principal.username,#id)))")
     public ResponseEntity<Integer> updateAnnouncementViews(@PathVariable Integer id) {
         return ResponseEntity.status(HttpStatus.OK).body(announcementService.updateViewCount(id));
     }

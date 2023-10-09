@@ -12,6 +12,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
@@ -20,9 +21,11 @@ import sit.int221.sas.sit_announcement_system_backend.config.JwtUserDetailsServi
 import sit.int221.sas.sit_announcement_system_backend.entity.JwtRequest;
 import sit.int221.sas.sit_announcement_system_backend.entity.JwtResponse;
 import sit.int221.sas.sit_announcement_system_backend.entity.JwtResponseOnlyAccessToken;
+import sit.int221.sas.sit_announcement_system_backend.entity.User;
 import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.JwtErrorException;
 
 import javax.naming.AuthenticationException;
+import java.util.Collection;
 
 @RestController
 @RequestMapping("api/token")
@@ -53,9 +56,10 @@ public class JwtAuthenticationController {
         String error = (String) request.getAttribute("error");
         if(request.getAttribute("error") !=null){throw new JwtErrorException(error,"token") ;
         }
-        authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
         final UserDetails userDetails = userDetailsService
                 .loadUserByUsername(authenticationRequest.getUsername());
+        authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword(),userDetails.getAuthorities());
+
         final String accessToken = jwtTokenUtil.generateAccessToken(userDetails);
         final String refreshToken = jwtTokenUtil.generateRefreshToken(accessToken);
         return ResponseEntity.status(HttpStatus.OK).body(new JwtResponse(accessToken,refreshToken));
@@ -78,9 +82,9 @@ public class JwtAuthenticationController {
 
 
 
-    private void authenticate(String username, String password) throws Exception {
+    private void authenticate(String username, String password, Collection<? extends GrantedAuthority> authority) throws Exception {
         try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password,authority));
         } catch (DisabledException e) {
             throw new Exception("USER_DISABLED", e);
         } catch (BadCredentialsException e) {

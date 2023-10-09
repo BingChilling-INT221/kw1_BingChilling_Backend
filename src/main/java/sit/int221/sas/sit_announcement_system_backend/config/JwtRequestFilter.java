@@ -3,6 +3,7 @@ package sit.int221.sas.sit_announcement_system_backend.config;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.JwtErrorException;
+import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.SetFiledErrorException;
 
 import java.io.IOException;
 //OncePerRequestFilter อยู่ใน Spring framework security
@@ -42,14 +44,12 @@ public class JwtRequestFilter extends OncePerRequestFilter{
 
         String username = null;
         String jwtToken = null;
-        System.out.println("filter 1 ");
         System.out.println(requestTokenHeader);
-        if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer " )) {
-            try {
+        try {
+            if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer " )) {
                     jwtToken = requestTokenHeader.substring(7);
                     Claims claims = (Claims) jwtTokenUtil.getClaims(jwtToken);
                     username = jwtTokenUtil.getSubjectFromToken(jwtToken);
-
                     if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                         UserDetails userDetails = this.jwtUserDetailsService.loadUserByUsername(username);
                         if (jwtTokenUtil.validateToken(jwtToken, userDetails)) {
@@ -63,28 +63,24 @@ public class JwtRequestFilter extends OncePerRequestFilter{
                     else {
                         final UserDetails userDetails = this.jwtUserDetailsService.loadUserByUsername((String) claims.get("username"));
                         jwtTokenUtil.validateRefreshToken(jwtToken, claims, userDetails);
-                        System.out.println("filter 3 ");
-
                     }
-            } catch (IllegalArgumentException e) {
-                jwtAuthenticationEntryPoint.commence(request, response, new JwtErrorException("Unable to get JWT Token","token"));
-            } catch (ExpiredJwtException e) {
-                jwtAuthenticationEntryPoint.commence(request, response,new JwtErrorException("JWT Token has expired","token")) ;
-            }catch (MalformedJwtException e){
-                jwtAuthenticationEntryPoint.commence(request, response,new JwtErrorException("Unable to read JSON value","format")) ;
+
+            } else {
+
             }
 
-
-        } else {
-
-            logger.warn("JWT Token does not begin with Bearer String");
-            System.out.println("-----");
-                jwtAuthenticationEntryPoint.commence(request, response, new JwtErrorException("JWT Token does not begin with Bearer String","token"));
-
+            //should be call once
+            chain.doFilter(request, response);
+        } catch (IllegalArgumentException e) {
+            jwtAuthenticationEntryPoint.commence(request, response, new JwtErrorException("Unable to get JWT Token","token"));
+        } catch (ExpiredJwtException e) {
+            jwtAuthenticationEntryPoint.commence(request, response,new JwtErrorException("JWT Token has expired","token")) ;
+        }catch (MalformedJwtException e){
+            jwtAuthenticationEntryPoint.commence(request, response,new JwtErrorException("Unable to read JSON value","format")) ;
         }
 
-        //should be call once
-        chain.doFilter(request, response);
     }
+
+
 
 }

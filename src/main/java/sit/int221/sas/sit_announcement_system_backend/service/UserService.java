@@ -59,10 +59,12 @@ public class UserService {
 
     }
 
+    public User getUserByUsername(String username) {
+        return  userRepository.findByUsername(username).orElseThrow(() -> new NotfoundByfield((username + "does not exist"), "username"  ));
+    }
+    public void deleteUser(Integer id) {
 
-    public void deleteUser(Integer userid) {
-        userRepository.findById(userid).orElseThrow(() -> new NotfoundByfield((userid + "does not exist"), "id"));
-        userRepository.deleteById(userid);
+        userRepository.deleteById(id);
     }
 
     public void matchPassword(String username, String raw_password) {

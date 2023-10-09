@@ -2,6 +2,7 @@ package sit.int221.sas.sit_announcement_system_backend.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -10,8 +11,10 @@ import sit.int221.sas.sit_announcement_system_backend.entity.User;
 import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.JwtErrorException;
 import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.NotfoundByfield;
 import sit.int221.sas.sit_announcement_system_backend.repository.UserRepo.UserRepository;
+import sit.int221.sas.sit_announcement_system_backend.utils.Role;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 @Service
 public class JwtUserDetailsService implements UserDetailsService {
@@ -22,9 +25,11 @@ public class JwtUserDetailsService implements UserDetailsService {
         User userexist = userRepository.findByUsername(username).orElse(null) ;
         if (userexist!=null) {
             return new org.springframework.security.core.userdetails.User(userexist.getUsername(),userexist.getPassword(),
-                    new ArrayList<>());
+                    Arrays.asList(new SimpleGrantedAuthority (String.valueOf(userexist.getRole()))));
         } else {
             throw new NotfoundByfield(username+" not found ","username");
         }
     }
+
+
 }

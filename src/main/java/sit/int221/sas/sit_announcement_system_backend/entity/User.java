@@ -1,5 +1,6 @@
 package sit.int221.sas.sit_announcement_system_backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,6 +15,7 @@ import sit.int221.sas.sit_announcement_system_backend.utils.Role;
 
 import java.io.Serializable;
 import java.time.ZonedDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -50,5 +52,9 @@ public class User implements Serializable {
 
     @Column(name = "password", nullable = false, length = 100)
     private String password;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "announcementOwner")
+    private List<Announcement> announcements;
 
 }
