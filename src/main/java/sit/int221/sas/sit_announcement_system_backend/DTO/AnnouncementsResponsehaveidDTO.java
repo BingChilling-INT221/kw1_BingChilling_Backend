@@ -7,6 +7,7 @@ import jakarta.persistence.Enumerated;
 import lombok.Getter;
 import lombok.Setter;
 import sit.int221.sas.sit_announcement_system_backend.entity.Category;
+import sit.int221.sas.sit_announcement_system_backend.entity.User;
 import sit.int221.sas.sit_announcement_system_backend.utils.AnnouncementDisplay;
 
 import java.time.ZonedDateTime;
@@ -25,7 +26,10 @@ public class AnnouncementsResponsehaveidDTO {
     @JsonIgnore
     @Column(name = "announcementCategory")
     private Category category;
-
+    private User announcementOwner;
+    public String getAnnouncementOwner(){
+        return announcementOwner.getUsername();
+    }
     public Integer getCategoryId() {
         return category.getCategoryId();
     }

@@ -4,6 +4,7 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.Getter;
 import lombok.Setter;
+import sit.int221.sas.sit_announcement_system_backend.entity.User;
 import sit.int221.sas.sit_announcement_system_backend.utils.AnnouncementDisplay;
 
 import java.time.ZonedDateTime;
@@ -20,5 +21,8 @@ public class AnnouncementsResponseDTO {
 
     private String announcementCategory;
     private Integer viewCount;
-
+    private User announcementOwner;
+    public String getAnnouncementOwner(){
+        return announcementOwner.getUsername();
+    }
 }
