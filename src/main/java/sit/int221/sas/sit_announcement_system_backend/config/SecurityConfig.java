@@ -48,6 +48,7 @@ public class SecurityConfig {
                                 .requestMatchers(DELETE,"api/announcements/**").hasAnyAuthority(Role.admin.toString(),Role.announcer.toString())
 
                                 .requestMatchers(GET,"api/announcements/**").permitAll()
+                                .requestMatchers(GET,"api/categories/**").permitAll()
                                 .anyRequest().authenticated()
 
                         // all other requests need to be authenticated
