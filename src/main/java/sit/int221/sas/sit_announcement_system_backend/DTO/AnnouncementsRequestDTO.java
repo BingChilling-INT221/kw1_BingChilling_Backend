@@ -53,5 +53,7 @@ public class AnnouncementsRequestDTO {
     @NotNull(message = "must not be null")
     private Integer categoryId;
 
-
+    @Column(name = "announcementOwner", nullable = false)
+    @NotNull(message = "must not be null")
+    private String ownerName;
 }

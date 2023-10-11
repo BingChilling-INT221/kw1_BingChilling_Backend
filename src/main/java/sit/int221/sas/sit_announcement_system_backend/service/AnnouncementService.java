@@ -29,7 +29,8 @@ public class AnnouncementService {
     private AnnouncementRepository announcementRepository;
     @Autowired
     private CategoryRepository categoryRepository;
-
+    @Autowired
+    private UserRepository UserRepository;
     private List<Announcement> getAnnouncementsByOwner(Integer ownerId) {
         return announcementRepository.findByAnnouncementOwnerId(ownerId).orElseThrow(() -> new NotfoundByfield("does not exits","announcementOwner"));
     }
@@ -63,6 +64,7 @@ public class AnnouncementService {
 
 
     public Announcement getAnnouncementById(Integer announcementid) {
+
         return announcementRepository.findById(announcementid).orElseThrow(() -> new NotfoundByfield(("Announcement id " + announcementid + " does not exist"), "id"));
 //        announcement.setViewCount(announcement.getViewCount()+1);
 //        announcementRepository.saveAndFlush(announcement);
@@ -100,6 +102,7 @@ public class AnnouncementService {
         if (announcement.getAnnouncementDisplay() != null) {
             RealAnnouncement.setAnnouncementDisplay(announcement.getAnnouncementDisplay());
         }
+        RealAnnouncement.setAnnouncementOwner(UserRepository.findByUsername(announcement.getOwnerName()).orElseThrow(() -> new SetFiledErrorException("does not exists", "announcementOwner")));
         RealAnnouncement.setAnnouncementCategory(categoryRepository.findById(announcement.getCategoryId()).orElseThrow(() -> new SetFiledErrorException("does not exists", "categoryId")));
         return announcementRepository.saveAndFlush(RealAnnouncement);
     }
