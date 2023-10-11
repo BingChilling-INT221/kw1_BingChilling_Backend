@@ -51,10 +51,11 @@ public class JwtTokenUtil {
 
         Map<String, Object> claims = new HashMap<>();
         claims.put("type","AccessToken");
+        claims.put("username",userDetails.getUsername());
+        claims.put("role",userDetails.getAuthorities().toArray()[0].toString());
         return doGenerateToken(claims, userDetails.getUsername());
     }
     public String generateRefreshToken(String accesstoken) {
-
         Map<String,Object> claims = new HashMap<>() ;
         claims.put("type","RefreshToken");
         claims.put("accessToken",accesstoken) ;
@@ -65,7 +66,7 @@ public class JwtTokenUtil {
     private String doGenerateToken(Map<String, Object> claims, String subject) { //subject ก็แล้วแต่ว่าเราจะแอดอะไรเข้าไปใน map
 
 
-        return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
+        return Jwts.builder().setClaims(claims).setIssuedAt(new Date(System.currentTimeMillis()))
 
                 .setExpiration(new Date( Math.round(System.currentTimeMillis() + (JWT_TOKEN_VALIDITY * jwtProperties.getTokenInterval()))))
 
