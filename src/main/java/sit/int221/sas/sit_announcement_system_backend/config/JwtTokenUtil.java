@@ -66,7 +66,7 @@ public class JwtTokenUtil {
     private String doGenerateToken(Map<String, Object> claims, String subject) { //subject ก็แล้วแต่ว่าเราจะแอดอะไรเข้าไปใน map
 
 
-        return Jwts.builder().setClaims(claims).setIssuedAt(new Date(System.currentTimeMillis()))
+        return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
 
                 .setExpiration(new Date( Math.round(System.currentTimeMillis() + (JWT_TOKEN_VALIDITY * jwtProperties.getTokenInterval()))))
 
