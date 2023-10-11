@@ -39,7 +39,9 @@ public class AnnouncementService {
         announcements.forEach(announcement -> announcement.setAnnouncementOwner(newOwner));
         return announcementRepository.saveAllAndFlush(announcements);
     }
-
+    public List<Announcement> getAnnouncementsByOwnerName(String ownerName) {
+        return announcementRepository.findByAnnouncementOwnerUsername(ownerName);
+    }
     public boolean isAuthorize(String username,Integer announcementId) {
         Announcement announcement = announcementRepository.findById(announcementId).orElse(null);
         return announcement != null &&  announcement.getAnnouncementOwner().getUsername().equals(username);

@@ -59,6 +59,8 @@ public interface AnnouncementRepository extends JpaRepository<Announcement, Inte
 
     Page<Announcement> findAnnouncementByAnnouncementCategory_CategoryIdOrderByIdDesc(Integer id, Pageable pageable);
 
+    List<Announcement> findByAnnouncementOwnerUsername(String ownerName);
+
 
     // List<Announcement> findAllByAnnouncementCategory_Category_IdDesc() ;
 
