@@ -53,26 +53,31 @@ public class AnnouncementService {
         Authentication payload = SecurityContextHolder.getContext().getAuthentication()  ;
         String role = payload.getAuthorities().stream().findFirst().get().getAuthority();
         String username = payload.getName();
-//        System.out.println(payload);
-//        System.out.println("--------------------");
-//        System.out.println(role);
+        System.out.println(payload);
+        System.out.println("--------------------");
+        System.out.println(role);
         if (role.equalsIgnoreCase("announcer")) {
+            System.out.println("announcer");
             return announcementRepository.findByAnnouncementOwnerUsernameOrderByIdDesc(username);
         } else if (role.equalsIgnoreCase("admin")) {
+            System.out.println("admin");
             return announcementRepository.findAllByOrderByIdDesc();
         }
         else{
         LocalDateTime localNow = LocalDateTime.now();
         if (mode != null) {
             if (mode.equalsIgnoreCase("active")) {
+                System.out.println("active");
                 return announcementRepository.findAnnouncementByValidateDatetimeList(localNow.atZone(ZoneId.of("UTC")));
             } else if (mode.equalsIgnoreCase("close")) {
+                System.out.println("close");
                 return announcementRepository.findAnnouncementByCloseDateAfterNowList(localNow.atZone(ZoneId.of("UTC")));
             } else {
+                System.out.println("not found");
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Not Found : " + mode + " mode .");
             }
         }
-            return Collections.<Announcement>emptyList();
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Not Found : ");
         }
 
 
@@ -128,6 +133,29 @@ public class AnnouncementService {
 //        page= page!=null?page:0 ;
 //        size=size!=null?size:size(getAnnouncements(null));
         Pageable pageable = PageRequest.of(page, size);
+        Authentication payload = SecurityContextHolder.getContext().getAuthentication()  ;
+        String role = payload.getAuthorities().stream().findFirst().get().getAuthority();
+        String username = payload.getName();
+        System.out.println(payload);
+        System.out.println("--------------------");
+        System.out.println(role);
+        if (role.equalsIgnoreCase("announcer")) {
+            System.out.println("announcer");
+            if (category == null ){
+                return announcementRepository.findByAnnouncementOwnerUsernameOrderByIdDesc(username,pageable);
+            }
+            else {
+                return announcementRepository.findAnnouncementByAnnouncementCategory_CategoryIdOrderByIdDesc(category, pageable);
+            }
+        } else if (role.equalsIgnoreCase("admin")) {
+            System.out.println("admin");
+            if (category == null ){
+                return announcementRepository.findAllByOrderByIdDesc(pageable);
+            }
+            else {
+                return announcementRepository.findAnnouncementByAnnouncementCategory_CategoryIdOrderByIdDesc(category, pageable);
+            }
+        }
         LocalDateTime localNow = LocalDateTime.now();
         if (category != null && mode != null) {
             if (mode.equalsIgnoreCase("active")) {
@@ -137,9 +165,9 @@ public class AnnouncementService {
             } else {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Not Found : " + mode + "mode .");
             }
-        } else if (category != null && mode == null) {
+        } else if (category != null) {
             return announcementRepository.findAnnouncementByAnnouncementCategory_CategoryIdOrderByIdDesc(category, pageable);
-        } else if (category == null && mode != null) {
+        } else if (mode != null) {
             if (mode.equalsIgnoreCase("active")) {
                 return announcementRepository.findAnnouncementByValidateDatetimePage(localNow.atZone(ZoneId.of("UTC")), pageable);
             } else if (mode.equalsIgnoreCase("close")) {
