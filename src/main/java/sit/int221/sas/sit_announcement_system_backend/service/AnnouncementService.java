@@ -5,6 +5,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import sit.int221.sas.sit_announcement_system_backend.DTO.AnnouncementsRequestDTO;
@@ -48,6 +51,12 @@ public class AnnouncementService {
     }
 
     public List<Announcement> getAnnouncements(String mode) {
+        Authentication payload = SecurityContextHolder.getContext().getAuthentication()  ;
+        String role = payload.getAuthorities().stream().findFirst().get().getAuthority();
+        String username = payload.getName();
+//        System.out.println(payload);
+//        System.out.println("--------------------");
+//        System.out.println(role);
         LocalDateTime localNow = LocalDateTime.now();
         if (mode != null) {
             if (mode.equalsIgnoreCase("active")) {
@@ -58,7 +67,14 @@ public class AnnouncementService {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Not Found : " + mode + " mode .");
             }
         } else {
-            return announcementRepository.findAllByOrderByIdDesc();
+            if (role.equalsIgnoreCase("announcer")) {
+                return announcementRepository.findByAnnouncementOwnerUsernameOrderByIdDesc(username);
+            } else if (role.equalsIgnoreCase("admin")) {
+                return announcementRepository.findAllByOrderByIdDesc();
+            } else {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Not Found : " + role + " role .");
+            }
+//            return announcementRepository.findAllByOrderByIdDesc();
         }
 
 
