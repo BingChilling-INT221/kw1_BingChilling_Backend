@@ -56,6 +56,12 @@ public class AnnouncementService {
 //        System.out.println(payload);
 //        System.out.println("--------------------");
 //        System.out.println(role);
+        if (role.equalsIgnoreCase("announcer")) {
+            return announcementRepository.findByAnnouncementOwnerUsernameOrderByIdDesc(username);
+        } else if (role.equalsIgnoreCase("admin")) {
+            return announcementRepository.findAllByOrderByIdDesc();
+        }
+        else{
         LocalDateTime localNow = LocalDateTime.now();
         if (mode != null) {
             if (mode.equalsIgnoreCase("active")) {
@@ -65,15 +71,8 @@ public class AnnouncementService {
             } else {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Not Found : " + mode + " mode .");
             }
-        } else {
-            if (role.equalsIgnoreCase("announcer")) {
-                return announcementRepository.findByAnnouncementOwnerUsernameOrderByIdDesc(username);
-            } else if (role.equalsIgnoreCase("admin")) {
-                return announcementRepository.findAllByOrderByIdDesc();
-            } else {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Not Found : " + role + " role .");
-            }
-//            return announcementRepository.findAllByOrderByIdDesc();
+        }
+            return Collections.<Announcement>emptyList();
         }
 
 
