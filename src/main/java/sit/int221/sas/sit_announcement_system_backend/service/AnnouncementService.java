@@ -17,7 +17,6 @@ import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.No
 import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.SetFiledErrorException;
 import sit.int221.sas.sit_announcement_system_backend.repository.AnnouncementRepository;
 import sit.int221.sas.sit_announcement_system_backend.repository.CategoryRepository;
-import sit.int221.sas.sit_announcement_system_backend.repository.UserRepo.CustomUserRepository;
 import sit.int221.sas.sit_announcement_system_backend.repository.UserRepo.UserRepository;
 
 
