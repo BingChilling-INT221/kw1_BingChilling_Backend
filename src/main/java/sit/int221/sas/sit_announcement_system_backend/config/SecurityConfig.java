@@ -42,6 +42,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/api/token").permitAll()
                         //allow all  self and child
+                                .requestMatchers(POST, "api/users/announcer").permitAll()
+                                .requestMatchers("api/users/announcer/**").hasAnyAuthority(Role.admin.toString(), Role.announcer.toString())
                                 .requestMatchers("api/users/**").hasAuthority(Role.admin.name())
                                 .requestMatchers(POST,"api/announcements/**").hasAnyAuthority(Role.admin.toString(),Role.announcer.toString())
                                 .requestMatchers(PUT,"api/announcements/**").hasAnyAuthority(Role.admin.toString(),Role.announcer.toString())
