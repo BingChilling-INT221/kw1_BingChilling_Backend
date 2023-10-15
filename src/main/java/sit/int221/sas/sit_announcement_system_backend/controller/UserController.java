@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import sit.int221.sas.sit_announcement_system_backend.DTO.UsersDTO.*;
 import sit.int221.sas.sit_announcement_system_backend.config.JwtTokenUtil;
 import sit.int221.sas.sit_announcement_system_backend.entity.User;
+import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.ForbiddenException;
 import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.JwtErrorException;
 import sit.int221.sas.sit_announcement_system_backend.service.AnnouncementService;
 import sit.int221.sas.sit_announcement_system_backend.service.UserService;
@@ -87,7 +88,7 @@ public class UserController {
         String token = header.substring(7);
         String username = jwtTokenUtil.getSubjectFromToken(token);
         if(username.equals(userService.getUserById(id).getUsername())){
-            throw new JwtErrorException("Cannot delete yourself.","token");
+            throw new ForbiddenException("You can't delete yourself.");
         }
         User newOwner = userService.getUserByUsername(username);
         announcementService.updateAnnouncementsByAnnouncementOwner(id,newOwner);
