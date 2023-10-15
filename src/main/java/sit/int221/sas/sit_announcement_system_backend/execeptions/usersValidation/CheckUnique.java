@@ -2,10 +2,11 @@ package sit.int221.sas.sit_announcement_system_backend.execeptions.usersValidati
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
-import org.hibernate.mapping.UniqueKey;
-import sit.int221.sas.sit_announcement_system_backend.entity.User;
 
-import java.lang.annotation.*;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 

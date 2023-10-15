@@ -5,11 +5,12 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class UsernameException extends RuntimeException{
+public class UsernameException extends RuntimeException {
     private String field;
+
     public UsernameException(String message, String field) {
         super(message);
-        this.field= field;
+        this.field = field;
 
     }
 }

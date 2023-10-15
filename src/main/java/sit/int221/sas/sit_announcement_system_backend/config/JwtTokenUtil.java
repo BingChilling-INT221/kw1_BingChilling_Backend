@@ -20,8 +20,7 @@ public class JwtTokenUtil {
 
     @Autowired
     private JwtProperties jwtProperties;
-    public static final long JWT_TOKEN_VALIDITY = 60*60*1000;
-
+    public static final long JWT_TOKEN_VALIDITY = 60 * 60 * 1000;
 
 
     public String getSubjectFromToken(String token) {
@@ -50,17 +49,18 @@ public class JwtTokenUtil {
     public String generateAccessToken(UserDetails userDetails) {
 
         Map<String, Object> claims = new HashMap<>();
-        claims.put("type","AccessToken");
-        claims.put("username",userDetails.getUsername());
-        claims.put("role",userDetails.getAuthorities().toArray()[0].toString());
+        claims.put("type", "AccessToken");
+        claims.put("username", userDetails.getUsername());
+        claims.put("role", userDetails.getAuthorities().toArray()[0].toString());
         return doGenerateToken(claims, userDetails.getUsername());
     }
+
     public String generateRefreshToken(String accesstoken) {
-        Map<String,Object> claims = new HashMap<>() ;
-        claims.put("type","RefreshToken");
-        claims.put("accessToken",accesstoken) ;
-        claims.put("username",getSubjectFromToken(accesstoken));
-   return doGenerateRefreshToken(claims);
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("type", "RefreshToken");
+        claims.put("accessToken", accesstoken);
+        claims.put("username", getSubjectFromToken(accesstoken));
+        return doGenerateRefreshToken(claims);
     }
 
     private String doGenerateToken(Map<String, Object> claims, String subject) { //subject ก็แล้วแต่ว่าเราจะแอดอะไรเข้าไปใน map
@@ -68,7 +68,7 @@ public class JwtTokenUtil {
 
         return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
 
-                .setExpiration(new Date( Math.round(System.currentTimeMillis() + (JWT_TOKEN_VALIDITY * jwtProperties.getTokenInterval()))))
+                .setExpiration(new Date(Math.round(System.currentTimeMillis() + (JWT_TOKEN_VALIDITY * jwtProperties.getTokenInterval()))))
 
 
                 .signWith(SignatureAlgorithm.HS512, jwtProperties.getSecretKey()).compact(); // compact คือทำให้เป็นรูปแบบ encrypt => 3...
@@ -76,7 +76,7 @@ public class JwtTokenUtil {
 
     public String doGenerateRefreshToken(Map<String, Object> claims) {
         return Jwts.builder().setClaims(claims).setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date( Math.round(System.currentTimeMillis() + (JWT_TOKEN_VALIDITY * jwtProperties.getRefreshExpirationDateInMs()))))
+                .setExpiration(new Date(Math.round(System.currentTimeMillis() + (JWT_TOKEN_VALIDITY * jwtProperties.getRefreshExpirationDateInMs()))))
                 .signWith(SignatureAlgorithm.HS512, jwtProperties.getSecretKey()).compact();
 
     }
@@ -88,18 +88,16 @@ public class JwtTokenUtil {
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 
-    public  Boolean validateRefreshToken(String token,Claims claims,UserDetails userDetails){
+    public Boolean validateRefreshToken(String token, Claims claims, UserDetails userDetails) {
 
-     return  (!isTokenExpired(token)) &&   (claims.get("type").equals("RefreshToken") ) &&   (claims.get("username").equals(userDetails.getUsername())) ;
-   //( isTokenExpired((String) claims.get("accessToken") ) )&&
+        return (!isTokenExpired(token)) && (claims.get("type").equals("RefreshToken")) && (claims.get("username").equals(userDetails.getUsername()));
+        //( isTokenExpired((String) claims.get("accessToken") ) )&&
     }
 
-    public  Object getClaims(String token ){
+    public Object getClaims(String token) {
         Claims claims = getAllClaimsFromToken(token);// Use the appropriate signing key
-        return claims ;
+        return claims;
     }
-
-
 
 
 }

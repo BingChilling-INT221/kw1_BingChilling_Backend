@@ -1,14 +1,10 @@
 package sit.int221.sas.sit_announcement_system_backend.repository.UserRepo;
 
-import jakarta.validation.groups.Default;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import sit.int221.sas.sit_announcement_system_backend.entity.Category;
 import sit.int221.sas.sit_announcement_system_backend.entity.User;
 
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Integer>, CustomUserRepository {
@@ -20,8 +16,8 @@ public interface UserRepository extends JpaRepository<User, Integer>, CustomUser
             "WHERE  (u.username = :filed " +
             "OR  u.name = :filed " +
             "OR  u.email = :filed )" +
-            "AND (:id is null  OR u.id <> :id) " )
+            "AND (:id is null  OR u.id <> :id) ")
     Optional<User> findUsersByUsernameAndNameAndEmail(
-            @Param("filed") String filed,@Param("id") Integer id
+            @Param("filed") String filed, @Param("id") Integer id
     );
 }

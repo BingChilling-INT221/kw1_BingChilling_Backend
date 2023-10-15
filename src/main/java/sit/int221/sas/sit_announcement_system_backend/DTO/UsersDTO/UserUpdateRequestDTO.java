@@ -1,13 +1,8 @@
 package sit.int221.sas.sit_announcement_system_backend.DTO.UsersDTO;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.validation.GroupSequence;
 import jakarta.validation.constraints.*;
-import jakarta.validation.groups.Default;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.BindingResult;
 import sit.int221.sas.sit_announcement_system_backend.execeptions.usersValidation.CheckRole;
 import sit.int221.sas.sit_announcement_system_backend.execeptions.usersValidation.CheckUnique;
 import sit.int221.sas.sit_announcement_system_backend.utils.Role;

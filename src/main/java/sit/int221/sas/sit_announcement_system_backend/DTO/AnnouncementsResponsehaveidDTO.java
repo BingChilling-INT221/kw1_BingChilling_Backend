@@ -27,9 +27,11 @@ public class AnnouncementsResponsehaveidDTO {
     @Column(name = "announcementCategory")
     private Category category;
     private User announcementOwner;
-    public String getAnnouncementOwner(){
+
+    public String getAnnouncementOwner() {
         return announcementOwner.getUsername();
     }
+
     public Integer getCategoryId() {
         return category.getCategoryId();
     }

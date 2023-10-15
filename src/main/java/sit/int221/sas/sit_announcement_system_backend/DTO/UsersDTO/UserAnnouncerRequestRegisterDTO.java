@@ -6,7 +6,6 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
-import sit.int221.sas.sit_announcement_system_backend.execeptions.usersValidation.CheckRole;
 import sit.int221.sas.sit_announcement_system_backend.execeptions.usersValidation.CheckUnique;
 import sit.int221.sas.sit_announcement_system_backend.utils.Role;
 
@@ -35,6 +34,7 @@ public class UserAnnouncerRequestRegisterDTO {
 
     //เหลือ check Enum
     private String role;
+
     public Role getRole() {
         return Role.announcer;
     }

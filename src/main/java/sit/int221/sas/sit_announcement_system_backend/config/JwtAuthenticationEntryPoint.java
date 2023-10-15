@@ -6,15 +6,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 import sit.int221.sas.sit_announcement_system_backend.execeptions.ErrorResponse;
-import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.JwtErrorException;
 
 import java.io.IOException;
 import java.io.Serializable;
+
 @Component
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint, Serializable {
 

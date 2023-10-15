@@ -54,28 +54,36 @@ public class UserController {
     public UserResponseDTO createUser(@Valid @RequestBody UseRequestRegisterDTO userObj) throws InterruptedException {
         return modelMapper.map(userService.createUser(userObj), UserResponseDTO.class);
     }
+
     @GetMapping("/announcer")
     public UserResponseDTO getSelfAnnouncer(@RequestHeader(name = "Authorization") String header) {
-        if(!header.startsWith("Bearer ")){ throw new JwtErrorException("Bearer error.","token"); }
+        if (!header.startsWith("Bearer ")) {
+            throw new JwtErrorException("Bearer error.", "token");
+        }
         String token = header.substring(7);
         String username = jwtTokenUtil.getSubjectFromToken(token);
         System.out.println(username);
         return modelMapper.map(userService.getUserByUsername(username), UserResponseDTO.class);
     }
+
     @PostMapping("/announcer")
     public UserResponseDTO createUserAnnouncer(@Valid @RequestBody UserAnnouncerRequestRegisterDTO userObj) throws InterruptedException {
         userObj.setRole("announcer");
         UseRequestRegisterDTO user = modelMapper.map(userObj, UseRequestRegisterDTO.class);
         return modelMapper.map(userService.createUser(user), UserResponseDTO.class);
     }
+
     @PutMapping("/announcer")
     public UserResponseDTO updateUserAnnouncer(@RequestHeader(name = "Authorization") String header, @Valid @RequestBody UserUpdateRequestDTO userObj) throws InterruptedException {
-        if(!header.startsWith("Bearer ")){ throw new JwtErrorException("Bearer error.","token"); }
+        if (!header.startsWith("Bearer ")) {
+            throw new JwtErrorException("Bearer error.", "token");
+        }
         String token = header.substring(7);
         String username = jwtTokenUtil.getSubjectFromToken(token);
         userObj.setRole("announcer");
         return modelMapper.map(userService.updateUser(userService.getUserByUsername(username).getId(), userObj), UserResponseDTO.class);
     }
+
     @PutMapping("/{id}")
     public UserResponseDTO updateUser(@PathVariable Integer id, @Valid @RequestBody UserUpdateRequestDTO userObj) throws InterruptedException {
         return modelMapper.map(userService.updateUser(id, userObj), UserResponseDTO.class);
@@ -84,14 +92,16 @@ public class UserController {
     @DeleteMapping("/{id}")
 
     public void delete(@RequestHeader(name = "Authorization") String header, @PathVariable Integer id) {
-        if(!header.startsWith("Bearer ")){ throw new JwtErrorException("Bearer error.","token"); }
+        if (!header.startsWith("Bearer ")) {
+            throw new JwtErrorException("Bearer error.", "token");
+        }
         String token = header.substring(7);
         String username = jwtTokenUtil.getSubjectFromToken(token);
-        if(username.equals(userService.getUserById(id).getUsername())){
-            throw new ForbiddenException("You can't delete yourself.","error");
+        if (username.equals(userService.getUserById(id).getUsername())) {
+            throw new ForbiddenException("You can't delete yourself.", "error");
         }
         User newOwner = userService.getUserByUsername(username);
-        announcementService.updateAnnouncementsByAnnouncementOwner(id,newOwner);
+        announcementService.updateAnnouncementsByAnnouncementOwner(id, newOwner);
         userService.deleteUser(id);
 
     }
@@ -100,7 +110,6 @@ public class UserController {
     public void matchPassword(@Valid @RequestBody UserLoginRequestDTO userLogin) {
         userService.matchPassword(userLogin.getUsername(), userLogin.getPassword());
     }
-
 
 
 }

@@ -6,7 +6,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -19,10 +18,9 @@ import sit.int221.sas.sit_announcement_system_backend.repository.AnnouncementRep
 import sit.int221.sas.sit_announcement_system_backend.repository.CategoryRepository;
 import sit.int221.sas.sit_announcement_system_backend.repository.UserRepo.UserRepository;
 
-
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.*;
+import java.util.List;
 
 @Service
 public class AnnouncementService {
@@ -33,24 +31,28 @@ public class AnnouncementService {
     private CategoryRepository categoryRepository;
     @Autowired
     private UserRepository UserRepository;
+
     private List<Announcement> getAnnouncementsByOwner(Integer ownerId) {
-        return announcementRepository.findByAnnouncementOwnerId(ownerId).orElseThrow(() -> new NotfoundByfield("does not exits","announcementOwner"));
+        return announcementRepository.findByAnnouncementOwnerId(ownerId).orElseThrow(() -> new NotfoundByfield("does not exits", "announcementOwner"));
     }
-    public List<Announcement> updateAnnouncementsByAnnouncementOwner(Integer ownerId,User newOwner) {
+
+    public List<Announcement> updateAnnouncementsByAnnouncementOwner(Integer ownerId, User newOwner) {
         List<Announcement> announcements = getAnnouncementsByOwner(ownerId);
         announcements.forEach(announcement -> announcement.setAnnouncementOwner(newOwner));
         return announcementRepository.saveAllAndFlush(announcements);
     }
+
     public List<Announcement> getAnnouncementsByOwnerName(String ownerName) {
         return announcementRepository.findByAnnouncementOwnerUsername(ownerName);
     }
-    public boolean isAuthorize(String username,Integer announcementId) {
+
+    public boolean isAuthorize(String username, Integer announcementId) {
         Announcement announcement = announcementRepository.findById(announcementId).orElse(null);
-        return announcement != null &&  announcement.getAnnouncementOwner().getUsername().equals(username);
+        return announcement != null && announcement.getAnnouncementOwner().getUsername().equals(username);
     }
 
     public List<Announcement> getAnnouncements(String mode) {
-        Authentication payload = SecurityContextHolder.getContext().getAuthentication()  ;
+        Authentication payload = SecurityContextHolder.getContext().getAuthentication();
         String role = payload.getAuthorities().stream().findFirst().get().getAuthority();
         String username = payload.getName();
         System.out.println(payload);
@@ -62,21 +64,20 @@ public class AnnouncementService {
         } else if (role.equalsIgnoreCase("admin")) {
             System.out.println("admin");
             return announcementRepository.findAllByOrderByIdDesc();
-        }
-        else{
-        LocalDateTime localNow = LocalDateTime.now();
-        if (mode != null) {
-            if (mode.equalsIgnoreCase("active")) {
-                System.out.println("active");
-                return announcementRepository.findAnnouncementByValidateDatetimeList(localNow.atZone(ZoneId.of("UTC")));
-            } else if (mode.equalsIgnoreCase("close")) {
-                System.out.println("close");
-                return announcementRepository.findAnnouncementByCloseDateAfterNowList(localNow.atZone(ZoneId.of("UTC")));
-            } else {
-                System.out.println("not found");
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Not Found : " + mode + " mode .");
+        } else {
+            LocalDateTime localNow = LocalDateTime.now();
+            if (mode != null) {
+                if (mode.equalsIgnoreCase("active")) {
+                    System.out.println("active");
+                    return announcementRepository.findAnnouncementByValidateDatetimeList(localNow.atZone(ZoneId.of("UTC")));
+                } else if (mode.equalsIgnoreCase("close")) {
+                    System.out.println("close");
+                    return announcementRepository.findAnnouncementByCloseDateAfterNowList(localNow.atZone(ZoneId.of("UTC")));
+                } else {
+                    System.out.println("not found");
+                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Not Found : " + mode + " mode .");
+                }
             }
-        }
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Not Found : ");
         }
 
@@ -133,7 +134,7 @@ public class AnnouncementService {
 //        page= page!=null?page:0 ;
 //        size=size!=null?size:size(getAnnouncements(null));
         Pageable pageable = PageRequest.of(page, size);
-        Authentication payload = SecurityContextHolder.getContext().getAuthentication()  ;
+        Authentication payload = SecurityContextHolder.getContext().getAuthentication();
         String role = payload.getAuthorities().stream().findFirst().get().getAuthority();
         String username = payload.getName();
         System.out.println(payload);
@@ -141,18 +142,16 @@ public class AnnouncementService {
         System.out.println(role);
         if (role.equalsIgnoreCase("announcer")) {
             System.out.println("announcer");
-            if (category == null ){
-                return announcementRepository.findByAnnouncementOwnerUsernameOrderByIdDesc(username,pageable);
-            }
-            else {
+            if (category == null) {
+                return announcementRepository.findByAnnouncementOwnerUsernameOrderByIdDesc(username, pageable);
+            } else {
                 return announcementRepository.findAnnouncementByAnnouncementCategory_CategoryIdOrderByIdDesc(category, pageable);
             }
         } else if (role.equalsIgnoreCase("admin")) {
             System.out.println("admin");
-            if (category == null ){
+            if (category == null) {
                 return announcementRepository.findAllByOrderByIdDesc(pageable);
-            }
-            else {
+            } else {
                 return announcementRepository.findAnnouncementByAnnouncementCategory_CategoryIdOrderByIdDesc(category, pageable);
             }
         }

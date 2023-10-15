@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import sit.int221.sas.sit_announcement_system_backend.entity.Announcement;
-import sit.int221.sas.sit_announcement_system_backend.entity.User;
 import sit.int221.sas.sit_announcement_system_backend.utils.AnnouncementDisplay;
 
 import java.time.ZonedDateTime;
@@ -62,6 +61,7 @@ public interface AnnouncementRepository extends JpaRepository<Announcement, Inte
     List<Announcement> findByAnnouncementOwnerUsername(String ownerName);
 
     List<Announcement> findByAnnouncementOwnerUsernameOrderByIdDesc(String username);
+
     Page<Announcement> findByAnnouncementOwnerUsernameOrderByIdDesc(String username, Pageable pageable);
 
 

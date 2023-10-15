@@ -14,7 +14,6 @@ import org.springframework.web.context.request.WebRequest;
 import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.ForbiddenException;
 import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.JwtErrorException;
 import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.NotfoundByfield;
-
 import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.SetFiledErrorException;
 
 
@@ -64,7 +63,6 @@ public class GlobalExceptionHandler {
     }
 
 
-
     @ExceptionHandler({JwtException.class})
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ResponseEntity<ErrorResponse> handleJWTException(JwtException e, WebRequest request) {
@@ -85,6 +83,7 @@ public class GlobalExceptionHandler {
         ErrorResponse er = new ErrorResponse(HttpStatus.FORBIDDEN.value(), e.getMessage(), request.getDescription(false));
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(er);
     }
+
     @ExceptionHandler({UsernameNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<ErrorResponse> handleSignatureException(UsernameNotFoundException e, WebRequest request) {

@@ -1,33 +1,31 @@
 package sit.int221.sas.sit_announcement_system_backend.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import sit.int221.sas.sit_announcement_system_backend.entity.User;
-import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.JwtErrorException;
 import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.NotfoundByfield;
 import sit.int221.sas.sit_announcement_system_backend.repository.UserRepo.UserRepository;
-import sit.int221.sas.sit_announcement_system_backend.utils.Role;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 @Service
 public class JwtUserDetailsService implements UserDetailsService {
     @Autowired
-    private UserRepository userRepository ;
+    private UserRepository userRepository;
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User userexist = userRepository.findByUsername(username).orElse(null) ;
-        if (userexist!=null) {
-            return new org.springframework.security.core.userdetails.User(userexist.getUsername(),userexist.getPassword(),
-                    Arrays.asList(new SimpleGrantedAuthority (String.valueOf(userexist.getRole()))));
+        User userexist = userRepository.findByUsername(username).orElse(null);
+        if (userexist != null) {
+            return new org.springframework.security.core.userdetails.User(userexist.getUsername(), userexist.getPassword(),
+                    List.of(new SimpleGrantedAuthority(String.valueOf(userexist.getRole()))));
         } else {
-            throw new NotfoundByfield(username+" not found ","username");
+            throw new NotfoundByfield(username + " not found ", "username");
         }
     }
 

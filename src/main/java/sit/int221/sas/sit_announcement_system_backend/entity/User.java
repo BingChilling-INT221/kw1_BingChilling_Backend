@@ -6,11 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.NaturalId;
-import org.hibernate.annotations.SourceType;
-import org.hibernate.annotations.UpdateTimestamp;
-import sit.int221.sas.sit_announcement_system_backend.execeptions.usersValidation.CheckUnique;
 import sit.int221.sas.sit_announcement_system_backend.utils.Role;
 
 import java.io.Serializable;

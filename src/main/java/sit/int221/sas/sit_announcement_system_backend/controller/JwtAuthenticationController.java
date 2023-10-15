@@ -3,7 +3,6 @@ package sit.int221.sas.sit_announcement_system_backend.controller;
 
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,17 +13,14 @@ import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import sit.int221.sas.sit_announcement_system_backend.config.JwtTokenUtil;
 import sit.int221.sas.sit_announcement_system_backend.config.JwtUserDetailsService;
 import sit.int221.sas.sit_announcement_system_backend.entity.JwtRequest;
 import sit.int221.sas.sit_announcement_system_backend.entity.JwtResponse;
 import sit.int221.sas.sit_announcement_system_backend.entity.JwtResponseOnlyAccessToken;
-import sit.int221.sas.sit_announcement_system_backend.entity.User;
 import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.JwtErrorException;
 
-import javax.naming.AuthenticationException;
 import java.util.Collection;
 
 @RestController
@@ -46,45 +42,47 @@ public class JwtAuthenticationController {
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
-   @Autowired
-   private  ModelMapper modelMapper ;
+    @Autowired
+    private ModelMapper modelMapper;
     @Autowired
     private JwtUserDetailsService userDetailsService;
 
-    @PostMapping( "")
-    public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest,HttpServletRequest request) throws Exception {
+    @PostMapping("")
+    public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest, HttpServletRequest request) throws Exception {
         String error = (String) request.getAttribute("error");
-        if(request.getAttribute("error") !=null){throw new JwtErrorException(error,"token") ;
+        if (request.getAttribute("error") != null) {
+            throw new JwtErrorException(error, "token");
         }
         final UserDetails userDetails = userDetailsService
                 .loadUserByUsername(authenticationRequest.getUsername());
-        authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword(),userDetails.getAuthorities());
+        authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword(), userDetails.getAuthorities());
 
         final String accessToken = jwtTokenUtil.generateAccessToken(userDetails);
         final String refreshToken = jwtTokenUtil.generateRefreshToken(accessToken);
-        return ResponseEntity.status(HttpStatus.OK).body(new JwtResponse(accessToken,refreshToken));
+        return ResponseEntity.status(HttpStatus.OK).body(new JwtResponse(accessToken, refreshToken));
     }
+
     // get ก็สามารถส่ง  json data ได้
-    @GetMapping( "")
+    @GetMapping("")
     public ResponseEntity<?> refreshToken(HttpServletRequest request) throws Exception {
         String error = (String) request.getAttribute("error");
-        if(request.getAttribute("error") !=null){throw new JwtErrorException(error,"token") ;
+        if (request.getAttribute("error") != null) {
+            throw new JwtErrorException(error, "token");
         }
         final String requestTokenHeader = request.getHeader("Authorization");
-       String jwtToken = requestTokenHeader.substring(7);
+        String jwtToken = requestTokenHeader.substring(7);
         Claims claims = (Claims) jwtTokenUtil.getClaims(jwtToken);
         final UserDetails userDetails = userDetailsService
                 .loadUserByUsername((String) claims.get("username"));
-            final  String accessToken = jwtTokenUtil.generateAccessToken(userDetails) ;
-            return ResponseEntity.status(HttpStatus.OK).body(new JwtResponseOnlyAccessToken(accessToken)) ;
+        final String accessToken = jwtTokenUtil.generateAccessToken(userDetails);
+        return ResponseEntity.status(HttpStatus.OK).body(new JwtResponseOnlyAccessToken(accessToken));
 
     }
-
 
 
     private void authenticate(String username, String password, Collection<? extends GrantedAuthority> authority) throws Exception {
         try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password,authority));
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password, authority));
         } catch (DisabledException e) {
             throw new Exception("USER_DISABLED", e);
         } catch (BadCredentialsException e) {

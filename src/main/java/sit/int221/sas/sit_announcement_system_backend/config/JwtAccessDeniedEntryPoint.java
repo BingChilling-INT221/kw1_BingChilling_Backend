@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import sit.int221.sas.sit_announcement_system_backend.execeptions.ErrorResponse;
 
 import java.io.IOException;
+
 @Component
 public class JwtAccessDeniedEntryPoint implements AccessDeniedHandler {
     @Override

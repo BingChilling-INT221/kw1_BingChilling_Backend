@@ -2,7 +2,6 @@ package sit.int221.sas.sit_announcement_system_backend.execeptions.annoucementVa
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import sit.int221.sas.sit_announcement_system_backend.execeptions.annoucementValidation.CheckDisplay;
 import sit.int221.sas.sit_announcement_system_backend.utils.AnnouncementDisplay;
 
 public class CheckDisplayValidator implements ConstraintValidator<CheckDisplay, String> {

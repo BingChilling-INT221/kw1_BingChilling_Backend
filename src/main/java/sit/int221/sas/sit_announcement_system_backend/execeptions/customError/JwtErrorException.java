@@ -7,7 +7,7 @@ import org.springframework.security.core.AuthenticationException;
 @Getter
 @Setter
 public class JwtErrorException extends AuthenticationException {
-        private String field;
+    private String field;
 
     public JwtErrorException(String message, String field) {
         super(message);
