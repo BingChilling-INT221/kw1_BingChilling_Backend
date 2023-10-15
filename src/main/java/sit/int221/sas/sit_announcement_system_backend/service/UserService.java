@@ -28,7 +28,9 @@ public class UserService {
 
         return userRepository.findAll(Sort.by("role").ascending().and(Sort.by("username")));
     }
-
+    public User getUserById(Integer id) {
+        return userRepository.findById(id).orElseThrow(() -> new NotfoundByfield((id + " does not exist"), "id"));
+    }
     public User getDetailUser(Integer userid) {
         return userRepository.findById(userid).orElseThrow(() -> new NotfoundByfield((userid + " does not exist"), "id"));
     }

@@ -81,10 +81,14 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
+
     public void delete(@RequestHeader(name = "Authorization") String header, @PathVariable Integer id) {
         if(!header.startsWith("Bearer ")){ throw new JwtErrorException("Bearer error.","token"); }
         String token = header.substring(7);
         String username = jwtTokenUtil.getSubjectFromToken(token);
+        if(username.equals(userService.getUserById(id).getUsername())){
+            throw new JwtErrorException("Cannot delete yourself.","token");
+        }
         User newOwner = userService.getUserByUsername(username);
         announcementService.updateAnnouncementsByAnnouncementOwner(id,newOwner);
         userService.deleteUser(id);
