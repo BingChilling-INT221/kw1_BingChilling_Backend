@@ -88,7 +88,7 @@ public class UserController {
         String token = header.substring(7);
         String username = jwtTokenUtil.getSubjectFromToken(token);
         if(username.equals(userService.getUserById(id).getUsername())){
-            throw new ForbiddenException("You can't delete yourself.");
+            throw new ForbiddenException("You can't delete yourself.","error");
         }
         User newOwner = userService.getUserByUsername(username);
         announcementService.updateAnnouncementsByAnnouncementOwner(id,newOwner);
