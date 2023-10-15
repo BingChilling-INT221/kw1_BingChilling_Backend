@@ -11,8 +11,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.ForbiddenException;
 import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.JwtErrorException;
 import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.NotfoundByfield;
+
 import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.SetFiledErrorException;
 
 
@@ -77,7 +79,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(er);
     }
 
-
+    @ExceptionHandler(ForbiddenException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ResponseEntity<ErrorResponse> handleForbidden(ForbiddenException e, WebRequest request) {
+        ErrorResponse er = new ErrorResponse(HttpStatus.FORBIDDEN.value(), e.getMessage(), request.getDescription(false));
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(er);
+    }
     @ExceptionHandler({UsernameNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<ErrorResponse> handleSignatureException(UsernameNotFoundException e, WebRequest request) {
