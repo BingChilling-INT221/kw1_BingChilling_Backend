@@ -56,6 +56,5 @@ public class AnnouncementsRequestDTO {
     private Integer categoryId;
 
     @Column(name = "announcementOwner", nullable = false)
-    @NotNull(message = "must not be null")
     private String ownerName;
 }

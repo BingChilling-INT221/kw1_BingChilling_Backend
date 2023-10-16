@@ -108,6 +108,7 @@ public class AnnouncementService {
         try {
             Announcement existAnnouncement = announcementRepository.findById(id).orElseThrow(
                     () -> new NotfoundByfield(("Announcement id " + id + " does not exist"), "id"));
+            announcement.setOwnerName(existAnnouncement.getAnnouncementOwner().getUsername());
             return getAnnouncement(announcement, existAnnouncement);
         } catch (RuntimeException e) {
             throw new RuntimeException(e);
