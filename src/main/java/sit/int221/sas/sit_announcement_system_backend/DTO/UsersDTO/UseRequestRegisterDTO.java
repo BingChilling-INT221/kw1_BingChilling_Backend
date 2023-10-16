@@ -38,7 +38,6 @@ public class UseRequestRegisterDTO {
     @NotBlank(message = "must not be blank")
     @CheckRole
     private String role;
-
     public Role getRole() {
         if (role != null) {
             return Role.valueOf(role.trim());

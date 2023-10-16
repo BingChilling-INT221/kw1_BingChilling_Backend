@@ -13,7 +13,7 @@ public class CheckRoleValidator implements ConstraintValidator<CheckRole, String
     @Override
     public boolean isValid(String role, ConstraintValidatorContext context) {
         for (Role roleR : Role.values()) {
-            if (roleR.name().equals(role)) {
+            if (roleR.name().equals(role.trim())) {
                 return true;
             }
         }
