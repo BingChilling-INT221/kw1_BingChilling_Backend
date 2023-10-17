@@ -50,7 +50,7 @@ public class SecurityConfig {
                                 .requestMatchers(POST, "api/announcements/**").hasAnyAuthority(Role.admin.toString(), Role.announcer.toString())
                                 .requestMatchers(PUT, "api/announcements/**").hasAnyAuthority(Role.admin.toString(), Role.announcer.toString())
                                 .requestMatchers(DELETE, "api/announcements/**").hasAnyAuthority(Role.admin.toString(), Role.announcer.toString())
-                                .requestMatchers("api/announcer/announcements/**").hasAuthority(Role.announcer.toString())
+                                .requestMatchers("api/announcements/**").permitAll()
                                 .requestMatchers(GET, "api/announcements/**").permitAll()
                                 .requestMatchers(GET, "api/categories/**").permitAll()
                                 .anyRequest().authenticated()

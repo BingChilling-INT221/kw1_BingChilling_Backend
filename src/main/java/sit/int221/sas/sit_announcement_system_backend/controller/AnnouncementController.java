@@ -10,6 +10,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import sit.int221.sas.sit_announcement_system_backend.DTO.*;
+import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.ForbiddenException;
 import sit.int221.sas.sit_announcement_system_backend.service.AnnouncementService;
 import sit.int221.sas.sit_announcement_system_backend.utils.ListMapper;
 
@@ -66,12 +67,24 @@ public class AnnouncementController<T> {
         if (count) {
             announcementService.updateViewCount(id);
         }
-        return ResponseEntity.status(HttpStatus.OK).body(modelMapper.map(announcementService.getAnnouncementById(id), AnnouncementsResponseDetailDTO.class));
+        String role = SecurityContextHolder.getContext().getAuthentication().getAuthorities().toArray()[0].toString();
+        if (role.equals("admin")) {
+            return ResponseEntity.status(HttpStatus.OK).body(modelMapper.map(announcementService.getAnnouncementById(id), AnnouncementsResponseDetailDTO.class));
+        }
+        System.out.println(role);
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        System.out.println(username);
+        if (username.equals("anonymousUser")) {
+            return ResponseEntity.status(HttpStatus.OK).body(modelMapper.map(announcementService.getAnnouncementById(id), AnnouncementsResponseDetailDTO.class));
+        }
+        if (announcementService.isAuthorize(username, id)) {
+            return ResponseEntity.status(HttpStatus.OK).body(modelMapper.map(announcementService.getAnnouncementById(id), AnnouncementsResponseDetailDTO.class));
+        }
+        throw new ForbiddenException("You are not authorized to access this resource","announcementId");
     }
 
 
     @GetMapping("/pages")
-
     public ResponseEntity<PageDto> getAnnouncementPage(@RequestParam(defaultValue = "0") Integer page,
                                                        @RequestParam(defaultValue = "5") Integer size,
                                                        @RequestParam(required = false) String mode,
