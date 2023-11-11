@@ -11,6 +11,7 @@ import sit.int221.sas.sit_announcement_system_backend.properties.JwtProperties;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 
 
@@ -62,7 +63,25 @@ public class JwtTokenUtil {
         claims.put("username", getSubjectFromToken(accesstoken));
         return doGenerateRefreshToken(claims);
     }
+    public String generateSubscribe(String toEmail,Integer otpCode) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("type", "OTP");
+        claims.put("username",toEmail );
+        claims.put("otp",otpCode);
+        return doGenerateSubscribe(claims);
+    }
 
+    private String doGenerateSubscribe(Map<String, Object> claims) { //subject ก็แล้วแต่ว่าเราจะแอดอะไรเข้าไปใน map
+
+
+        return Jwts.builder().setClaims(claims).setIssuedAt(new Date(System.currentTimeMillis()))
+
+                .setExpiration(new Date(Math.round(System.currentTimeMillis() + (JWT_TOKEN_VALIDITY * jwtProperties.getEmailOtp()))))
+
+
+                .signWith(SignatureAlgorithm.HS512, jwtProperties.getSecretKey()).compact(); // compact คือทำให้เป็นรูปแบบ encrypt => 3...
+    }
+    
     private String doGenerateToken(Map<String, Object> claims, String subject) { //subject ก็แล้วแต่ว่าเราจะแอดอะไรเข้าไปใน map
 
 
@@ -94,6 +113,9 @@ public class JwtTokenUtil {
         //( isTokenExpired((String) claims.get("accessToken") ) )&&
     }
 
+    public  Boolean validateOtpEmail(Integer otp,String token,Claims claims){
+        return  ((Objects.equals((Integer) claims.get("otp"), otp)) && !isTokenExpired(token));
+    }
     public Object getClaims(String token) {
         Claims claims = getAllClaimsFromToken(token);// Use the appropriate signing key
         return claims;

@@ -1,10 +1,15 @@
 package sit.int221.sas.sit_announcement_system_backend.service;
 
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -14,6 +19,7 @@ import sit.int221.sas.sit_announcement_system_backend.entity.Announcement;
 import sit.int221.sas.sit_announcement_system_backend.entity.User;
 import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.NotfoundByfield;
 import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.SetFiledErrorException;
+import sit.int221.sas.sit_announcement_system_backend.properties.MailProperties;
 import sit.int221.sas.sit_announcement_system_backend.repository.AnnouncementRepository;
 import sit.int221.sas.sit_announcement_system_backend.repository.CategoryRepository;
 import sit.int221.sas.sit_announcement_system_backend.repository.UserRepo.UserRepository;
@@ -21,9 +27,12 @@ import sit.int221.sas.sit_announcement_system_backend.repository.UserRepo.UserRe
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.Random;
 
 @Service
 public class AnnouncementService {
+    @Autowired
+    private JavaMailSender mailSender;
 
     @Autowired
     private AnnouncementRepository announcementRepository;
@@ -32,7 +41,11 @@ public class AnnouncementService {
     @Autowired
     private UserRepository UserRepository;
 
+    @Autowired
+    private MailProperties mailProperties ;
+
     private List<Announcement> getAnnouncementsByOwner(Integer ownerId) {
+
         return announcementRepository.findByAnnouncementOwnerId(ownerId).orElseThrow(() -> new NotfoundByfield("does not exits", "announcementOwner"));
     }
 
@@ -53,6 +66,7 @@ public class AnnouncementService {
 
     public List<Announcement> getAnnouncements(String mode) {
         Authentication payload = SecurityContextHolder.getContext().getAuthentication();
+
         String role = payload.getAuthorities().stream().findFirst().get().getAuthority();
         String username = payload.getName();
         System.out.println(payload);
@@ -186,6 +200,36 @@ public class AnnouncementService {
         announcement.setViewCount(announcement.getViewCount() + 1);
         announcementRepository.saveAndFlush(announcement);
         return announcement.getViewCount();
+    }
+
+
+    public void sendNewMail(String to, String subject, String body) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(to);
+        message.setSubject(subject);
+        message.setText(body);
+        message.setFrom(mailProperties.getUsername());
+        mailSender.send(message);
+    }
+
+    public Integer sendOTP(String username,String subject) throws MessagingException {
+        Random random = new Random() ;
+        int otp = random.nextInt(900000)+100000;
+        System.out.println("OTP"+otp);
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true);
+        helper.setFrom(mailProperties.getUsername());
+        helper.setTo(username);
+        helper.setSubject(subject);
+        String htmlContent = "<h3>OTP For YourEmail </h3>" +
+                "<p>You have registered to send notification of SAS WEB. This is your OTP : " + otp + "</p>" +
+                "<hr>  <p> __ please  keep this for secrete and this code will expired in 5 minutes after receiving this mail __!! </p>";
+        message.setContent(htmlContent, "text/html; charset=utf-8");
+
+//        helper.setText("You have registered to send notification of SAS WEB. This is your OTP :  <br> ${otp} <\br>   \n please keep this be secrete");
+
+        mailSender.send(message);
+        return otp ;
     }
 
   /*  public Integer getViewsCount(Integer id){

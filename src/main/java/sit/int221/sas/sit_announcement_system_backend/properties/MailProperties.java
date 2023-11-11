@@ -4,13 +4,11 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties(prefix = "jwt")
+@ConfigurationProperties(prefix = "spring.mail")
 @Getter
 @Setter
 
-public class JwtProperties {
-    private String secretKey;
-    private Double tokenInterval;
-    private Double refreshExpirationDateInMs;
-    private Double emailOtp;
+public class MailProperties {
+    private String username;
+    private String password;
 }

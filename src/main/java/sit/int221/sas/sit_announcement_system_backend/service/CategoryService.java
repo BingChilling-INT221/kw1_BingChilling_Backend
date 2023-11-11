@@ -14,6 +14,7 @@ public class CategoryService {
 
     public List<Category> getCategories() {
         try {
+
             return categoryRepository.findAll();
         } catch (RuntimeException e) {
             throw new RuntimeException();

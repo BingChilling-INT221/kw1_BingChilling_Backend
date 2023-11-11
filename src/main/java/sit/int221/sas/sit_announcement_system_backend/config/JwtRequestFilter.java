@@ -16,7 +16,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.JwtErrorException;
 
+import javax.security.sasl.AuthenticationException;
 import java.io.IOException;
+import java.util.Objects;
 //OncePerRequestFilter อยู่ใน Spring framework security
 
 
@@ -36,7 +38,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         String requestTokenHeader = request.getHeader("Authorization");
-
         String username = null;
         String jwtToken = null;
         try {
@@ -45,6 +46,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 Claims claims = (Claims) jwtTokenUtil.getClaims(jwtToken);
                 username = jwtTokenUtil.getSubjectFromToken(jwtToken);
                 if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+
                     UserDetails userDetails = this.jwtUserDetailsService.loadUserByUsername(username);
                     if (jwtTokenUtil.validateToken(jwtToken, userDetails)) {
                         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
@@ -54,13 +56,29 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                         SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
                     }
                 } else {
-                    final UserDetails userDetails = this.jwtUserDetailsService.loadUserByUsername((String) claims.get("username"));
-                    jwtTokenUtil.validateRefreshToken(jwtToken, claims, userDetails);
+
+                        final UserDetails userDetails = this.jwtUserDetailsService.loadUserByUsername((String) claims.get("username"));
+                        jwtTokenUtil.validateRefreshToken(jwtToken, claims, userDetails);
+
+
                 }
 
-            } else {
+            }
+            String requestTokenHeaderOtp = request.getHeader("AuthorizationOtp");
+            String tokenOtp = null ;
+
+            if(requestTokenHeaderOtp != null &&  requestTokenHeaderOtp.startsWith("Bearer ")) {
+                    tokenOtp = requestTokenHeaderOtp.substring(7);
+                    Claims claims = (Claims) jwtTokenUtil.getClaims(tokenOtp);
+                    if (Objects.equals(claims.get("type"), "OTP")) {
+                        String otpRequest = request.getHeader("Otp");
+                        if(!jwtTokenUtil.validateOtpEmail(Integer.valueOf(otpRequest), tokenOtp, claims)) {
+                            throw new AuthenticationException();
+                        }
+                    }
 
             }
+
 
             //should be call once
             chain.doFilter(request, response);
@@ -70,6 +88,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             jwtAuthenticationEntryPoint.commence(request, response, new JwtErrorException("JWT Token has expired", "token"));
         } catch (MalformedJwtException e) {
             jwtAuthenticationEntryPoint.commence(request, response, new JwtErrorException("Unable to read JSON value", "format"));
+        } catch (AuthenticationException e){
+            jwtAuthenticationEntryPoint.commence(request, response, new JwtErrorException("You can not access the resources. !", "OTP"));
         }
 
     }
