@@ -40,13 +40,14 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         String requestTokenHeader = request.getHeader("Authorization");
         String username = null;
         String jwtToken = null;
+        System.out.println("11");
         try {
             if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
                 jwtToken = requestTokenHeader.substring(7);
                 Claims claims = (Claims) jwtTokenUtil.getClaims(jwtToken);
                 username = jwtTokenUtil.getSubjectFromToken(jwtToken);
                 if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-
+                    System.out.println("22");
                     UserDetails userDetails = this.jwtUserDetailsService.loadUserByUsername(username);
                     if (jwtTokenUtil.validateToken(jwtToken, userDetails)) {
                         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
@@ -64,10 +65,12 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 }
 
             }
+            System.out.println("33");
             String requestTokenHeaderOtp = request.getHeader("AuthorizationOtp");
             String tokenOtp = null ;
 
             if(requestTokenHeaderOtp != null &&  requestTokenHeaderOtp.startsWith("Bearer ")) {
+                System.out.println("44");
                     tokenOtp = requestTokenHeaderOtp.substring(7);
                     Claims claims = (Claims) jwtTokenUtil.getClaims(tokenOtp);
                     if (Objects.equals(claims.get("type"), "OTP")) {
@@ -78,7 +81,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                     }
 
             }
-
+            System.out.println("55");
 
             //should be call once
             chain.doFilter(request, response);

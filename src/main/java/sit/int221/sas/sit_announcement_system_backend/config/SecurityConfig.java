@@ -43,14 +43,13 @@ public class SecurityConfig {
         http.cors().and().csrf().disable()
                 .authorizeHttpRequests((requests) -> requests
                                 .requestMatchers("/api/token").permitAll()
-
+                                .requestMatchers("/api/announcements/notified_subscribe").permitAll()
+                                .requestMatchers("/api/announcements/confirm_otp").permitAll()
                                 //allow all  self and child
                                 .requestMatchers(POST, "api/users/announcer").permitAll()
                                 .requestMatchers("api/users/announcer/**").hasAnyAuthority(Role.admin.toString(), Role.announcer.toString())
                                 .requestMatchers("api/users/**").hasAuthority(Role.admin.name())
                                 .requestMatchers(POST, "api/announcements/**").hasAnyAuthority(Role.admin.toString(), Role.announcer.toString())
-                                .requestMatchers("/api/announcements/notified_subscribe").permitAll()
-                                .requestMatchers("/api/announcements/confirm_otp").permitAll()
                                 .requestMatchers(PUT, "api/announcements/**").hasAnyAuthority(Role.admin.toString(), Role.announcer.toString())
                                 .requestMatchers(DELETE, "api/announcements/**").hasAnyAuthority(Role.admin.toString(), Role.announcer.toString())
                                 .requestMatchers("api/announcements/**").permitAll()
