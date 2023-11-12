@@ -3,27 +3,27 @@ package sit.int221.sas.sit_announcement_system_backend.controller;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import sit.int221.sas.sit_announcement_system_backend.DTO.*;
 import sit.int221.sas.sit_announcement_system_backend.config.JwtTokenUtil;
-import sit.int221.sas.sit_announcement_system_backend.config.JwtUserDetailsService;
-import sit.int221.sas.sit_announcement_system_backend.entity.JwtRequest;
-import sit.int221.sas.sit_announcement_system_backend.entity.Subscribe.SubscribeRequest;
+import sit.int221.sas.sit_announcement_system_backend.entity.Subscribe;
+import sit.int221.sas.sit_announcement_system_backend.entity.SubscribeFolder.SubscribeRequest;
+import sit.int221.sas.sit_announcement_system_backend.entity.User;
 import sit.int221.sas.sit_announcement_system_backend.entity.email.EmailOtpResponse;
 import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.ForbiddenException;
 import sit.int221.sas.sit_announcement_system_backend.service.AnnouncementService;
+import sit.int221.sas.sit_announcement_system_backend.service.SubscribeService;
+import sit.int221.sas.sit_announcement_system_backend.service.UserService;
 import sit.int221.sas.sit_announcement_system_backend.utils.ListMapper;
 
 import java.util.Arrays;
@@ -51,13 +51,13 @@ public class AnnouncementController<T> {
     private AnnouncementService announcementService;
 
     @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
     @Autowired
-    private JwtUserDetailsService userDetailsService;
+    private UserService userService ;
+
+    @Autowired
+    private SubscribeService subscribeService ;
 
     @GetMapping("")
     public ResponseEntity<List<AnnouncementsResponseDTO>> getAnnouncements(@RequestParam(required = false) String mode) {
@@ -153,27 +153,54 @@ public class AnnouncementController<T> {
 
 
     @PostMapping("/notified_subscribe")
-    public ResponseEntity<?> sendOTP( @RequestParam ("email") String email, @Valid @RequestBody SubscribeRequest subscribeRequest){
+    public ResponseEntity<?> sendOTP( @RequestParam  (name="email",required = false) String emailRequest, @Valid @RequestBody SubscribeRequest subscribeRequest){
         try {
-            String [] subscribes = subscribeRequest.getSubscribes();
-            System.out.println(Arrays.toString(subscribes));
-            int otp=announcementService.sendOTP(email,"Confirm your email to Login SAS WebApp of BingChilling Group");
-            String tokenEmail=jwtTokenUtil.generateSubscribe(email,otp);
-            return ResponseEntity.status(HttpStatus.OK).body(new EmailOtpResponse(tokenEmail,email));
+
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String email = null ;
+            email = emailRequest ;
+            String role = authentication.getAuthorities().stream().findFirst().get().toString() ;
+             if(role.equals("admin") || role.equals("announcer")){
+               User   user = userService.getUserByUsername(((UserDetails) authentication.getPrincipal()).getUsername());
+               email = user.getEmail();
+
+             }
+                List<Integer> subscribes = Arrays.stream(subscribeRequest.getSubscribes()).toList();
+            System.out.println(subscribes);
+
+                int otp = announcementService.sendOTP(email, "Confirm your email to Notification SAS WebApp of BingChilling Group");
+                String tokenEmail = jwtTokenUtil.generateSubscribe(email, otp , subscribes);
+            System.out.println("sendmail");
+                return ResponseEntity.status(HttpStatus.OK).body(new EmailOtpResponse(tokenEmail, email));
+
         }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.OK).body("Error");
+            System.out.println(e);
+            return ResponseEntity.status(HttpStatus.OK).body("Error because : "+e.getMessage());
         }
     }
 
     @PostMapping("/confirm_otp")
-    public ResponseEntity<String> confirmOTP(){
+    public ResponseEntity<?> confirmOTP(HttpServletRequest request){
     try {
-        return ResponseEntity.status(HttpStatus.OK).body("Success");
+        System.out.println("start confirm ---");
+        String token =request.getHeader("AuthorizationOtp").substring(7);
+        Claims claims = (Claims) jwtTokenUtil.getClaims(token);
+        List<Integer> subscribe = (List<Integer>) claims.get("subscribe");
+        System.out.println("start add ---");
+        List<Subscribe> subscribes =subscribeService.AddSubScribe((String) claims.get("email"),subscribe);
+        System.out.println("start return ---");
+        return ResponseEntity.status(HttpStatus.OK).body(subscribes);
     }catch (Exception e){
-        return ResponseEntity.status(HttpStatus.OK).body("Error");
+        return ResponseEntity.status(HttpStatus.OK).body("Error is : "+ e.getMessage());
     }
     }
 
+    @GetMapping("/testsub")
+    public ResponseEntity<List<Subscribe>> test(){
+
+//        System.out.println(subscribeService.getSubscribes().get(0).toString());
+        return ResponseEntity.status(HttpStatus.OK).body(subscribeService.getSubscribes()) ;
+    }
 
 
 //    @GetMapping("/{id}/views")

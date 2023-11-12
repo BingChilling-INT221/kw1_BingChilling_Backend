@@ -8,10 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import sit.int221.sas.sit_announcement_system_backend.properties.JwtProperties;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Function;
 
 
@@ -63,11 +60,12 @@ public class JwtTokenUtil {
         claims.put("username", getSubjectFromToken(accesstoken));
         return doGenerateRefreshToken(claims);
     }
-    public String generateSubscribe(String toEmail,Integer otpCode) {
+    public String generateSubscribe(String toEmail, Integer otpCode, List<Integer> subscribe) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("type", "OTP");
-        claims.put("username",toEmail );
+        claims.put("email",toEmail );
         claims.put("otp",otpCode);
+        claims.put("subscribe",subscribe);
         return doGenerateSubscribe(claims);
     }
 
