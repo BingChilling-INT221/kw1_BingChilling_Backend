@@ -125,8 +125,7 @@ public class SubscribeController {
     public ResponseEntity<String> deleteSubscribeByIdAndByEmail(@Valid @RequestBody SubscribeRequestToUnsubscribeDTO subscribeRequest){
         try {
             List<Subscribe> subscribes = subscribeService.deleteSubscribeByEmailAndCategoryId(subscribeRequest.getEmail(),subscribeRequest.getSubscribes()) ;
-            System.out.println(subscribes);
-            return ResponseEntity.status(HttpStatus.OK).body("Unsubscribe"+ Arrays.stream(subscribeRequest.getSubscribes()).map(String::valueOf).collect(Collectors.joining(" , ")) +"successfully.");
+            return ResponseEntity.status(HttpStatus.OK).body("You have unsubscribe "+ subscribes.stream().map(x-> x.getCategory().getCategoryName()).collect(Collectors.joining(" , ")) +" successfully.");
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error is : "+ e.getMessage());
         }

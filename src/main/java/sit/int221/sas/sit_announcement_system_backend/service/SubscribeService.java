@@ -39,27 +39,19 @@ public class SubscribeService {
 
        List<Subscribe> subscribesObjOfEmail = subscribeRepository.findByEmail(email);
        List<Integer> tempCategory = new ArrayList<>();
-        System.out.println("AddSubScribe 1");
-        System.out.println(subscribesObjOfEmail);
         categorys.forEach((catagory)->{
-            System.out.println("AddSubScribe 2");
             tempCategory.add(catagory) ;
-            System.out.println("AddSubScribe 3");
             if(subscribesObjOfEmail.size()!=0){
             subscribesObjOfEmail.forEach((subscribe)->{
                     if(subscribe.getCategory().getCategoryId().equals(catagory)){
                         tempCategory.remove(tempCategory.size()-1);
-                        System.out.println("check sub");
                     }
                     if(((subscribesObjOfEmail.indexOf(subscribe) == subscribesObjOfEmail.size()-1) && tempCategory.size()>0)){
                         if(catagory.equals(tempCategory.get(tempCategory.size() - 1))) {
                             System.out.println(tempCategory.get(tempCategory.size() - 1));
                             Category categoryTarget = categoryRepository.findById(tempCategory.get(tempCategory.size() - 1)).orElse(null);
-                            System.out.println("add sub");
                             assert categoryTarget != null;
-                            System.out.println(categoryTarget.getCategoryName());
-                            Subscribe subscribe1=subscribeRepository.saveAndFlush(new Subscribe(email, categoryTarget));
-                            System.out.println(subscribe1);
+                           subscribeRepository.saveAndFlush(new Subscribe(email, categoryTarget));
                             tempCategory.clear();
                         }
                     }
