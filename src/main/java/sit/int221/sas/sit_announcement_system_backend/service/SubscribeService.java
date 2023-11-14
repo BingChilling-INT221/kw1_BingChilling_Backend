@@ -34,7 +34,9 @@ public class SubscribeService {
     public List<Subscribe> getSubscribes (){
         return  subscribeRepository.findAll();
     }
-
+    public List<Subscribe> getSubscribesByEmail(String email){
+        return  subscribeRepository.findByEmail(email);
+    }
     public List<Integer> AddSubScribe(String email,List<Integer> categorys){
 
        List<Subscribe> subscribesObjOfEmail = subscribeRepository.findByEmail(email);

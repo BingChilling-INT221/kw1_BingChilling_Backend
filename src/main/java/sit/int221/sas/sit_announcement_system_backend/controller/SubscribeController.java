@@ -60,7 +60,10 @@ public class SubscribeController {
         return subscribeService.getSubscribes();
     }
 
-
+    @GetMapping("/email")
+    public List<Subscribe> getSubscribeByEmail(@RequestParam String email) {
+        return subscribeService.getSubscribesByEmail(email);
+    }
     @PostMapping("/notified_subscribe")
     public ResponseEntity<?> sendOTP( @RequestParam  (name="email",required = false) String emailRequest, @Valid @RequestBody SubscribeRequestDTO subscribeRequest){
         try {
