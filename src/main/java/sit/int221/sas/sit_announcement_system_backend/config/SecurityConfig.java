@@ -46,6 +46,7 @@ public class SecurityConfig {
                                 .requestMatchers("/api/subscribes/notified_subscribe").permitAll()
                                 .requestMatchers("/api/subscribes/confirm_otp").permitAll()
                                 .requestMatchers(GET,"/api/subscribes/email").permitAll()
+                                .requestMatchers("/api/subscribes/unsubscribes/**").permitAll()
                                 //allow all  self and child
                                 .requestMatchers(POST, "api/users/announcer").permitAll()
                                 .requestMatchers("api/users/announcer/**").hasAnyAuthority(Role.admin.toString(), Role.announcer.toString())
