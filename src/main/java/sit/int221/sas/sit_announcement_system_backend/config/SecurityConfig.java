@@ -43,8 +43,8 @@ public class SecurityConfig {
         http.cors().and().csrf().disable()
                 .authorizeHttpRequests((requests) -> requests
                                 .requestMatchers("/api/token").permitAll()
-                                .requestMatchers("/api/announcements/notified_subscribe").permitAll()
-                                .requestMatchers("/api/announcements/confirm_otp").permitAll()
+                                .requestMatchers("/api/subscribes/notified_subscribe").permitAll()
+                                .requestMatchers("/api/subscribes/confirm_otp").permitAll()
                                 //allow all  self and child
                                 .requestMatchers(POST, "api/users/announcer").permitAll()
                                 .requestMatchers("api/users/announcer/**").hasAnyAuthority(Role.admin.toString(), Role.announcer.toString())

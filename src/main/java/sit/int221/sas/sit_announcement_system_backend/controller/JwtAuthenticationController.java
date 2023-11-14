@@ -43,8 +43,6 @@ public class JwtAuthenticationController {
     private JwtTokenUtil jwtTokenUtil;
 
     @Autowired
-    private ModelMapper modelMapper;
-    @Autowired
     private JwtUserDetailsService userDetailsService;
 
     @PostMapping("")

@@ -1,32 +1,24 @@
 package sit.int221.sas.sit_announcement_system_backend.controller;
 
-import io.jsonwebtoken.Claims;
-import jakarta.servlet.http.HttpServletRequest;
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import sit.int221.sas.sit_announcement_system_backend.DTO.*;
 import sit.int221.sas.sit_announcement_system_backend.config.JwtTokenUtil;
-import sit.int221.sas.sit_announcement_system_backend.entity.Subscribe;
-import sit.int221.sas.sit_announcement_system_backend.entity.SubscribeFolder.SubscribeRequest;
-import sit.int221.sas.sit_announcement_system_backend.entity.User;
-import sit.int221.sas.sit_announcement_system_backend.entity.email.EmailOtpResponse;
+import sit.int221.sas.sit_announcement_system_backend.entity.Announcement;
 import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.ForbiddenException;
 import sit.int221.sas.sit_announcement_system_backend.service.AnnouncementService;
 import sit.int221.sas.sit_announcement_system_backend.service.SubscribeService;
 import sit.int221.sas.sit_announcement_system_backend.service.UserService;
 import sit.int221.sas.sit_announcement_system_backend.utils.ListMapper;
 
-import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -126,21 +118,36 @@ public class AnnouncementController<T> {
 
 
     @PostMapping("")
-    public ResponseEntity<AnnouncementsResponsehaveidDTO> createAnnouncement(@Valid @RequestBody AnnouncementsRequestDTO announcementDTO) {
+    public ResponseEntity<AnnouncementsResponsehaveidDTO> createAnnouncement(@Valid @RequestBody AnnouncementsRequestDTO announcementDTO) throws MessagingException {
         announcementDTO.setOwnerName( SecurityContextHolder.getContext().getAuthentication().getName());
-        return ResponseEntity.status(HttpStatus.OK).body(modelMapper.map(announcementService.createAnnoucement(announcementDTO), AnnouncementsResponsehaveidDTO.class));
+        Announcement  announcement = announcementService.createAnnoucement(announcementDTO);
+        System.out.println(announcement.getAnnouncementOwner().getEmail());
+        System.out.println(announcement.getAnnouncementCategory());
+        subscribeService.sendEmailToNotificationSubscribeWhenAnnouncementUpdated("Notification from announcement category of "+announcement.getAnnouncementCategory().getCategoryName()
+                +" from create announcement with \""+announcement.getAnnouncementTitle()+"\" title"
+        , announcement);
+        return ResponseEntity.status(HttpStatus.OK).body(modelMapper.map(announcement, AnnouncementsResponsehaveidDTO.class));
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority(@Role.ADMIN) or (hasAuthority(@Role.ANNOUNCER) and (@announcementService.isAuthorize(authentication.principal.username,#id)))")
-    public void deleteAnnouncement(@PathVariable Integer id) {
-        announcementService.deleteAnnouncement(id);
+    public void deleteAnnouncement(@PathVariable Integer id) throws MessagingException {
+        Announcement announcement=announcementService.deleteAnnouncement(id);
+        System.out.println(announcement.getAnnouncementOwner().getEmail());
+        System.out.println(announcement.getAnnouncementCategory());
+        subscribeService.sendEmailToNotificationSubscribeWhenAnnouncementUpdated("Notification from announcement category of "+announcement.getAnnouncementCategory().getCategoryName()+
+                " from delete announcement of \""+announcement.getAnnouncementTitle()+"\" title ", announcement);
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority(@Role.ADMIN) or (hasAuthority(@Role.ANNOUNCER) and (@announcementService.isAuthorize(authentication.principal.username,#id)))")
-    public ResponseEntity<AnnouncementsResponseDetailDTO> updateAnnouncement(@PathVariable Integer id, @Valid @RequestBody AnnouncementsRequestDTO announcmentDTO) {
-        return ResponseEntity.status(HttpStatus.OK).body(modelMapper.map(announcementService.updateAnnouncement(id, announcmentDTO), AnnouncementsResponseDetailDTO.class));
+    public ResponseEntity<AnnouncementsResponseDetailDTO> updateAnnouncement(@PathVariable Integer id, @Valid @RequestBody AnnouncementsRequestDTO announcmentDTO) throws MessagingException {
+        Announcement announcement = announcementService.updateAnnouncement(id, announcmentDTO) ;
+        System.out.println(announcement.getAnnouncementOwner().getEmail());
+        System.out.println(announcement.getAnnouncementCategory());
+        subscribeService.sendEmailToNotificationSubscribeWhenAnnouncementUpdated("Notification from announcement category of "+announcement.getAnnouncementCategory().getCategoryName()+
+                " from updated announcement of \""+announcement.getAnnouncementTitle()+"\" title ", announcement);
+        return ResponseEntity.status(HttpStatus.OK).body(modelMapper.map(announcement, AnnouncementsResponseDetailDTO.class));
 
     }
 
@@ -150,57 +157,6 @@ public class AnnouncementController<T> {
         return ResponseEntity.status(HttpStatus.OK).body(announcementService.updateViewCount(id));
     }
 
-
-
-    @PostMapping("/notified_subscribe")
-    public ResponseEntity<?> sendOTP( @RequestParam  (name="email",required = false) String emailRequest, @Valid @RequestBody SubscribeRequest subscribeRequest){
-        try {
-
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String email = null ;
-            email = emailRequest ;
-            String role = authentication.getAuthorities().stream().findFirst().get().toString() ;
-             if(role.equals("admin") || role.equals("announcer")){
-               User   user = userService.getUserByUsername(((UserDetails) authentication.getPrincipal()).getUsername());
-               email = user.getEmail();
-
-             }
-                List<Integer> subscribes = Arrays.stream(subscribeRequest.getSubscribes()).toList();
-            System.out.println(subscribes);
-
-                int otp = announcementService.sendOTP(email, "Confirm your email to Notification SAS WebApp of BingChilling Group");
-                String tokenEmail = jwtTokenUtil.generateSubscribe(email, otp , subscribes);
-            System.out.println("sendmail");
-                return ResponseEntity.status(HttpStatus.OK).body(new EmailOtpResponse(tokenEmail, email));
-
-        }catch (Exception e){
-            System.out.println(e);
-            return ResponseEntity.status(HttpStatus.OK).body("Error because : "+e.getMessage());
-        }
-    }
-
-    @PostMapping("/confirm_otp")
-    public ResponseEntity<?> confirmOTP(HttpServletRequest request){
-    try {
-        System.out.println("start confirm ---");
-        String token =request.getHeader("AuthorizationOtp").substring(7);
-        Claims claims = (Claims) jwtTokenUtil.getClaims(token);
-        List<Integer> subscribe = (List<Integer>) claims.get("subscribe");
-        System.out.println("start add ---");
-        List<Subscribe> subscribes =subscribeService.AddSubScribe((String) claims.get("email"),subscribe);
-        System.out.println("start return ---");
-        return ResponseEntity.status(HttpStatus.OK).body(subscribes);
-    }catch (Exception e){
-        return ResponseEntity.status(HttpStatus.OK).body("Error is : "+ e.getMessage());
-    }
-    }
-
-    @GetMapping("/testsub")
-    public ResponseEntity<List<Subscribe>> test(){
-
-//        System.out.println(subscribeService.getSubscribes().get(0).toString());
-        return ResponseEntity.status(HttpStatus.OK).body(subscribeService.getSubscribes()) ;
-    }
 
 
 //    @GetMapping("/{id}/views")

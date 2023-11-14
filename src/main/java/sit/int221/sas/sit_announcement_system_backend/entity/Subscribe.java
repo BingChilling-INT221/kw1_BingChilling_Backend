@@ -19,8 +19,9 @@ public class Subscribe implements Serializable {
     @Column(name = "email")
     private String email ;
     @Id
-    @Column(name = "category_id")
-    private Integer category_id ;
+    @ManyToOne
+    @JoinColumn(name="category_id", nullable=false)
+    private Category category ;
 
 
 

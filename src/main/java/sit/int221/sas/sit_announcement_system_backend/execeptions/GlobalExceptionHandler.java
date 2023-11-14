@@ -2,6 +2,7 @@ package sit.int221.sas.sit_announcement_system_backend.execeptions;
 
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.SignatureException;
+import jakarta.mail.MessagingException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -90,6 +91,16 @@ public class GlobalExceptionHandler {
         ErrorResponse er = new ErrorResponse(HttpStatus.NOT_FOUND.value(), e.getMessage(), request.getDescription(false));
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(er);
     }
+
+    @ExceptionHandler({MessagingException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ErrorResponse> handleEmailException(MessagingException e, WebRequest request) {
+        ErrorResponse er = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), e.getMessage(), request.getDescription(false));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(er);
+    }
+
+
+
     //    @ExceptionHandler(RuntimeException.class)
 //    @ResponseStatus(HttpStatus.NOT_FOUND)
 //    public ResponseEntity<ErrorResponse>  handlerAuthentication(RuntimeException e){

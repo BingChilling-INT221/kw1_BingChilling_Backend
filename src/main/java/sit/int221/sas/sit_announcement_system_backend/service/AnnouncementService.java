@@ -1,5 +1,6 @@
 package sit.int221.sas.sit_announcement_system_backend.service;
 
+import io.jsonwebtoken.Claims;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,12 +17,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import sit.int221.sas.sit_announcement_system_backend.DTO.AnnouncementsRequestDTO;
 import sit.int221.sas.sit_announcement_system_backend.entity.Announcement;
+import sit.int221.sas.sit_announcement_system_backend.entity.Category;
+import sit.int221.sas.sit_announcement_system_backend.entity.Subscribe;
 import sit.int221.sas.sit_announcement_system_backend.entity.User;
 import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.NotfoundByfield;
 import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.SetFiledErrorException;
 import sit.int221.sas.sit_announcement_system_backend.properties.MailProperties;
 import sit.int221.sas.sit_announcement_system_backend.repository.AnnouncementRepository;
 import sit.int221.sas.sit_announcement_system_backend.repository.CategoryRepository;
+import sit.int221.sas.sit_announcement_system_backend.repository.SubscribeRepository;
 import sit.int221.sas.sit_announcement_system_backend.repository.UserRepo.UserRepository;
 
 import java.time.LocalDateTime;
@@ -36,6 +40,8 @@ public class AnnouncementService {
 
     @Autowired
     private AnnouncementRepository announcementRepository;
+    @Autowired
+    private SubscribeRepository subscribeRepository ;
     @Autowired
     private CategoryRepository categoryRepository;
     @Autowired
@@ -112,9 +118,10 @@ public class AnnouncementService {
         return getAnnouncement(announcementDTO, announcement);
     }
 
-    public void deleteAnnouncement(Integer id) {
-        announcementRepository.findById(id).orElseThrow(() -> new NotfoundByfield(("Announcement id " + id + " does not exist"), "id"));
+    public Announcement deleteAnnouncement(Integer id) {
+        Announcement announcement=announcementRepository.findById(id).orElseThrow(() -> new NotfoundByfield(("Announcement id " + id + " does not exist"), "id"));
         announcementRepository.deleteById(id);
+        return announcement ;
     }
 
 
@@ -200,36 +207,6 @@ public class AnnouncementService {
         announcement.setViewCount(announcement.getViewCount() + 1);
         announcementRepository.saveAndFlush(announcement);
         return announcement.getViewCount();
-    }
-
-
-    public void sendNewMail(String to, String subject, String body) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(to);
-        message.setSubject(subject);
-        message.setText(body);
-        message.setFrom(mailProperties.getUsername());
-        mailSender.send(message);
-    }
-
-    public Integer sendOTP(String username,String subject) throws MessagingException {
-        Random random = new Random() ;
-        int otp = random.nextInt(900000)+100000;
-        System.out.println("OTP"+otp);
-        MimeMessage message = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message, true);
-        helper.setFrom(mailProperties.getUsername());
-        helper.setTo(username);
-        helper.setSubject(subject);
-        String htmlContent = "<h3>OTP For YourEmail </h3>" +
-                "<p>You have registered to send notification of SAS WEB. This is your OTP : " + otp + "</p>" +
-                "<hr>  <p> __ please  keep this for secrete and this code will expired in 5 minutes after receiving this mail __!! </p>";
-        message.setContent(htmlContent, "text/html; charset=utf-8");
-
-//        helper.setText("You have registered to send notification of SAS WEB. This is your OTP :  <br> ${otp} <\br>   \n please keep this be secrete");
-
-        mailSender.send(message);
-        return otp ;
     }
 
   /*  public Integer getViewsCount(Integer id){
