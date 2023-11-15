@@ -48,6 +48,8 @@ public class SecurityConfig {
                                 .requestMatchers(GET,"/api/subscribes/email").permitAll()
                                 .requestMatchers("/api/subscribes/unsubscribes").permitAll()
                                 .requestMatchers("/api/subscribes/unsubscribe/id").permitAll()
+                                .requestMatchers("/api/subscribes/unsubscribe/id").permitAll()
+                                .requestMatchers("api/files/**").permitAll()
                                 //allow all  self and child
                                 .requestMatchers(POST, "api/users/announcer").permitAll()
                                 .requestMatchers("api/users/announcer/**").hasAnyAuthority(Role.admin.toString(), Role.announcer.toString())

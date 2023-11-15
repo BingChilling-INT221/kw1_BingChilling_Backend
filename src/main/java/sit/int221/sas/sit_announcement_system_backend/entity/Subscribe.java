@@ -6,6 +6,7 @@ import lombok.*;
 import sit.int221.sas.sit_announcement_system_backend.entity.SubscribeFolder.CompositekeySubscrib;
 
 import java.io.Serializable;
+import java.time.ZonedDateTime;
 
 @Entity
 @Getter
@@ -16,13 +17,18 @@ import java.io.Serializable;
 @Table(name = "subscribe")
 public class Subscribe implements Serializable {
     @Id
-    @Column(name = "email")
-    private String email ;
-    @Id
     @ManyToOne
-    @JoinColumn(name="category_id", nullable=false)
+    @JoinColumn(name="categoryId", nullable=false)
     private Category category ;
 
+    @Id
+    @Column(name = "subscriberEmail", nullable=false)
+    private String email ;
+
+    @Column(name = "createdOn",insertable = false, updatable = false)
+    private ZonedDateTime createdOn ;
+    @Column(name = "updatedOn",insertable = false, updatable = false)
+    private ZonedDateTime updatedOn ;
 
 
 

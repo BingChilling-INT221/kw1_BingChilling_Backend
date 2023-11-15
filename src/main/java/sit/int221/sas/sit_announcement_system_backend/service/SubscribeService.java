@@ -14,6 +14,9 @@ import sit.int221.sas.sit_announcement_system_backend.properties.MailProperties;
 import sit.int221.sas.sit_announcement_system_backend.repository.CategoryRepository;
 import sit.int221.sas.sit_announcement_system_backend.repository.SubscribeRepository;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -53,7 +56,7 @@ public class SubscribeService {
                             System.out.println(tempCategory.get(tempCategory.size() - 1));
                             Category categoryTarget = categoryRepository.findById(tempCategory.get(tempCategory.size() - 1)).orElse(null);
                             assert categoryTarget != null;
-                           subscribeRepository.saveAndFlush(new Subscribe(email, categoryTarget));
+                           subscribeRepository.saveAndFlush(new Subscribe( categoryTarget,email,null,null));
                             tempCategory.clear();
                         }
                     }
@@ -61,7 +64,7 @@ public class SubscribeService {
                 });}
             else {
                 Category categoryTarget = categoryRepository.findById(catagory).orElse(null);
-                subscribeRepository.saveAndFlush(new Subscribe(email, categoryTarget));
+                subscribeRepository.saveAndFlush(new Subscribe( categoryTarget,email,null,null));
             }
 
         });

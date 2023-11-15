@@ -65,12 +65,12 @@ public class SubscribeController {
         return subscribeService.getSubscribesByEmail(email);
     }
     @PostMapping("/notified_subscribe")
-    public ResponseEntity<?> sendOTP( @RequestParam  (name="email",required = false) String emailRequest, @Valid @RequestBody SubscribeRequestDTO subscribeRequest){
+    public ResponseEntity<?> sendOTP(  @Valid @RequestBody SubscribeRequestDTO subscribeRequest){
         try {
             System.out.println("test notified_subscribe");
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String email = null ;
-            email = emailRequest ;
+            email = subscribeRequest.getEmail() ;
             String role = authentication.getAuthorities().stream().findFirst().get().toString() ;
             if(  email == null && (role.equals("admin") || role.equals("announcer"))){
                 User user = userService.getUserByUsername(((UserDetails) authentication.getPrincipal()).getUsername());
