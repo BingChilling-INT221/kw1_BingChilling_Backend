@@ -19,6 +19,7 @@ import sit.int221.sas.sit_announcement_system_backend.entity.Subscribe;
 import sit.int221.sas.sit_announcement_system_backend.entity.User;
 import sit.int221.sas.sit_announcement_system_backend.entity.email.EmailOtpResponse;
 import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.EmailException;
+import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.SetFiledErrorException;
 import sit.int221.sas.sit_announcement_system_backend.service.AnnouncementService;
 import sit.int221.sas.sit_announcement_system_backend.service.SubscribeService;
 import sit.int221.sas.sit_announcement_system_backend.service.UserService;
@@ -91,21 +92,25 @@ public class SubscribeController {
     @PostMapping("/confirm_otp")
     public ResponseEntity<?> confirmOTP(HttpServletRequest request){
         try {
+            String messageError = "" ;
             String token =request.getHeader("AuthorizationOtp").substring(7);
             Claims claims = (Claims) jwtTokenUtil.getClaims(token);
             List<Integer> subscribeFromClaim = (List<Integer>) claims.get("subscribe");
-            System.out.println("confirm_otp "+ subscribeFromClaim);
-            List<Integer> subscribes =subscribeService.AddSubScribe((String) claims.get("email"),subscribeFromClaim);
-            System.out.println((String) claims.get("email"));
-            System.out.println(subscribes);
+            try {
+                subscribeService.AddSubScribe((String) claims.get("email"),subscribeFromClaim);
+            }catch (Exception e){
+               messageError = e.getMessage();
+            }
+
            subscribeService.sendEmailToNotificationSubscribe((String) claims.get("email"),
-                    "Subscription Announcement Notification of SAS WEB  [ BingChilling Group ]",
-                    "<h3>Thank you  for subscribe</h3>" +
-                            "<p>We are delighted to have you on board. You have Subscribe more than before "+ subscribes.size() +
-                            " category. You will receive news from us when we announce new updates.  </p> ");
-            System.out.println("-c3");
-            return ResponseEntity.status(HttpStatus.OK).body("Subscribe successfully.");
-        }catch (Exception e){
+                    "[ "+  claims.get("email") +" subscription @ SAS ]  Subscribed Notification ",
+                    "<p> Thank you  for subscribing </p>" +
+                            "<p>We are delighted to have you on board."+
+                            " You will receive news from us when we announce new updates.  </p> ");
+            return  messageError.length()==0?
+                    ResponseEntity.status(HttpStatus.OK).body("Subscribe all successfully.") :
+                    ResponseEntity.status(HttpStatus.BAD_REQUEST).body("May be could Subscribed some category. but , "+ messageError);
+        } catch (Exception e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error is : "+ e.getMessage());
         }
     }

@@ -8,7 +8,14 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.FileException;
+import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.NotfoundByfield;
+import sit.int221.sas.sit_announcement_system_backend.service.AnnouncementService;
 import sit.int221.sas.sit_announcement_system_backend.service.FileService;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @CrossOrigin
 @RestController
@@ -20,40 +27,57 @@ public class FileController {
         this.fileService = fileService;
     }
 
+    @Autowired
+    public AnnouncementService announcementService ;
 
 
-    @GetMapping("/{filename:.+}")
+    @GetMapping("/{id}")
+    public ResponseEntity<List<Resource>> serveFilesById(@PathVariable String id) throws FileException {
+       List<Resource> test  =    fileService.loadAllFilesAsResource(id) ;
+
+        if (test != null) {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentDispositionFormData("attachment", "test");
+            //headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .body(test);
+        } else {
+            // If the file does not exist, you may return an appropriate HTTP status
+            throw new  NotfoundByfield("Not found Path or filename as you want.","file");
+        }
+    }
+
+
+
+    @GetMapping("/{id}/{filename:.+}")
     @ResponseBody
 // เวลาเรียกชื่อไฟล์ เรียกพร้อมนามสกุล และ เป็น inSensitiveCase
-    public ResponseEntity<Resource> serveFile(@PathVariable String filename) {
-        Resource file = fileService.loadFileAsResource(filename);
+    public ResponseEntity<Resource> serveFile(@PathVariable String id,@PathVariable String filename) throws FileException {
+        Resource file = fileService.loadFileAsResource(id,filename);
+
 
         if (file.exists()) {
-            // Set Content-Disposition header to trigger download prompt
             HttpHeaders headers = new HttpHeaders();
             headers.setContentDispositionFormData("attachment", filename);
-
-            // Set the content type as application/octet-stream for binary data
             headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-
-            // Return the file content along with headers in a ResponseEntity
             return ResponseEntity.ok()
                     .headers(headers)
                     .body(file);
         } else {
             // If the file does not exist, you may return an appropriate HTTP status
-            return ResponseEntity.notFound().build();
+           throw new  NotfoundByfield("Not found Path or filename as you want.","file");
         }
 
     }
 
 
 
-    @PostMapping("")
+    @PostMapping("/{id}")
     //    parameter ที่ส่งใน body post man ต้องเป็น ชื่อเดียวกับใน code ที่เรารับมา
-    public String fileUpload(@RequestParam("file") MultipartFile file) {
-        fileService.store(file);
-        return "You successfully uploaded " + file.getOriginalFilename() + "!";
+    public String fileUpload(@RequestParam("file") MultipartFile [] file,@PathVariable String id) throws FileException {
+        fileService.store(id,file);
+        return "You successfully uploaded " + Arrays.stream(file).map(MultipartFile::getOriginalFilename).collect(Collectors.joining(" , "))+ " already !";
     }
 
 

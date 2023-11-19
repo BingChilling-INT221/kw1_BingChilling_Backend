@@ -9,10 +9,10 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import sit.int221.sas.sit_announcement_system_backend.utils.Argon2Class;
 import sit.int221.sas.sit_announcement_system_backend.utils.Role;
 
 import static org.springframework.http.HttpMethod.*;
@@ -24,7 +24,8 @@ import static org.springframework.http.HttpMethod.*;
 public class SecurityConfig {
 
     private final AuthenticationConfiguration authConfiguration;
-
+    @Autowired
+    private Argon2Class encodingArgon2 ;
     @Autowired
     private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     @Autowired
@@ -74,7 +75,7 @@ public class SecurityConfig {
     //บอกว่า password encoder เราใช้อะไร
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new Argon2PasswordEncoder(16, 30, 1, 16, 2);
+        return encodingArgon2.getArg2SpringSecurity() ;
     }
 
 //    @Bean

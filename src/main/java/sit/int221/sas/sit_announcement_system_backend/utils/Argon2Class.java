@@ -10,12 +10,13 @@ import org.springframework.stereotype.Component;
 @Component
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-public class EncodingArgon2 {
+public class Argon2Class {
     private final Argon2PasswordEncoder arg2SpringSecurity =  new Argon2PasswordEncoder(16, 30, 1, 16, 2);
 
-    public Argon2PasswordEncoder  getArgonEncoder ()
+    public Argon2PasswordEncoder  getArg2SpringSecurity (){
+        return this.arg2SpringSecurity;
+    }
     public String getEncryption(String input){
        return this.arg2SpringSecurity.encode(input);
     }

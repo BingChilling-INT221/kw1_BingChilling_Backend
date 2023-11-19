@@ -5,6 +5,7 @@ import io.jsonwebtoken.SignatureException;
 import jakarta.mail.MessagingException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.MailException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -12,10 +13,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
-import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.ForbiddenException;
-import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.JwtErrorException;
-import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.NotfoundByfield;
-import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.SetFiledErrorException;
+import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.*;
 
 
 @RestControllerAdvice
@@ -92,9 +90,16 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(er);
     }
 
-    @ExceptionHandler({MessagingException.class})
+    @ExceptionHandler({EmailException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<ErrorResponse> handleEmailException(MessagingException e, WebRequest request) {
+    public ResponseEntity<ErrorResponse> handleEmailException(EmailException e, WebRequest request) {
+        ErrorResponse er = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), e.getMessage(), request.getDescription(false));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(er);
+    }
+
+    @ExceptionHandler({FileException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ErrorResponse> handleEmailException(FileException e, WebRequest request) {
         ErrorResponse er = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), e.getMessage(), request.getDescription(false));
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(er);
     }

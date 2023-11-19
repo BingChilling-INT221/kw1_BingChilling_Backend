@@ -123,9 +123,7 @@ public class AnnouncementController<T> {
         Announcement  announcement = announcementService.createAnnoucement(announcementDTO);
         System.out.println(announcement.getAnnouncementOwner().getEmail());
         System.out.println(announcement.getAnnouncementCategory());
-        subscribeService.sendEmailToNotificationSubscribeWhenAnnouncementUpdated("Notification from announcement category of "+announcement.getAnnouncementCategory().getCategoryName()
-                +" from create announcement with \""+announcement.getAnnouncementTitle()+"\" title"
-        , announcement);
+        subscribeService.sendEmailToNotificationSubscribeWhenAnnouncementUpdated(announcement);
         return ResponseEntity.status(HttpStatus.OK).body(modelMapper.map(announcement, AnnouncementsResponsehaveidDTO.class));
     }
 
@@ -135,8 +133,7 @@ public class AnnouncementController<T> {
         Announcement announcement=announcementService.deleteAnnouncement(id);
         System.out.println(announcement.getAnnouncementOwner().getEmail());
         System.out.println(announcement.getAnnouncementCategory());
-        subscribeService.sendEmailToNotificationSubscribeWhenAnnouncementUpdated("Notification from announcement category of "+announcement.getAnnouncementCategory().getCategoryName()+
-                " from delete announcement of \""+announcement.getAnnouncementTitle()+"\" title ", announcement);
+        subscribeService.sendEmailToNotificationSubscribeWhenAnnouncementUpdated(announcement);
     }
 
     @PutMapping("/{id}")
@@ -145,8 +142,7 @@ public class AnnouncementController<T> {
         Announcement announcement = announcementService.updateAnnouncement(id, announcmentDTO) ;
         System.out.println(announcement.getAnnouncementOwner().getEmail());
         System.out.println(announcement.getAnnouncementCategory());
-        subscribeService.sendEmailToNotificationSubscribeWhenAnnouncementUpdated("Notification from announcement category of "+announcement.getAnnouncementCategory().getCategoryName()+
-                " from updated announcement of \""+announcement.getAnnouncementTitle()+"\" title ", announcement);
+        subscribeService.sendEmailToNotificationSubscribeWhenAnnouncementUpdated(announcement);
         return ResponseEntity.status(HttpStatus.OK).body(modelMapper.map(announcement, AnnouncementsResponseDetailDTO.class));
 
     }
