@@ -81,7 +81,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                     }
 
             }
-            System.out.println("55");
+
 
             //should be call once
             chain.doFilter(request, response);
@@ -92,7 +92,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         } catch (MalformedJwtException e) {
             jwtAuthenticationEntryPoint.commence(request, response, new JwtErrorException("Unable to read JSON value", "format"));
         } catch (AuthenticationException e){
-            jwtAuthenticationEntryPoint.commence(request, response, new JwtErrorException("You can not access the resources. !", "OTP"));
+            jwtAuthenticationEntryPoint.commence(request, response, new JwtErrorException("You can not access the resources. !", "token"));
         }
 
     }

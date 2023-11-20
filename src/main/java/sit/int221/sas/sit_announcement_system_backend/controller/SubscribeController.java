@@ -139,5 +139,13 @@ public class SubscribeController {
         }
     }
 
+    @GetMapping("/getEmail")
+    public ResponseEntity<String> getEmailByToken(HttpServletRequest request){
+            String token = request.getHeader("AuthorizationEmailSubscribe").substring(7);
+            Claims claims = (Claims) jwtTokenUtil.getClaims(token);
+            return  ResponseEntity.status(HttpStatus.OK).body(claims.get("email").toString());
+
+    }
+
 
 }

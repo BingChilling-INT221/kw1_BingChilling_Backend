@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import sit.int221.sas.sit_announcement_system_backend.config.JwtTokenUtil;
 import sit.int221.sas.sit_announcement_system_backend.entity.Announcement;
 import sit.int221.sas.sit_announcement_system_backend.entity.Category;
 import sit.int221.sas.sit_announcement_system_backend.entity.Subscribe;
@@ -27,6 +28,8 @@ import java.util.Random;
 
 @Service
 public class SubscribeService {
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil ;
     @Autowired
     private Argon2Class argon2Class;
     @Autowired
@@ -60,7 +63,6 @@ public class SubscribeService {
                     }
                     if(((subscribesObjOfEmail.indexOf(subscribe) == subscribesObjOfEmail.size()-1) && tempCategory.size()>0)){
                         if(catagory.equals(tempCategory.get(tempCategory.size() - 1))) {
-                            System.out.println(tempCategory.get(tempCategory.size() - 1));
                             Category categoryTarget = categoryRepository.findById(tempCategory.get(tempCategory.size() - 1)).orElse(null);
                             assert categoryTarget != null;
                            subscribeRepository.saveAndFlush(new Subscribe( categoryTarget,email,null,null));
@@ -140,7 +142,7 @@ public class SubscribeService {
 //        }
         htmlContent.append(emailTo).append("  to receive any email announcement messages <br> from SAS, please click the following link ")
                 .append("<a href=\"https://intproj22.sit.kmutt.ac.th/kw1/unsubscribe/email?email= ")
-                .append(argon2Class.getEncryption(emailTo))
+                .append(jwtTokenUtil.generateVerifyUnSubscribeEmail(emailTo))
                 .append(" \" >un-subscribe link</a>    <p>  ");
         System.out.println(htmlContent);
         return  htmlContent.toString() ;
@@ -159,6 +161,7 @@ public class SubscribeService {
             throw new  MessagingException(e.getMessage()) ;
         }
     }
+
     
     
 
