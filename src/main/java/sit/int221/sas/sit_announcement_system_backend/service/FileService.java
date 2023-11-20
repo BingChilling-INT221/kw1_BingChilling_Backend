@@ -46,7 +46,7 @@ public class FileService {
             }
         });
         fileResource.forEach(x->{
-            String url = "https://intproj22.sit.kmutt.ac.th/kw1/api/file/"+id+"/"+x.getFilename();
+            String url = "https://intproj22.sit.kmutt.ac.th/kw1/api/files/"+id+"/"+x.getFilename();
             try {
                 fileDTOList.add(new FileDTO(x.getFilename(),detectFileType(Objects.requireNonNull(x.getFilename())),url,x.contentLength()));
             } catch (IOException e) {
