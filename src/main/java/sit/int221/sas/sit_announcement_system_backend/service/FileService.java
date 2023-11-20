@@ -4,11 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
-
+import org.springframework.util.FileSystemUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import sit.int221.sas.sit_announcement_system_backend.DTO.files.FileDTO;
 import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.FileException;
+import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.NotfoundByfield;
 import sit.int221.sas.sit_announcement_system_backend.properties.FileStorageProperties;
 
 import java.io.File;
@@ -19,6 +20,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -77,21 +79,6 @@ public class FileService {
                 return "application/octet-stream"; // Default to binary if the type is unknown
         }
     }
-//    public List<Resource> loadAllFilesAsResource(String id) throws FileException {
-//        setFileStorageLocation(id);
-//        List<File> fileFromDirectoryTarget = List.of(Objects.requireNonNull(new File(String.valueOf(this.fileStorageLocation)).listFiles()));
-//
-//        return  fileFromDirectoryTarget.stream().map(x->{
-//            try {
-//              return (Resource) new UrlResource(  this.fileStorageLocation.resolve(x.getName()).normalize().toUri());
-//            } catch (MalformedURLException e) {
-//                throw new RuntimeException(e);
-//            }
-//        }).toList() ;
-////        new UrlResource(filePath.toUri());
-////        return Arrays.stream(directoryTarget.listFiles()).toList();
-//
-//    }
 
 
     public List<String> store(String id,MultipartFile [] files) throws FileException {
@@ -134,6 +121,36 @@ public class FileService {
             return new UrlResource(filePath.toUri());
         } catch (MalformedURLException ex) {
             throw new FileException("File operation error: " + fileName, "file");
+        }
+    }
+
+    public void  deleteFolderById(String id) throws FileException {
+        try {
+            setFileStorageLocation(id);
+            if(Files.exists(this.fileStorageLocation.toAbsolutePath())) {
+                FileSystemUtils.deleteRecursively(this.fileStorageLocation.toFile());
+            }else {
+                throw new FileException("Could not delete directory because there not existing.","file");
+            }
+        }catch (FileException e) {
+            throw new NotfoundByfield(e.getMessage(),"Folder");
+        }
+
+    }
+
+    public void  deleteFileById(String id,String fileName) {
+        try {
+            setFileStorageLocation(id);
+            Path filePath = this.fileStorageLocation.resolve(fileName).normalize();
+            if(Files.exists(filePath)){
+                FileSystemUtils.deleteRecursively(filePath.toFile());
+            }
+            else {
+                throw new FileException("Could not delete file  because there not existing.","file");
+            }
+
+        }  catch (FileException e) {
+            throw new NotfoundByfield(e.getMessage(),"File");
         }
     }
 
