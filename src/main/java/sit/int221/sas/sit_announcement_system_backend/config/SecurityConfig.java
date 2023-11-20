@@ -50,6 +50,7 @@ public class SecurityConfig {
                                 .requestMatchers("/api/subscribes/unsubscribes").permitAll()
                                 .requestMatchers("/api/subscribes/unsubscribe/id").permitAll()
                                 .requestMatchers("/api/subscribes/unsubscribe/id").permitAll()
+                                .requestMatchers("api/subscribes/getEmail").permitAll()
                                 .requestMatchers("api/files/**").permitAll()
                                 //allow all  self and child
                                 .requestMatchers(POST, "api/users/announcer").permitAll()

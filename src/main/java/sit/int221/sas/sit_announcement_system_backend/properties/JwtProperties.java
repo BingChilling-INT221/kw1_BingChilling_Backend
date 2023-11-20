@@ -13,4 +13,5 @@ public class JwtProperties {
     private Double tokenInterval;
     private Double refreshExpirationDateInMs;
     private Double emailOtp;
+    private Double unsubLink;
 }

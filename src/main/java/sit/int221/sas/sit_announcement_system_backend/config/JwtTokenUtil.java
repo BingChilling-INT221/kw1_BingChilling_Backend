@@ -69,6 +69,22 @@ public class JwtTokenUtil {
         return doGenerateSubscribe(claims);
     }
 
+    public String generateVerifyUnSubscribeEmail(String toEmail) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("type", "VerifyUnSubscribeEmail");
+        claims.put("email",toEmail );
+
+        return doGenerateVerifyUnSubscribeEmail(claims);
+    }
+    private String doGenerateVerifyUnSubscribeEmail(Map<String, Object> claims) { //subject ก็แล้วแต่ว่าเราจะแอดอะไรเข้าไปใน map
+
+        return Jwts.builder().setClaims(claims).setIssuedAt(new Date(System.currentTimeMillis()))
+
+                .setExpiration(new Date(Math.round(System.currentTimeMillis() + (JWT_TOKEN_VALIDITY * jwtProperties.getUnsubLink()))))
+
+                .signWith(SignatureAlgorithm.HS512, jwtProperties.getSecretKey()).compact();
+    }
+
     private String doGenerateSubscribe(Map<String, Object> claims) { //subject ก็แล้วแต่ว่าเราจะแอดอะไรเข้าไปใน map
 
 
@@ -114,6 +130,8 @@ public class JwtTokenUtil {
     public  Boolean validateOtpEmail(Integer otp,String token,Claims claims){
         return  ((Objects.equals((Integer) claims.get("otp"), otp)) && !isTokenExpired(token));
     }
+
+
     public Object getClaims(String token) {
         Claims claims = getAllClaimsFromToken(token);// Use the appropriate signing key
         return claims;
