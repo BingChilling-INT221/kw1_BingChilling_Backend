@@ -128,7 +128,7 @@ public class JwtTokenUtil {
     }
 
     public  Boolean validateOtpEmail(Integer otp,String token,Claims claims){
-        return  ((Objects.equals((Integer) claims.get("otp"), otp)) && !isTokenExpired(token));
+        return  ((Objects.equals(claims.get("otp"), otp)) && !isTokenExpired(token));
     }
 
 

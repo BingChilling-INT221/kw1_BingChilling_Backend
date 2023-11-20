@@ -4,6 +4,7 @@ package sit.int221.sas.sit_announcement_system_backend.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -80,8 +81,17 @@ public class FileController {
         return "You successfully uploaded " + Arrays.stream(file).map(MultipartFile::getOriginalFilename).collect(Collectors.joining(" , "))+ " already !";
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> DeleteFolderById(@PathVariable String id) throws FileException {
+        fileService.deleteFolderById(id);
+        return ResponseEntity.status(HttpStatus.OK).body("Could delete all file of announcement successfully") ;
+    }
 
-
+    @DeleteMapping("/{id}/{filename:.+}")
+    public ResponseEntity<String> DeleteFileById(@PathVariable String id, @PathVariable String filename) throws FileException {
+        fileService.deleteFileById(id,filename);
+        return ResponseEntity.status(HttpStatus.OK).body("Can delete file successfully") ;
+    }
 
 
 }
