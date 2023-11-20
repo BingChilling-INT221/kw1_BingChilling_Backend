@@ -48,44 +48,14 @@ public class FileService {
         fileResource.forEach(x->{
             String url = "https://intproj22.sit.kmutt.ac.th/kw1/api/files/"+id+"/"+x.getFilename();
             try {
-                fileDTOList.add(new FileDTO(x.getFilename(),detectFileType(Objects.requireNonNull(x.getFilename())),url,x.contentLength()));
+                fileDTOList.add(new FileDTO(x.getFilename(),url,detectFileType(Objects.requireNonNull(x.getFilename())),x.contentLength()));
             } catch (IOException e) {
                 e.printStackTrace();
             }
         });
         return fileDTOList;
     }
-    public List<FileDTO> loadAllFilesAsResourcePreview(String id )throws FileException {
-        setFileStorageLocation(id);
-        File directoryTarget = new File(String.valueOf(this.fileStorageLocation));
-        List<File> fileFromDirectoryTarget = List.of(Objects.requireNonNull(directoryTarget.listFiles()));
 
-        List<Resource> fileResource = new ArrayList<>();
-        List<FileDTO> fileDTOList = new ArrayList<>();
-        fileFromDirectoryTarget.forEach(x->{
-            try {
-                fileResource.add(new UrlResource(  this.fileStorageLocation.resolve(x.getName()).normalize().toUri()));
-            } catch (MalformedURLException e) {
-                throw new RuntimeException(e);
-            }
-        });
-        fileResource.forEach(x->{
-            String url = "https://intproj22.sit.kmutt.ac.th/kw1/api/files/"+id+"/"+x.getFilename();
-            try {
-                FileDTO fileDTO = new FileDTO(x.getFilename(),detectFileType(Objects.requireNonNull(x.getFilename())),url,x.contentLength());
-                if(fileDTO.getFileType().equals("image")||fileDTO.getFileType().equals("video")) {
-                    fileDTOList.add(fileDTO);
-                }
-                else {
-                    fileDTO.nullFile();
-                    fileDTOList.add(fileDTO);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
-        return fileDTOList.subList(0,Math.min(5,fileDTOList.size()));
-    }
     private String detectFileType(String fileName) {
         String fileExtension = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
 

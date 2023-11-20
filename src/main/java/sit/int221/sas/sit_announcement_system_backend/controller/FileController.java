@@ -40,10 +40,6 @@ public class FileController {
     public List<FileDTO> serveFilesById(@PathVariable String id) throws IOException {
         return fileService.loadAllFilesAsResource(id);
     }
-    @GetMapping("/preview/{id}")
-    public List<FileDTO> serveFilesByIdPreview(@PathVariable String id) throws IOException {
-        return fileService.loadAllFilesAsResourcePreview(id);
-    }
 
 
     @GetMapping("/{id}/{filename:.+}")
