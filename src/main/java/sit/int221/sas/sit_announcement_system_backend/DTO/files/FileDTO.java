@@ -15,5 +15,7 @@ public class FileDTO implements Serializable {
     private String fileUrl;
     private String fileType;
     private long size;
-
+    public void nullFile(){
+        this.fileUrl = null;
+    }
 }
