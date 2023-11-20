@@ -34,7 +34,7 @@ public class FileController {
     @GetMapping("/{id}")
     public ResponseEntity<List<Resource>> serveFilesById(@PathVariable String id) throws FileException {
        List<Resource> test  =    fileService.loadAllFilesAsResource(id) ;
-
+        System.out.println(test);
         if (test != null) {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentDispositionFormData("attachment", "test");
