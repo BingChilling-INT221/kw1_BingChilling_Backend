@@ -38,6 +38,9 @@ public class UserService {
     public User getDetailUser(Integer userid) {
         return userRepository.findById(userid).orElseThrow(() -> new NotfoundByfield((userid + " does not exist"), "id"));
     }
+    public User getUser(String username) {
+        return userRepository.findByUsername(username).orElseThrow(() -> new NotfoundByfield((username + " does not exist"), "username"));
+    }
 
     @Transactional
     public User createUser(UseRequestRegisterDTO user) throws InterruptedException {

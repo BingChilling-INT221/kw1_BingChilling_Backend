@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import sit.int221.sas.sit_announcement_system_backend.properties.JwtProperties;
+import sit.int221.sas.sit_announcement_system_backend.repository.UserRepo.UserRepository;
+import sit.int221.sas.sit_announcement_system_backend.service.UserService;
 
 import java.util.*;
 import java.util.function.Function;
@@ -19,7 +21,8 @@ public class JwtTokenUtil {
     @Autowired
     private JwtProperties jwtProperties;
     public static final long JWT_TOKEN_VALIDITY = 60 * 60 * 1000;
-
+    @Autowired
+    private UserService userService;
 
     public String getSubjectFromToken(String token) {
         return getClaimFromToken(token, Claims::getSubject);
@@ -50,6 +53,7 @@ public class JwtTokenUtil {
         claims.put("type", "AccessToken");
         claims.put("username", userDetails.getUsername());
         claims.put("role", userDetails.getAuthorities().toArray()[0].toString());
+        claims.put("email", userService.getUser(userDetails.getUsername()).getEmail());
         return doGenerateToken(claims, userDetails.getUsername());
     }
 
