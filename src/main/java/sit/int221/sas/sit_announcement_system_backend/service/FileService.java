@@ -35,6 +35,7 @@ public class FileService {
         setFileStorageLocation(id);
         File directoryTarget = new File(String.valueOf(this.fileStorageLocation));
         List<File> fileFromDirectoryTarget = List.of(Objects.requireNonNull(directoryTarget.listFiles()));
+
         List<Resource> fileResource = new ArrayList<>();
         List<FileDTO> fileDTOList = new ArrayList<>();
         fileFromDirectoryTarget.forEach(x->{
@@ -45,8 +46,9 @@ public class FileService {
             }
         });
         fileResource.forEach(x->{
+            String url = "https://intproj22.sit.kmutt.ac.th/kw1/api/file/"+id+"/"+x.getFilename();
             try {
-                fileDTOList.add(new FileDTO(x.getFilename(),x.getURL().toString(),detectFileType(x.getFilename()),x.contentLength()));
+                fileDTOList.add(new FileDTO(x.getFilename(),detectFileType(Objects.requireNonNull(x.getFilename())),url,x.contentLength()));
             } catch (IOException e) {
                 e.printStackTrace();
             }
