@@ -4,8 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
+
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
+import sit.int221.sas.sit_announcement_system_backend.DTO.files.FileDTO;
 import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.FileException;
 import sit.int221.sas.sit_announcement_system_backend.properties.FileStorageProperties;
 
@@ -27,22 +29,69 @@ public class FileService {
     private Path directoryMainLocation ;
     @Autowired
     FileStorageProperties fileStorageProperties ;
-
-    public List<Resource> loadAllFilesAsResource(String id) throws FileException {
+    public List<FileDTO> loadAllFilesAsResource(String id )throws FileException {
         setFileStorageLocation(id);
-        List<File> fileFromDirectoryTarget = List.of(Objects.requireNonNull(new File(String.valueOf(this.fileStorageLocation)).listFiles()));
-
-        return  fileFromDirectoryTarget.stream().map(x->{
+        File directoryTarget = new File(String.valueOf(this.fileStorageLocation));
+        List<File> fileFromDirectoryTarget = List.of(Objects.requireNonNull(directoryTarget.listFiles()));
+        List<Resource> fileResource = new ArrayList<>();
+        List<FileDTO> fileDTOList = new ArrayList<>();
+        fileFromDirectoryTarget.forEach(x->{
             try {
-              return (Resource) new UrlResource(  this.fileStorageLocation.resolve(x.getName()).normalize().toUri());
+                fileResource.add(new UrlResource(  this.fileStorageLocation.resolve(x.getName()).normalize().toUri()));
             } catch (MalformedURLException e) {
                 throw new RuntimeException(e);
             }
-        }).toList() ;
-//        new UrlResource(filePath.toUri());
-//        return Arrays.stream(directoryTarget.listFiles()).toList();
-
+        });
+        fileResource.forEach(x->{
+            try {
+                fileDTOList.add(new FileDTO(x.getFilename(),x.getURL().toString(),detectFileType(x.getFilename()),x.contentLength()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+        return fileDTOList;
     }
+    private String detectFileType(String fileName) {
+        String fileExtension = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
+
+        switch (fileExtension) {
+            case "png":
+            case "jpg":
+            case "jpeg":
+                return "image";
+            case "mp4":
+                return "video";
+            case "txt":
+                return "text/plain";
+            case "pdf":
+                return "application/pdf";
+            case "mp3":
+                return "audio";
+            case "apk":
+                return "application/vnd.android.package-archive";
+            case "zip":
+                return "application/zip";
+            case "sql":
+                return "application/sql";
+            default:
+                return "application/octet-stream"; // Default to binary if the type is unknown
+        }
+    }
+//    public List<Resource> loadAllFilesAsResource(String id) throws FileException {
+//        setFileStorageLocation(id);
+//        List<File> fileFromDirectoryTarget = List.of(Objects.requireNonNull(new File(String.valueOf(this.fileStorageLocation)).listFiles()));
+//
+//        return  fileFromDirectoryTarget.stream().map(x->{
+//            try {
+//              return (Resource) new UrlResource(  this.fileStorageLocation.resolve(x.getName()).normalize().toUri());
+//            } catch (MalformedURLException e) {
+//                throw new RuntimeException(e);
+//            }
+//        }).toList() ;
+////        new UrlResource(filePath.toUri());
+////        return Arrays.stream(directoryTarget.listFiles()).toList();
+//
+//    }
 
 
     public List<String> store(String id,MultipartFile [] files) throws FileException {
