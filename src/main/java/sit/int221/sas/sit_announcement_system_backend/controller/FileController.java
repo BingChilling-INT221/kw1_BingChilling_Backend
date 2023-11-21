@@ -64,7 +64,6 @@ public class FileController {
     }
 
 
-
     @PostMapping("/{id}")
     //    parameter ที่ส่งใน body post man ต้องเป็น ชื่อเดียวกับใน code ที่เรารับมา
     public String fileUpload(@RequestParam("file") MultipartFile [] file,@PathVariable String id) throws FileException {

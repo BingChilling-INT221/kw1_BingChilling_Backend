@@ -19,12 +19,14 @@ import sit.int221.sas.sit_announcement_system_backend.entity.Subscribe;
 import sit.int221.sas.sit_announcement_system_backend.entity.User;
 import sit.int221.sas.sit_announcement_system_backend.entity.email.EmailOtpResponse;
 import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.EmailException;
+import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.ErrorSubscribeException;
 import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.SetFiledErrorException;
 import sit.int221.sas.sit_announcement_system_backend.service.AnnouncementService;
 import sit.int221.sas.sit_announcement_system_backend.service.SubscribeService;
 import sit.int221.sas.sit_announcement_system_backend.service.UserService;
 import sit.int221.sas.sit_announcement_system_backend.utils.ListMapper;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -96,20 +98,29 @@ public class SubscribeController {
             String token =request.getHeader("AuthorizationOtp").substring(7);
             Claims claims = (Claims) jwtTokenUtil.getClaims(token);
             List<Integer> subscribeFromClaim = (List<Integer>) claims.get("subscribe");
+            List<Integer> listAdd = new ArrayList<>();
             try {
-                subscribeService.AddSubScribe((String) claims.get("email"),subscribeFromClaim);
-            }catch (Exception e){
+                listAdd =   subscribeService.AddSubScribe((String) claims.get("email"),subscribeFromClaim);
+            }catch (ErrorSubscribeException e){
+                listAdd = e.getList() ;
                messageError = e.getMessage();
             }
 
-           subscribeService.sendEmailToNotificationSubscribe((String) claims.get("email"),
-                    "[ "+  claims.get("email") +" subscription @ SAS ]  Subscribed Notification ",
-                    "<p> Thank you  for subscribing </p>" +
-                            "<p>We are delighted to have you on board."+
-                            " You will receive news from us when we announce new updates.  </p> ");
-            return  messageError.length()==0?
-                    ResponseEntity.status(HttpStatus.OK).body("Subscribe all successfully.") :
-                    ResponseEntity.status(HttpStatus.BAD_REQUEST).body("May be could Subscribed some category. but , "+ messageError);
+            if( messageError.length()==0) {
+                subscribeService.sendEmailToNotificationSubscribe((String) claims.get("email"),
+                        claims);
+               return ResponseEntity.status(HttpStatus.OK).body("Subscribe all successfully.");
+            }
+            else if(Arrays.stream(messageError.split(",")).toList().size()< listAdd.size()) {
+                subscribeService.sendEmailToNotificationSubscribe((String) claims.get("email"),
+                        claims);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("May be could Subscribed some category. but , "+ messageError);
+            }
+            else {
+
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("You could not Subscribed all category. "+ messageError);
+            }
+
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error is : "+ e.getMessage());
         }

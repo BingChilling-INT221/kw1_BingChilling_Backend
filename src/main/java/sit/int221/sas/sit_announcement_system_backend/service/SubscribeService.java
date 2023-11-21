@@ -1,5 +1,6 @@
 package sit.int221.sas.sit_announcement_system_backend.service;
 
+import io.jsonwebtoken.Claims;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import sit.int221.sas.sit_announcement_system_backend.entity.Category;
 import sit.int221.sas.sit_announcement_system_backend.entity.Subscribe;
 import sit.int221.sas.sit_announcement_system_backend.entity.SubscribeFolder.CompositekeySubscrib;
 import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.EmailException;
+import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.ErrorSubscribeException;
 import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.SetFiledErrorException;
 import sit.int221.sas.sit_announcement_system_backend.properties.MailProperties;
 import sit.int221.sas.sit_announcement_system_backend.repository.CategoryRepository;
@@ -48,7 +50,7 @@ public class SubscribeService {
     public List<Subscribe> getSubscribesByEmail(String email){
         return  subscribeRepository.findByEmail(email);
     }
-    public  void   AddSubScribe(String email,List<Integer> categorys) throws Exception {
+    public  List<Integer>   AddSubScribe(String email,List<Integer> categorys) throws Exception {
 
        List<Subscribe> subscribesObjOfEmail = subscribeRepository.findByEmail(email);
        List<Integer> tempCategory = new ArrayList<>();
@@ -66,7 +68,7 @@ public class SubscribeService {
                             Category categoryTarget = categoryRepository.findById(tempCategory.get(tempCategory.size() - 1)).orElse(null);
                             assert categoryTarget != null;
                            subscribeRepository.saveAndFlush(new Subscribe( categoryTarget,email,null,null));
-                            tempCategory.clear();
+                            //tempCategory.clear();
                         }
                     }
 
@@ -76,9 +78,11 @@ public class SubscribeService {
                 subscribeRepository.saveAndFlush(new Subscribe( categoryTarget,email,null,null));
             }
 
-        });
-        if( error.length()!=0 ){ throw  new Exception("Could not subscribe "+error +" because those are existing.");
+        });     System.out.println(tempCategory);
+        if( error.length()!=0 ){ throw  new ErrorSubscribeException("Could not subscribe "+error +" because those are existing.",tempCategory);
         }
+
+        return tempCategory ;
 
     }
     public Integer sendOTP(String emailTo,String subject) throws MessagingException {
@@ -92,9 +96,11 @@ public class SubscribeService {
         return otp ;
     }
 
-    public void sendEmailToNotificationSubscribe(String emailTo,String subject,String body) throws MessagingException {
+    public void sendEmailToNotificationSubscribe(String emailTo, Claims claims) throws MessagingException {
         try {
-            sendmail(emailTo,subject, body + getFooterOfEmailNotification(emailTo));
+            sendmail(emailTo,"[ "+  claims.get("email") +" subscription @ SAS ]  Subscribed Notification ", "<p> Thank you  for subscribing </p>" +
+                    "<p>We are delighted to have you on board."+
+                    " You will receive news from us when we announce new updates.  </p> " + getFooterOfEmailNotification(emailTo));
         }catch (Exception e){
             throw new  MessagingException(e.getMessage()) ;
         }
