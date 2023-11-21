@@ -135,7 +135,17 @@ public class FileService {
                     Files.deleteIfExists(file.toPath());
                 }
             }
-
+            if (files[0].isEmpty()) {
+                return;
+            }
+            if (files.length + fileFromDirectoryTarget.size() > 5) {
+                System.out.println(files.length);
+                System.out.println(files.length + fileFromDirectoryTarget.size());
+                throw new FileException("Sorry, You can't store more than 5 files. So now You have added already " + fileFromDirectoryTarget.size() + " files from before.", "file");
+            }
+            if (files.length == 0) {
+                return;
+            }
             // ทำการเพิ่มไฟล์ใหม่ที่อัพโหลดเข้ามา
             for (MultipartFile file : files) {
                 String fileName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
