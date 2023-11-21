@@ -29,28 +29,35 @@ public class FileService {
     @Autowired
     FileStorageProperties fileStorageProperties ;
     public List<FileDTO> loadAllFilesAsResource(String id )throws FileException {
-        setFileStorageLocation(id);
-        File directoryTarget = new File(String.valueOf(this.fileStorageLocation));
-        List<File> fileFromDirectoryTarget = List.of(Objects.requireNonNull(directoryTarget.listFiles()));
 
-        List<Resource> fileResource = new ArrayList<>();
-        List<FileDTO> fileDTOList = new ArrayList<>();
-        fileFromDirectoryTarget.forEach(x->{
-            try {
-                fileResource.add(new UrlResource(  this.fileStorageLocation.resolve(x.getName()).normalize().toUri()));
-            } catch (MalformedURLException e) {
-                throw new RuntimeException(e);
-            }
-        });
-        fileResource.forEach(x->{
-            String url = "https://intproj22.sit.kmutt.ac.th/kw1/api/files/"+id+"/"+x.getFilename();
-            try {
-                fileDTOList.add(new FileDTO(x.getFilename(),url,detectFileType(Objects.requireNonNull(x.getFilename())),x.contentLength()));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
-        return fileDTOList;
+        setFileStorageLocation(id);
+        if(Files.exists(this.fileStorageLocation.toAbsolutePath())) {
+
+            File directoryTarget = new File(String.valueOf(this.fileStorageLocation));
+            List<File> fileFromDirectoryTarget = List.of(Objects.requireNonNull(directoryTarget.listFiles()));
+
+            List<Resource> fileResource = new ArrayList<>();
+            List<FileDTO> fileDTOList = new ArrayList<>();
+            fileFromDirectoryTarget.forEach(x -> {
+                try {
+                    fileResource.add(new UrlResource(this.fileStorageLocation.resolve(x.getName()).normalize().toUri()));
+                } catch (MalformedURLException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+            fileResource.forEach(x -> {
+                String url = "https://intproj22.sit.kmutt.ac.th/kw1/api/files/" + id + "/" + x.getFilename();
+                try {
+                    fileDTOList.add(new FileDTO(x.getFilename(), url, detectFileType(Objects.requireNonNull(x.getFilename())), x.contentLength()));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+            return fileDTOList;
+        }else {
+            throw new NotfoundByfield("this directory not existing.","file");
+        }
+
     }
 
     private String detectFileType(String fileName) {
