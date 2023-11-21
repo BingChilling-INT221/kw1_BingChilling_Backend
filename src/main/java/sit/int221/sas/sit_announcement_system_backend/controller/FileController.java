@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @CrossOrigin
@@ -70,7 +71,11 @@ public class FileController {
         fileService.store(id,file);
         return "You successfully uploaded " + Arrays.stream(file).map(MultipartFile::getOriginalFilename).collect(Collectors.joining(" , "))+ " already !";
     }
-
+    @PutMapping("/{id}")
+    public ResponseEntity<String> updateFiles(@RequestParam("file") MultipartFile[] files, @PathVariable String id,@RequestParam("oldFile") String [] oldFile) throws FileException {
+        fileService.updateFiles(id,files,oldFile);
+        return ResponseEntity.status(HttpStatus.OK).body("Can update file successfully") ;
+    }
     @DeleteMapping("/{id}")
     public ResponseEntity<String> DeleteFolderById(@PathVariable String id) throws FileException {
         fileService.deleteFolderById(id);

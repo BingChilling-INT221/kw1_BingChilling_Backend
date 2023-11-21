@@ -19,10 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 public class FileService {
@@ -115,6 +112,38 @@ public class FileService {
             throw new FileException("Could not store file " + String.join(" , ", filesName) + " at announcement folder id is "+ id +". Please try again! "+ex.getMessage(),"file");
         }
     }
+    public void updateFiles(String id, MultipartFile[] files, String[] oldFile) throws FileException {
+        setFileStorageLocation(id);
+        File directoryTarget = new File(String.valueOf(this.fileStorageLocation));
+        List<File> fileFromDirectoryTarget = List.of(Objects.requireNonNull(directoryTarget.listFiles()));
+        List<String> oldFileList = Arrays.asList(oldFile);
+        List<String> filesName = new ArrayList<>();
+
+        try {
+            // เพิ่มการประมวลผลที่นี่ เช่น ลูปเพื่อตรวจสอบไฟล์ที่ต้องการอัพเดท และเพิ่มไฟล์ใหม่ หรือลบไฟล์เก่าตามที่ต้องการ
+            // เพื่อให้เกิดการอัพเดทไฟล์ตามที่ต้องการ
+            for (File file : fileFromDirectoryTarget) {
+                if (oldFileList.contains(file.getName())) {
+                    // ตรวจสอบและทำการลบไฟล์ที่ต้องการ
+                    Files.deleteIfExists(file.toPath());
+                }
+            }
+
+            // ทำการเพิ่มไฟล์ใหม่ที่อัพโหลดเข้ามา
+            for (MultipartFile file : files) {
+                String fileName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
+                Path targetLocation = this.fileStorageLocation.resolve(fileName);
+                Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
+                filesName.add(fileName);
+            }
+
+            // เพิ่มการประมวลผลเพิ่มเติมตามความต้องการของคุณ
+        } catch (IOException e) {
+            throw new FileException("Could not update files: " + e.getMessage(), "file");
+        }
+    }
+
+
 
     public Resource loadFileAsResource(String id,String fileName) throws FileException {
         try {
