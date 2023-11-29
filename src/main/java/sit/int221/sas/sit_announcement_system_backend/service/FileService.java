@@ -8,9 +8,11 @@ import org.springframework.util.FileSystemUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import sit.int221.sas.sit_announcement_system_backend.DTO.files.FileDTO;
+import sit.int221.sas.sit_announcement_system_backend.entity.Announcement;
 import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.FileException;
 import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.NotfoundByfield;
 import sit.int221.sas.sit_announcement_system_backend.properties.FileStorageProperties;
+import sit.int221.sas.sit_announcement_system_backend.repository.AnnouncementRepository;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,11 +25,16 @@ import java.util.*;
 
 @Service
 public class FileService {
+    @Autowired
+    private AnnouncementRepository announcementRepository ;
     private Path fileStorageLocation ;
 
     private Path directoryMainLocation ;
     @Autowired
     FileStorageProperties fileStorageProperties ;
+
+
+
     public List<FileDTO> loadAllFilesAsResource(String id )throws FileException {
 
         setFileStorageLocation(id);

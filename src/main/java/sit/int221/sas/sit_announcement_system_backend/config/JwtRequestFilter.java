@@ -18,6 +18,7 @@ import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.Jw
 
 import javax.security.sasl.AuthenticationException;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Objects;
 //OncePerRequestFilter อยู่ใน Spring framework security
 
@@ -44,45 +45,71 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         try {
             if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
                 jwtToken = requestTokenHeader.substring(7);
-                Claims claims = (Claims) jwtTokenUtil.getClaims(jwtToken);
-                username = jwtTokenUtil.getSubjectFromToken(jwtToken);
-                if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                    System.out.println("22");
-                    UserDetails userDetails = this.jwtUserDetailsService.loadUserByUsername(username);
-                    if (jwtTokenUtil.validateToken(jwtToken, userDetails)) {
-                        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-                                userDetails, null, userDetails.getAuthorities());
-                        usernamePasswordAuthenticationToken
-                                .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                        SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-                    }
-                } else {
+                Claims claims = null;
+                System.out.println("1.1");
+                System.out.println(jwtToken);
+                System.out.println("1.2");
+                try {
+                    claims = (Claims) jwtTokenUtil.getClaims(jwtToken);
+                } catch (Exception e) {
+
+                    System.out.println(e.getMessage() + Arrays.toString(e.getStackTrace()));
+                    String publicKey = request.getHeader("publicKey");
+                   JwtTokenVerifier jwtTokenVerifier = new JwtTokenVerifier(publicKey) ;
+                    System.out.println(jwtTokenVerifier.isTokenValid(jwtToken));
+                    System.out.println("Jwt ms ");
+
+                }
+                if (claims != null) {
+                    username = jwtTokenUtil.getSubjectFromToken(jwtToken);
+                    Object email = claims.get("preferred_username");
+                    System.out.println(email);
+                    if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                        System.out.println("22");
+                        UserDetails userDetails = this.jwtUserDetailsService.loadUserByUsername(username);
+                        if (jwtTokenUtil.validateToken(jwtToken, userDetails)) {
+                            UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
+                                    userDetails, null, userDetails.getAuthorities());
+                            usernamePasswordAuthenticationToken
+                                    .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                            SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+                        }
+                    } else if (email != null) {
+                        System.out.println(email);
+                    } else {
 
                         final UserDetails userDetails = this.jwtUserDetailsService.loadUserByUsername((String) claims.get("username"));
                         jwtTokenUtil.validateRefreshToken(jwtToken, claims, userDetails);
 
 
+                    }
+
                 }
+                System.out.println("33");
+                String requestTokenHeaderOtp = request.getHeader("AuthorizationOtp");
+                String tokenOtp = null;
+                Claims claimsOtp = null;
 
-            }
-            System.out.println("33");
-            String requestTokenHeaderOtp = request.getHeader("AuthorizationOtp");
-            String tokenOtp = null ;
-
-            if(requestTokenHeaderOtp != null &&  requestTokenHeaderOtp.startsWith("Bearer ")) {
-                System.out.println("44");
+                if (requestTokenHeaderOtp != null && requestTokenHeaderOtp.startsWith("Bearer ")) {
+                    System.out.println("44");
                     tokenOtp = requestTokenHeaderOtp.substring(7);
-                    Claims claims = (Claims) jwtTokenUtil.getClaims(tokenOtp);
-                    if (Objects.equals(claims.get("type"), "OTP")) {
-                        String otpRequest = request.getHeader("Otp");
-                        if(!jwtTokenUtil.validateOtpEmail(Integer.valueOf(otpRequest), tokenOtp, claims)) {
-                            throw new AuthenticationException();
+                    try {
+                        claimsOtp = (Claims) jwtTokenUtil.getClaims(tokenOtp);
+                    } catch (Exception e) {
+                        System.out.println(e.getMessage());
+                    }
+                    if (claimsOtp != null) {
+                        if (Objects.equals(claimsOtp.get("type"), "OTP")) {
+                            String otpRequest = request.getHeader("Otp");
+                            if (!jwtTokenUtil.validateOtpEmail(Integer.valueOf(otpRequest), tokenOtp, claimsOtp)) {
+                                throw new AuthenticationException();
+                            }
                         }
                     }
 
+                }
+
             }
-
-
             //should be call once
             chain.doFilter(request, response);
         } catch (IllegalArgumentException e) {

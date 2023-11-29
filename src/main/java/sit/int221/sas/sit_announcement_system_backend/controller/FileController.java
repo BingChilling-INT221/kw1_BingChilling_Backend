@@ -8,6 +8,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import sit.int221.sas.sit_announcement_system_backend.DTO.files.FileDTO;
@@ -39,14 +42,28 @@ public class FileController {
 
     @GetMapping("/{id}")
     public List<FileDTO> serveFilesById(@PathVariable String id) throws IOException {
+        String role = SecurityContextHolder.getContext().getAuthentication().getAuthorities().toArray()[0].toString();
         return fileService.loadAllFilesAsResource(id);
     }
 
+
+    @GetMapping("/test/{id}")
+    public void testFile(@PathVariable String id,@RequestParam("file") MultipartFile [] file,@RequestParam("name") String[]  name){
+        System.out.println("start con");
+        System.out.println("");
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String role = SecurityContextHolder.getContext().getAuthentication().getAuthorities().toArray()[0].toString();
+        System.out.println(role);
+//        System.out.println(Arrays.stream(name).collect(Collectors.joining(" - ")));
+//        System.out.println(file);
+
+    }
 
     @GetMapping("/{id}/{filename:.+}")
     @ResponseBody
 // เวลาเรียกชื่อไฟล์ เรียกพร้อมนามสกุล และ เป็น inSensitiveCase
     public ResponseEntity<Resource> serveFile(@PathVariable String id,@PathVariable String filename) throws FileException {
+
         Resource file = fileService.loadFileAsResource(id,filename);
 
 
@@ -65,18 +82,22 @@ public class FileController {
     }
 
 
+
     @PostMapping("/{id}")
+    @PreAuthorize("hasAuthority(@Role.ADMIN) or (hasAuthority(@Role.ANNOUNCER) and (@announcementService.isAuthorize(authentication.principal.username,#id)))")
     //    parameter ที่ส่งใน body post man ต้องเป็น ชื่อเดียวกับใน code ที่เรารับมา
-    public String fileUpload(@RequestParam("file") MultipartFile [] file,@PathVariable String id) throws FileException {
-        fileService.store(id,file);
+    public String fileUpload(@RequestParam("file") MultipartFile [] file,@PathVariable Integer id) throws FileException {
+        fileService.store(String.valueOf( id),file);
         return "You successfully uploaded " + Arrays.stream(file).map(MultipartFile::getOriginalFilename).collect(Collectors.joining(" , "))+ " already !";
     }
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority(@Role.ADMIN) or (hasAuthority(@Role.ANNOUNCER) and (@announcementService.isAuthorize(authentication.principal.username,#id)))")
     public ResponseEntity<String> updateFiles(@RequestParam("file") MultipartFile[] files, @PathVariable String id,@RequestParam("oldFile") String [] oldFile) throws FileException {
         fileService.updateFiles(id,files,oldFile);
         return ResponseEntity.status(HttpStatus.OK).body("Can update file successfully") ;
     }
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority(@Role.ADMIN) or (hasAuthority(@Role.ANNOUNCER) and (@announcementService.isAuthorize(authentication.principal.username,#id)))")
     public ResponseEntity<String> DeleteFolderById(@PathVariable String id) throws FileException {
         fileService.deleteFolderById(id);
         return ResponseEntity.status(HttpStatus.OK).body("Could delete all file of announcement successfully") ;

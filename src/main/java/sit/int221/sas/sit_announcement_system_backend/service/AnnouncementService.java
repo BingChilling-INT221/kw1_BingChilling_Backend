@@ -66,7 +66,10 @@ public class AnnouncementService {
     }
 
     public boolean isAuthorize(String username, Integer announcementId) {
+        System.out.println(username + " " + announcementId);
         Announcement announcement = announcementRepository.findById(announcementId).orElse(null);
+        System.out.println(announcement.getId());
+        System.out.println(announcement.getAnnouncementOwner().getUsername());
         return announcement != null && announcement.getAnnouncementOwner().getUsername().equals(username);
     }
 

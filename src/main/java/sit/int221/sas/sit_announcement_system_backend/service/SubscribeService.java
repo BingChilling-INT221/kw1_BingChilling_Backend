@@ -3,9 +3,11 @@ package sit.int221.sas.sit_announcement_system_backend.service;
 import io.jsonwebtoken.Claims;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import org.apache.logging.log4j.message.AsynchronouslyFormattable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import sit.int221.sas.sit_announcement_system_backend.config.JwtTokenUtil;
 import sit.int221.sas.sit_announcement_system_backend.entity.Announcement;
@@ -153,6 +155,8 @@ public class SubscribeService {
         System.out.println(htmlContent);
         return  htmlContent.toString() ;
     }
+
+    @Async
     public void sendmail(String emailTo , String subject , String content) throws MessagingException {
         try {
             MimeMessage message = mailSender.createMimeMessage();

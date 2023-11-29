@@ -64,22 +64,24 @@ public class JwtTokenUtil {
         claims.put("username", getSubjectFromToken(accesstoken));
         return doGenerateRefreshToken(claims);
     }
+
     public String generateSubscribe(String toEmail, Integer otpCode, List<Integer> subscribe) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("type", "OTP");
-        claims.put("email",toEmail );
-        claims.put("otp",otpCode);
-        claims.put("subscribe",subscribe);
+        claims.put("email", toEmail);
+        claims.put("otp", otpCode);
+        claims.put("subscribe", subscribe);
         return doGenerateSubscribe(claims);
     }
 
     public String generateVerifyUnSubscribeEmail(String toEmail) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("type", "VerifyUnSubscribeEmail");
-        claims.put("email",toEmail );
+        claims.put("email", toEmail);
 
         return doGenerateVerifyUnSubscribeEmail(claims);
     }
+
     private String doGenerateVerifyUnSubscribeEmail(Map<String, Object> claims) { //subject ก็แล้วแต่ว่าเราจะแอดอะไรเข้าไปใน map
 
         return Jwts.builder().setClaims(claims).setIssuedAt(new Date(System.currentTimeMillis()))
@@ -99,7 +101,7 @@ public class JwtTokenUtil {
 
                 .signWith(SignatureAlgorithm.HS512, jwtProperties.getSecretKey()).compact(); // compact คือทำให้เป็นรูปแบบ encrypt => 3...
     }
-    
+
     private String doGenerateToken(Map<String, Object> claims, String subject) { //subject ก็แล้วแต่ว่าเราจะแอดอะไรเข้าไปใน map
 
 
@@ -131,15 +133,17 @@ public class JwtTokenUtil {
         //( isTokenExpired((String) claims.get("accessToken") ) )&&
     }
 
-    public  Boolean validateOtpEmail(Integer otp,String token,Claims claims){
-        return  ((Objects.equals(claims.get("otp"), otp)) && !isTokenExpired(token));
+    public Boolean validateOtpEmail(Integer otp, String token, Claims claims) {
+        return ((Objects.equals(claims.get("otp"), otp)) && !isTokenExpired(token));
     }
 
 
     public Object getClaims(String token) {
-        Claims claims = getAllClaimsFromToken(token);// Use the appropriate signing key
-        return claims;
+
+            Claims claims = getAllClaimsFromToken(token);
+            System.out.println("test get claim");
+            return claims;
+        // Use the appropriate signing key
+
     }
-
-
 }
