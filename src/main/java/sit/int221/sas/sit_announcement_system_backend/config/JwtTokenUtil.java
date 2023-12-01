@@ -6,6 +6,8 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import sit.int221.sas.sit_announcement_system_backend.DTO.UsersDTO.UseRequestRegisterDTO;
+import sit.int221.sas.sit_announcement_system_backend.entity.User;
 import sit.int221.sas.sit_announcement_system_backend.properties.JwtProperties;
 import sit.int221.sas.sit_announcement_system_backend.repository.UserRepo.UserRepository;
 import sit.int221.sas.sit_announcement_system_backend.service.UserService;
@@ -56,7 +58,24 @@ public class JwtTokenUtil {
         claims.put("email", userService.getUser(userDetails.getUsername()).getEmail());
         return doGenerateToken(claims, userDetails.getUsername());
     }
-
+    // สร้าง token สำหรับ user ที่ไม่ได้ authenticate แต่ login ด้วย microsoft
+    public String generateAccessToken(User user) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("type", "AccessToken");
+        claims.put("username", user.getUsername());
+        claims.put("role", user.getRole());
+        claims.put("email", user.getEmail());
+        return doGenerateToken(claims, user.getUsername());
+    }
+    // สร้าง token สำหรับ user ที่ยังไม่ได้ลงทะเบียน แต่ login ด้วย microsoft
+    public String generateVisitorAccessToken(String username,String email) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("type", "AccessToken");
+        claims.put("username", username);
+        claims.put("role", "visitor");
+        claims.put("email", email);
+        return doGenerateToken(claims, username);
+    }
     public String generateRefreshToken(String accesstoken) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("type", "RefreshToken");
