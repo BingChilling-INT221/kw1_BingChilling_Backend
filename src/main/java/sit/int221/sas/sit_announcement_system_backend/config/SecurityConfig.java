@@ -44,6 +44,7 @@ public class SecurityConfig {
         http.cors().and().csrf().disable()
                 .authorizeHttpRequests((requests) -> requests
                                 .requestMatchers("/api/token").permitAll()
+                                .requestMatchers("api/ms/**").permitAll()
                                 .requestMatchers("/api/subscribes/notified_subscribe").permitAll()
                                 .requestMatchers("/api/subscribes/confirm_otp").permitAll()
                                 .requestMatchers(GET,"/api/subscribes/email").permitAll()
@@ -52,7 +53,7 @@ public class SecurityConfig {
                                 .requestMatchers("/api/subscribes/unsubscribe/id").permitAll()
                                 .requestMatchers("api/subscribes/getEmail").permitAll()
                                 .requestMatchers(GET,"api/files/**").permitAll()
-                                .requestMatchers("api/ms/**").permitAll()
+
                                 //.requestMatchers("api/files").permitAll()
                                 .requestMatchers(POST,"api/files/**").hasAnyAuthority(Role.admin.toString(), Role.announcer.toString())
                                 .requestMatchers(PUT,"api/files/**").hasAnyAuthority(Role.admin.toString(), Role.announcer.toString())
