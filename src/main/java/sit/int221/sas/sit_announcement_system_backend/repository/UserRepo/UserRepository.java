@@ -20,4 +20,6 @@ public interface UserRepository extends JpaRepository<User, Integer>, CustomUser
     Optional<User> findUsersByUsernameAndNameAndEmail(
             @Param("filed") String filed, @Param("id") Integer id
     );
+
+   Optional<User> findByEmail(String email);
 }
