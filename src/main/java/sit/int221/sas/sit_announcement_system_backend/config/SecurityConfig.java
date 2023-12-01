@@ -43,6 +43,8 @@ public class SecurityConfig {
 
         http.cors().and().csrf().disable()
                 .authorizeHttpRequests((requests) -> requests
+                        // allow all who are accessing "auth" service
+                                .requestMatchers("/api/azure/token").permitAll()
                                 .requestMatchers("/api/token").permitAll()
                                 .requestMatchers("/api/subscribes/notified_subscribe").permitAll()
                                 .requestMatchers("/api/subscribes/confirm_otp").permitAll()
