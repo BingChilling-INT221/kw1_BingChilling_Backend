@@ -37,11 +37,13 @@ public class AzureService {
         String userEmail = (String) response.getBody().get("mail");
         User user = userRepository.findByEmail(userEmail).orElse(null);
         if(user == null){
+//            send token sas of role visitor
                 String name = (String) response.getBody().get("displayName");
                 String accessTokens = jwtTokenUtil.generateVisitorAccessToken(name, userEmail);
                 String refreshTokens = jwtTokenUtil.generateRefreshToken(accessTokens);
                 return Map.of("token", accessTokens, "refreshToken", refreshTokens);
         }
+//        send token sas for those account
         String accessTokens = jwtTokenUtil.generateAccessToken(user);
         String refreshTokens = jwtTokenUtil.generateRefreshToken(accessTokens);
         return Map.of("token", accessTokens, "refreshToken", refreshTokens);

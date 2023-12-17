@@ -13,8 +13,10 @@ import org.springframework.web.bind.annotation.*;
 import sit.int221.sas.sit_announcement_system_backend.DTO.*;
 import sit.int221.sas.sit_announcement_system_backend.config.JwtTokenUtil;
 import sit.int221.sas.sit_announcement_system_backend.entity.Announcement;
+import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.FileException;
 import sit.int221.sas.sit_announcement_system_backend.execeptions.customError.ForbiddenException;
 import sit.int221.sas.sit_announcement_system_backend.service.AnnouncementService;
+import sit.int221.sas.sit_announcement_system_backend.service.FileService;
 import sit.int221.sas.sit_announcement_system_backend.service.SubscribeService;
 import sit.int221.sas.sit_announcement_system_backend.service.UserService;
 import sit.int221.sas.sit_announcement_system_backend.utils.ListMapper;
@@ -35,6 +37,9 @@ import java.util.List;
 })
 @Validated
 public class AnnouncementController<T> {
+
+    @Autowired
+    private FileService fileService ;
     @Autowired
     private ListMapper listMapper;
     @Autowired
@@ -129,11 +134,12 @@ public class AnnouncementController<T> {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority(@Role.ADMIN) or (hasAuthority(@Role.ANNOUNCER) and (@announcementService.isAuthorize(authentication.principal.username,#id)))")
-    public void deleteAnnouncement(@PathVariable Integer id) throws MessagingException {
+    public void deleteAnnouncement(@PathVariable Integer id) throws MessagingException, FileException {
         Announcement announcement=announcementService.deleteAnnouncement(id);
         System.out.println(announcement.getAnnouncementOwner().getEmail());
         System.out.println(announcement.getAnnouncementCategory());
         subscribeService.sendEmailToNotificationSubscribeWhenAnnouncementUpdated(announcement);
+        fileService.deleteFolderById(String.valueOf(announcement.getId()));
     }
 
     @PutMapping("/{id}")

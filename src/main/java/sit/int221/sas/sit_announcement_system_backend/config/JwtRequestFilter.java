@@ -46,24 +46,13 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
                 jwtToken = requestTokenHeader.substring(7);
                 Claims claims = null;
-                System.out.println("1.1");
                 System.out.println(jwtToken);
-                System.out.println("1.2");
-                try {
+
+
                     claims = (Claims) jwtTokenUtil.getClaims(jwtToken);
-                } catch (Exception e) {
 
-                    System.out.println(e.getMessage() + Arrays.toString(e.getStackTrace()));
-                    String publicKey = request.getHeader("publicKey");
-                   JwtTokenVerifier jwtTokenVerifier = new JwtTokenVerifier(publicKey) ;
-                    System.out.println(jwtTokenVerifier.isTokenValid(jwtToken));
-                    System.out.println("Jwt ms ");
-
-                }
                 if (claims != null) {
                     username = jwtTokenUtil.getSubjectFromToken(jwtToken);
-                    Object email = claims.get("preferred_username");
-                    System.out.println(email);
                     if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                         System.out.println("22");
                         UserDetails userDetails = this.jwtUserDetailsService.loadUserByUsername(username);
@@ -74,24 +63,18 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                                     .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                             SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
                         }
-                    } else if (email != null) {
-                        System.out.println(email);
                     } else {
-
                         final UserDetails userDetails = this.jwtUserDetailsService.loadUserByUsername((String) claims.get("username"));
                         jwtTokenUtil.validateRefreshToken(jwtToken, claims, userDetails);
-
 
                     }
 
                 }
-                System.out.println("33");
                 String requestTokenHeaderOtp = request.getHeader("AuthorizationOtp");
                 String tokenOtp = null;
                 Claims claimsOtp = null;
 
                 if (requestTokenHeaderOtp != null && requestTokenHeaderOtp.startsWith("Bearer ")) {
-                    System.out.println("44");
                     tokenOtp = requestTokenHeaderOtp.substring(7);
                     try {
                         claimsOtp = (Claims) jwtTokenUtil.getClaims(tokenOtp);

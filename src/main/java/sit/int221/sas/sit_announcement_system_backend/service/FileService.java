@@ -34,27 +34,32 @@ public class FileService {
     FileStorageProperties fileStorageProperties ;
 
 
-
+//save link file
     public List<FileDTO> loadAllFilesAsResource(String id )throws FileException {
 
         setFileStorageLocation(id);
         if(Files.exists(this.fileStorageLocation.toAbsolutePath())) {
 
             File directoryTarget = new File(String.valueOf(this.fileStorageLocation));
+//            pull list of file
             List<File> fileFromDirectoryTarget = List.of(Objects.requireNonNull(directoryTarget.listFiles()));
 
             List<Resource> fileResource = new ArrayList<>();
             List<FileDTO> fileDTOList = new ArrayList<>();
+//            loop of list in file
             fileFromDirectoryTarget.forEach(x -> {
                 try {
+//                    make it to uri can remotely access
                     fileResource.add(new UrlResource(this.fileStorageLocation.resolve(x.getName()).normalize().toUri()));
                 } catch (MalformedURLException e) {
                     throw new RuntimeException(e);
                 }
             });
+//            loop again for attach id folder and file name
             fileResource.forEach(x -> {
                 String url = "https://intproj22.sit.kmutt.ac.th/kw1/api/files/" + id + "/" + x.getFilename();
                 try {
+//          take file to fileDTO and
                     fileDTOList.add(new FileDTO(x.getFilename(), url, detectFileType(Objects.requireNonNull(x.getFilename())), x.contentLength()));
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -68,6 +73,7 @@ public class FileService {
     }
 
     private String detectFileType(String fileName) {
+//        substring start at front of target index
         String fileExtension = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
 
         switch (fileExtension) {
@@ -129,31 +135,32 @@ public class FileService {
     public void updateFiles(String id, MultipartFile[] files, String[] oldFile) throws FileException {
         setFileStorageLocation(id);
         File directoryTarget = new File(String.valueOf(this.fileStorageLocation));
+//        pull lists file from directory
         List<File> fileFromDirectoryTarget = List.of(Objects.requireNonNull(directoryTarget.listFiles()));
+//        make list to array
         List<String> oldFileList = Arrays.asList(oldFile);
         List<String> filesName = new ArrayList<>();
 
         try {
-            // เพิ่มการประมวลผลที่นี่ เช่น ลูปเพื่อตรวจสอบไฟล์ที่ต้องการอัพเดท และเพิ่มไฟล์ใหม่ หรือลบไฟล์เก่าตามที่ต้องการ
-            // เพื่อให้เกิดการอัพเดทไฟล์ตามที่ต้องการ
+//   loop for check file have same name or not ?
             for (File file : fileFromDirectoryTarget) {
                 if (oldFileList.contains(file.getName())) {
-                    // ตรวจสอบและทำการลบไฟล์ที่ต้องการ
+//                    delete if file is duplicate
                     Files.deleteIfExists(file.toPath());
                 }
-            }
-            if (files[0].isEmpty()) {
-                return;
-            }
-            if (files.length + fileFromDirectoryTarget.size() > 5) {
-                System.out.println(files.length);
-                System.out.println(files.length + fileFromDirectoryTarget.size());
-                throw new FileException("Sorry, You can't store more than 5 files. So now You have added already " + fileFromDirectoryTarget.size() + " files from before.", "file");
             }
             if (files.length == 0) {
                 return;
             }
-            // ทำการเพิ่มไฟล์ใหม่ที่อัพโหลดเข้ามา
+            if (files.length + fileFromDirectoryTarget.size() > 5) {
+//                check file size not over 5
+                System.out.println(files.length);
+                System.out.println(files.length + fileFromDirectoryTarget.size());
+                throw new FileException("Sorry, You can't store more than 5 files. So now You have added already " + fileFromDirectoryTarget.size() + " files from before.", "file");
+            }
+
+
+//           add file from request
             for (MultipartFile file : files) {
                 String fileName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
                 Path targetLocation = this.fileStorageLocation.resolve(fileName);

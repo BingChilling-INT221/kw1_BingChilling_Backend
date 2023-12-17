@@ -50,7 +50,6 @@ public class FileController {
     @GetMapping("/test/{id}")
     public void testFile(@PathVariable String id,@RequestParam("file") MultipartFile [] file,@RequestParam("name") String[]  name){
         System.out.println("start con");
-        System.out.println("");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String role = SecurityContextHolder.getContext().getAuthentication().getAuthorities().toArray()[0].toString();
         System.out.println(role);
