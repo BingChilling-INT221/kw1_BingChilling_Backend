@@ -136,6 +136,10 @@ public class FileService {
         setFileStorageLocation(id);
         File directoryTarget = new File(String.valueOf(this.fileStorageLocation));
 //        pull lists file from directory
+        if(directoryTarget.listFiles()==null){
+            store(id,files);
+            return;
+        }
         List<File> fileFromDirectoryTarget = List.of(Objects.requireNonNull(directoryTarget.listFiles()));
 //        make list to array
         List<String> oldFileList = Arrays.asList(oldFile);
