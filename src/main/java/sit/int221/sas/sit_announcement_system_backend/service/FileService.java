@@ -148,10 +148,10 @@ public class FileService {
 //                    delete if file is duplicate
                     Files.deleteIfExists(file.toPath());
                 }
-            }
-            if (files.length == 0) {
+            }if(files[0].isEmpty()){
                 return;
             }
+
             if (files.length + fileFromDirectoryTarget.size() > 5) {
 //                check file size not over 5
                 System.out.println(files.length);
