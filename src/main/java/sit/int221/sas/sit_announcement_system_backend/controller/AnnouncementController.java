@@ -89,9 +89,7 @@ public class AnnouncementController<T> {
         if (role.equals("admin")) {
             return ResponseEntity.status(HttpStatus.OK).body(modelMapper.map(announcementService.getAnnouncementById(id), AnnouncementsResponseDetailDTO.class));
         }
-        System.out.println(role);
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        System.out.println(username);
         if (username.equals("anonymousUser")) {
             return ResponseEntity.status(HttpStatus.OK).body(modelMapper.map(announcementService.getAnnouncementById(id), AnnouncementsResponseDetailDTO.class));
         }
@@ -126,8 +124,6 @@ public class AnnouncementController<T> {
     public ResponseEntity<AnnouncementsResponsehaveidDTO> createAnnouncement(@Valid @RequestBody AnnouncementsRequestDTO announcementDTO) throws MessagingException {
         announcementDTO.setOwnerName( SecurityContextHolder.getContext().getAuthentication().getName());
         Announcement  announcement = announcementService.createAnnoucement(announcementDTO);
-        System.out.println(announcement.getAnnouncementOwner().getEmail());
-        System.out.println(announcement.getAnnouncementCategory());
         subscribeService.sendEmailToNotificationSubscribeWhenAnnouncementUpdated(announcement);
         return ResponseEntity.status(HttpStatus.OK).body(modelMapper.map(announcement, AnnouncementsResponsehaveidDTO.class));
     }
@@ -136,8 +132,6 @@ public class AnnouncementController<T> {
     @PreAuthorize("hasAuthority(@Role.ADMIN) or (hasAuthority(@Role.ANNOUNCER) and (@announcementService.isAuthorize(authentication.principal.username,#id)))")
     public void deleteAnnouncement(@PathVariable Integer id) throws MessagingException, FileException {
         Announcement announcement=announcementService.deleteAnnouncement(id);
-        System.out.println(announcement.getAnnouncementOwner().getEmail());
-        System.out.println(announcement.getAnnouncementCategory());
         subscribeService.sendEmailToNotificationSubscribeWhenAnnouncementUpdated(announcement);
         fileService.deleteFolderById(String.valueOf(announcement.getId()));
     }
@@ -146,8 +140,6 @@ public class AnnouncementController<T> {
     @PreAuthorize("hasAuthority(@Role.ADMIN) or (hasAuthority(@Role.ANNOUNCER) and (@announcementService.isAuthorize(authentication.principal.username,#id)))")
     public ResponseEntity<AnnouncementsResponseDetailDTO> updateAnnouncement(@PathVariable Integer id, @Valid @RequestBody AnnouncementsRequestDTO announcmentDTO) throws MessagingException {
         Announcement announcement = announcementService.updateAnnouncement(id, announcmentDTO) ;
-        System.out.println(announcement.getAnnouncementOwner().getEmail());
-        System.out.println(announcement.getAnnouncementCategory());
         subscribeService.sendEmailToNotificationSubscribeWhenAnnouncementUpdated(announcement);
         return ResponseEntity.status(HttpStatus.OK).body(modelMapper.map(announcement, AnnouncementsResponseDetailDTO.class));
 

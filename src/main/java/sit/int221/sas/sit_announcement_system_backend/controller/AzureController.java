@@ -42,8 +42,8 @@ public class AzureController {
         // ใช้ access token เพื่อเรียกข้อมูลจาก Microsoft Graph API ต่อไป
         try {
             Map<String, String> tokens = azureService.getuserAccessToken(accessToken);
-            System.out.println("accessToken: " + tokens.get("accessToken"));
-            System.out.println("refreshToken: " + tokens.get("refreshToken"));
+//            System.out.println("accessToken: " + tokens.get("accessToken"));
+//            System.out.println("refreshToken: " + tokens.get("refreshToken"));
             return ResponseEntity.ok(tokens);
         }
        catch (NotfoundByfield e){

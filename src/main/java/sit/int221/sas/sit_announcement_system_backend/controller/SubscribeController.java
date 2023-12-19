@@ -70,15 +70,16 @@ public class SubscribeController {
     @PostMapping("/notified_subscribe")
     public ResponseEntity<?> sendOTP(  @Valid @RequestBody SubscribeRequestDTO subscribeRequest){
         try {
-            System.out.println("test notified_subscribe");
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String email = null ;
             email = subscribeRequest.getEmail() ;
             String role = authentication.getAuthorities().stream().findFirst().get().toString() ;
+//            check role
             if(  email == null && (role.equals("admin") || role.equals("announcer"))){
                 User user = userService.getUserByUsername(((UserDetails) authentication.getPrincipal()).getUsername());
                 email = user.getEmail();
             }
+//            if not have the both ref email
             if(email == null){ throw new EmailException("please , enter email destination due to you haven't login  ","email");}
             List<Integer> subscribesFromRequest = Arrays.stream(subscribeRequest.getSubscribes()).toList();
             System.out.println(subscribesFromRequest);
@@ -106,7 +107,7 @@ public class SubscribeController {
                messageError = e.getMessage();
             }
 
-            if( messageError.length()==0) {
+            if(messageError.isEmpty()) {
                 subscribeService.sendEmailToNotificationSubscribe((String) claims.get("email"),
                         claims);
                return ResponseEntity.status(HttpStatus.OK).body("Subscribe all successfully.");
@@ -131,7 +132,6 @@ public class SubscribeController {
     public ResponseEntity<String>   deleteAllSubscribeByEmail(@Valid @RequestBody SubscribeRequestToUnsubscribeDTO subscribeRequest){
         try {
             List<Subscribe> subscribes = subscribeService.deleteAllSubscribe(subscribeRequest.getEmail()) ;
-            System.out.println(subscribes);
             return ResponseEntity.status(HttpStatus.OK).body("Unsubscribe all successfully.");
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error is : "+ e.getMessage());

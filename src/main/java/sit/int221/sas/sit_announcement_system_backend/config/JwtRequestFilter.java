@@ -41,54 +41,50 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         String requestTokenHeader = request.getHeader("Authorization");
         String username = null;
         String jwtToken = null;
-        System.out.println("11");
         try {
             if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
                 jwtToken = requestTokenHeader.substring(7);
                 Claims claims = null;
-                System.out.println(jwtToken);
-
-
                     claims = (Claims) jwtTokenUtil.getClaims(jwtToken);
 
                 if (claims != null) {
                     username = jwtTokenUtil.getSubjectFromToken(jwtToken);
                     if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                        System.out.println("22");
                         UserDetails userDetails = this.jwtUserDetailsService.loadUserByUsername(username);
-                        if (jwtTokenUtil.validateToken(jwtToken, userDetails)) {
-                            UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-                                    userDetails, null, userDetails.getAuthorities());
-                            usernamePasswordAuthenticationToken
-                                    .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                            SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-                        }
-                    } else {
+                             if (jwtTokenUtil.validateToken(jwtToken, userDetails)) {
+                                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
+                                        userDetails, null, userDetails.getAuthorities());
+                                usernamePasswordAuthenticationToken
+                                        .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                                SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+                                }
+                        } else {
                         final UserDetails userDetails = this.jwtUserDetailsService.loadUserByUsername((String) claims.get("username"));
                         jwtTokenUtil.validateRefreshToken(jwtToken, claims, userDetails);
-
-                    }
-
+                        }
                 }
+
                 String requestTokenHeaderOtp = request.getHeader("AuthorizationOtp");
                 String tokenOtp = null;
                 Claims claimsOtp = null;
 
                 if (requestTokenHeaderOtp != null && requestTokenHeaderOtp.startsWith("Bearer ")) {
                     tokenOtp = requestTokenHeaderOtp.substring(7);
-                    try {
-                        claimsOtp = (Claims) jwtTokenUtil.getClaims(tokenOtp);
-                    } catch (Exception e) {
-                        System.out.println(e.getMessage());
-                    }
-                    if (claimsOtp != null) {
-                        if (Objects.equals(claimsOtp.get("type"), "OTP")) {
-                            String otpRequest = request.getHeader("Otp");
-                            if (!jwtTokenUtil.validateOtpEmail(Integer.valueOf(otpRequest), tokenOtp, claimsOtp)) {
-                                throw new AuthenticationException();
+
+                        try {
+                            claimsOtp = (Claims) jwtTokenUtil.getClaims(tokenOtp);
+                        } catch (Exception e) {
+                            System.out.println(e.getMessage());
+                        }
+
+                        if (claimsOtp != null) {
+                            if (Objects.equals(claimsOtp.get("type"), "OTP")) {
+                                String otpRequest = request.getHeader("Otp");
+                                if (!jwtTokenUtil.validateOtpEmail(Integer.valueOf(otpRequest), tokenOtp, claimsOtp)) {
+                                    throw new AuthenticationException();
+                                }
                             }
                         }
-                    }
 
                 }
 

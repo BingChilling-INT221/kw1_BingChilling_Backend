@@ -159,9 +159,7 @@ public class JwtTokenUtil {
 
     public Object getClaims(String token) {
 
-            Claims claims = getAllClaimsFromToken(token);
-            System.out.println("test get claim");
-            return claims;
+        return getAllClaimsFromToken(token);
         // Use the appropriate signing key
 
     }

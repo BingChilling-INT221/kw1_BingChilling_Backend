@@ -68,8 +68,8 @@ public class AnnouncementService {
     public boolean isAuthorize(String username, Integer announcementId) {
         System.out.println(username + " " + announcementId);
         Announcement announcement = announcementRepository.findById(announcementId).orElse(null);
-        System.out.println(announcement.getId());
-        System.out.println(announcement.getAnnouncementOwner().getUsername());
+//        System.out.println(announcement.getId());
+//        System.out.println(announcement.getAnnouncementOwner().getUsername());
         return announcement != null && announcement.getAnnouncementOwner().getUsername().equals(username);
     }
 
@@ -78,26 +78,26 @@ public class AnnouncementService {
 
         String role = payload.getAuthorities().stream().findFirst().get().getAuthority();
         String username = payload.getName();
-        System.out.println(payload);
-        System.out.println("--------------------");
-        System.out.println(role);
+//        System.out.println(payload);
+//        System.out.println("--------------------");
+//        System.out.println(role);
         if (role.equalsIgnoreCase("announcer")) {
-            System.out.println("announcer");
+//            System.out.println("announcer");
             return announcementRepository.findByAnnouncementOwnerUsernameOrderByIdDesc(username);
         } else if (role.equalsIgnoreCase("admin")) {
-            System.out.println("admin");
+//            System.out.println("admin");
             return announcementRepository.findAllByOrderByIdDesc();
         } else {
             LocalDateTime localNow = LocalDateTime.now();
             if (mode != null) {
                 if (mode.equalsIgnoreCase("active")) {
-                    System.out.println("active");
+//                    System.out.println("active");
                     return announcementRepository.findAnnouncementByValidateDatetimeList(localNow.atZone(ZoneId.of("UTC")));
                 } else if (mode.equalsIgnoreCase("close")) {
-                    System.out.println("close");
+//                    System.out.println("close");
                     return announcementRepository.findAnnouncementByCloseDateAfterNowList(localNow.atZone(ZoneId.of("UTC")));
                 } else {
-                    System.out.println("not found");
+//                    System.out.println("not found");
                     throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Not Found : " + mode + " mode .");
                 }
             }

@@ -135,11 +135,12 @@ public class FileService {
     public void updateFiles(String id, MultipartFile[] files, String[] oldFile) throws FileException {
         setFileStorageLocation(id);
         File directoryTarget = new File(String.valueOf(this.fileStorageLocation));
-//        pull lists file from directory
+
         if(directoryTarget.listFiles()==null){
             store(id,files);
             return;
         }
+        //        pull lists file from directory
         List<File> fileFromDirectoryTarget = List.of(Objects.requireNonNull(directoryTarget.listFiles()));
 //        make list to array
         List<String> oldFileList = Arrays.asList(oldFile);
@@ -158,8 +159,6 @@ public class FileService {
 
             if (files.length + fileFromDirectoryTarget.size() > 5) {
 //                check file size not over 5
-                System.out.println(files.length);
-                System.out.println(files.length + fileFromDirectoryTarget.size());
                 throw new FileException("Sorry, You can't store more than 5 files. So now You have added already " + fileFromDirectoryTarget.size() + " files from before.", "file");
             }
 
