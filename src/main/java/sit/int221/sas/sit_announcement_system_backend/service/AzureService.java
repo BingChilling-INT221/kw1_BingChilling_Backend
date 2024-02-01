@@ -41,12 +41,12 @@ public class AzureService {
         String userEmail = (String) response.get("preferred_username");
         ArrayList<String> roles = (ArrayList<String>) response.get("roles");
         String role = null;
-        if (roles != null && roles.isEmpty()) {
+        if (roles != null && !roles.isEmpty()) {
             role = roles.get(0);
         };
         String name = (String) response.get("name");
         System.out.println(userEmail + "\n");
-        System.out.println(response);
+//        System.out.println(response);
         System.out.println(role + "\n");
         // fetch user info from Microsoft Graph with access token
 //        String graphApiUrl = "https://graph.microsoft.com/v1.0/me";
@@ -89,9 +89,12 @@ public class AzureService {
             String refreshTokens = jwtTokenUtil.generateRefreshToken(accessTokens);
             return Map.of("token", accessTokens, "refreshToken", refreshTokens);
         }
+        if (role == null) {
+            role = "";
+        }
         if (role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("announcer")) {
             user.setRole(Role.valueOf(role));
-            userRepository.save(user);
+            userRepository.saveAndFlush(user);
             String accessTokens = jwtTokenUtil.generateAccessToken(user);
             String refreshTokens = jwtTokenUtil.generateRefreshToken(accessTokens);
             return Map.of("token", accessTokens, "refreshToken", refreshTokens);
