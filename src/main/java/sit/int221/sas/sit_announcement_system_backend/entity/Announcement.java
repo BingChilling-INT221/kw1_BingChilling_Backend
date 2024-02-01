@@ -44,9 +44,7 @@ public class Announcement {
     @Enumerated(EnumType.STRING)
     private AnnouncementDisplay announcementDisplay;
 
-    @ManyToOne
-    @JoinColumn(name = "announcementOwner", nullable = false)
-    private User announcementOwner;
+    private String announcementOwner;
 
     public Announcement() {
         this.announcementDisplay = AnnouncementDisplay.N;

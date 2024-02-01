@@ -26,11 +26,8 @@ public class AnnouncementsResponsehaveidDTO {
     @JsonIgnore
     @Column(name = "announcementCategory")
     private Category category;
-    private User announcementOwner;
+    private String announcementOwner;
 
-    public String getAnnouncementOwner() {
-        return announcementOwner.getUsername();
-    }
 
     public Integer getCategoryId() {
         return category.getCategoryId();

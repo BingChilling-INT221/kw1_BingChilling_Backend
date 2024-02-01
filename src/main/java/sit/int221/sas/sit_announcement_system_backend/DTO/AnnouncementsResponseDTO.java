@@ -21,9 +21,6 @@ public class AnnouncementsResponseDTO {
 
     private String announcementCategory;
     private Integer viewCount;
-    private User announcementOwner;
+    private String announcementOwner;
 
-    public String getAnnouncementOwner() {
-        return announcementOwner.getUsername();
-    }
 }

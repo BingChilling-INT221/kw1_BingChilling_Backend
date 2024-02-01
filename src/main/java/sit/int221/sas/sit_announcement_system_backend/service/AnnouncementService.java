@@ -50,19 +50,19 @@ public class AnnouncementService {
     @Autowired
     private MailProperties mailProperties ;
 
-    private List<Announcement> getAnnouncementsByOwner(Integer ownerId) {
+//    private List<Announcement> getAnnouncementsByOwner(String ownerId) {
+//
+//        return announcementRepository.findByAnnouncementOwnerOrderByCloseDateDesc(ownerId);
+//    }
 
-        return announcementRepository.findByAnnouncementOwnerId(ownerId).orElseThrow(() -> new NotfoundByfield("does not exits", "announcementOwner"));
-    }
-
-    public List<Announcement> updateAnnouncementsByAnnouncementOwner(Integer ownerId, User newOwner) {
-        List<Announcement> announcements = getAnnouncementsByOwner(ownerId);
-        announcements.forEach(announcement -> announcement.setAnnouncementOwner(newOwner));
+    public List<Announcement> updateAnnouncementsByAnnouncementOwner(Integer ownerId, String newOwner) {
+        List<Announcement> announcements = announcementRepository.findByAnnouncementOwnerOrderByCloseDateDesc(newOwner);
+//        announcements.forEach(announcement -> announcement.setAnnouncementOwner(newOwner));
         return announcementRepository.saveAllAndFlush(announcements);
     }
 
     public List<Announcement> getAnnouncementsByOwnerName(String ownerName) {
-        return announcementRepository.findByAnnouncementOwnerUsername(ownerName);
+        return announcementRepository.findByAnnouncementOwnerOrderByCloseDateDesc(ownerName);
     }
 
     public boolean isAuthorize(String username, Integer announcementId) {
@@ -70,10 +70,10 @@ public class AnnouncementService {
         Announcement announcement = announcementRepository.findById(announcementId).orElse(null);
 //        System.out.println(announcement.getId());
 //        System.out.println(announcement.getAnnouncementOwner().getUsername());
-        return announcement != null && announcement.getAnnouncementOwner().getUsername().equals(username);
+        return announcement != null && announcement.getAnnouncementOwner().equals(username);
     }
 
-    public List<Announcement> getAnnouncements(String mode) {
+    public List<Announcement> getAnnouncements(String mode, Integer category) {
         Authentication payload = SecurityContextHolder.getContext().getAuthentication();
 
         String role = payload.getAuthorities().stream().findFirst().get().getAuthority();
@@ -83,7 +83,7 @@ public class AnnouncementService {
 //        System.out.println(role);
         if (role.equalsIgnoreCase("announcer")) {
 //            System.out.println("announcer");
-            return announcementRepository.findByAnnouncementOwnerUsernameOrderByIdDesc(username);
+            return announcementRepository.findByAnnouncementOwnerOrderByCloseDateDesc(username);
         } else if (role.equalsIgnoreCase("admin")) {
 //            System.out.println("admin");
             return announcementRepository.findAllByOrderByIdDesc();
@@ -132,7 +132,7 @@ public class AnnouncementService {
         try {
             Announcement existAnnouncement = announcementRepository.findById(id).orElseThrow(
                     () -> new NotfoundByfield(("Announcement id " + id + " does not exist"), "id"));
-            announcement.setOwnerName(existAnnouncement.getAnnouncementOwner().getUsername());
+            announcement.setOwnerName(existAnnouncement.getAnnouncementOwner());
             return getAnnouncement(announcement, existAnnouncement);
         } catch (RuntimeException e) {
             throw new RuntimeException(e);
@@ -149,7 +149,7 @@ public class AnnouncementService {
         if (announcement.getAnnouncementDisplay() != null) {
             RealAnnouncement.setAnnouncementDisplay(announcement.getAnnouncementDisplay());
         }
-        RealAnnouncement.setAnnouncementOwner(UserRepository.findByUsername(announcement.getOwnerName()).orElseThrow(() -> new SetFiledErrorException("does not exists", "announcementOwner")));
+        RealAnnouncement.setAnnouncementOwner(announcement.getOwnerName());
         RealAnnouncement.setAnnouncementCategory(categoryRepository.findById(announcement.getCategoryId()).orElseThrow(() -> new SetFiledErrorException("does not exists", "categoryId")));
         return announcementRepository.saveAndFlush(RealAnnouncement);
     }
@@ -162,13 +162,13 @@ public class AnnouncementService {
         Authentication payload = SecurityContextHolder.getContext().getAuthentication();
         String role = payload.getAuthorities().stream().findFirst().get().getAuthority();
         String username = payload.getName();
-        System.out.println(payload);
-        System.out.println("--------------------");
-        System.out.println(role);
+//        System.out.println(payload);
+//        System.out.println("--------------------");
+//        System.out.println(role);
         if (role.equalsIgnoreCase("announcer")) {
             System.out.println("announcer");
             if (category == null) {
-                return announcementRepository.findByAnnouncementOwnerUsernameOrderByIdDesc(username, pageable);
+                return announcementRepository.findByAnnouncementOwnerOrderByCloseDateDesc(username, pageable);
             } else {
                 return announcementRepository.findAnnouncementByAnnouncementCategory_CategoryIdOrderByIdDesc(category, pageable);
             }

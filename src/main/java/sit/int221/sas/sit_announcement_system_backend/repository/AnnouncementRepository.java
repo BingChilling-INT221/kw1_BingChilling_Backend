@@ -14,7 +14,6 @@ import java.util.Optional;
 
 public interface AnnouncementRepository extends JpaRepository<Announcement, Integer> {
 
-    Optional<List<Announcement>> findByAnnouncementOwnerId(Integer announcementOwnerId);
 
     @Query(value = "SELECT a.viewCount FROM Announcement a WHERE a.id = :id")
     Integer viewcountById(Integer id);
@@ -58,13 +57,7 @@ public interface AnnouncementRepository extends JpaRepository<Announcement, Inte
 
     Page<Announcement> findAnnouncementByAnnouncementCategory_CategoryIdOrderByIdDesc(Integer id, Pageable pageable);
 
-    List<Announcement> findByAnnouncementOwnerUsername(String ownerName);
-
-    List<Announcement> findByAnnouncementOwnerUsernameOrderByIdDesc(String username);
-
-    Page<Announcement> findByAnnouncementOwnerUsernameOrderByIdDesc(String username, Pageable pageable);
-
-
-    // List<Announcement> findAllByAnnouncementCategory_Category_IdDesc() ;
+    List<Announcement> findByAnnouncementOwnerOrderByCloseDateDesc(String username);
+    Page<Announcement> findByAnnouncementOwnerOrderByCloseDateDesc(String username, Pageable pageable);
 
 }
