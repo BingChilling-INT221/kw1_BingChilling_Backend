@@ -67,7 +67,17 @@ public class JwtTokenUtil {
         claims.put("email", user.getEmail());
         return doGenerateToken(claims, user.getUsername());
     }
+    public String generateAzureAccessToken(String username, String email, String role, String accessToken) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("type", "AccessToken");
+        claims.put("username", username);
+        claims.put("role", role);
+        claims.put("email", email);
+        claims.put("AzureAccessToken", accessToken);
+        return doGenerateToken(claims, username);
+    }
     // สร้าง token สำหรับ user ที่ยังไม่ได้ลงทะเบียน แต่ login ด้วย microsoft
+
     public String generateVisitorAccessToken(String username,String email) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("type", "AccessToken");
