@@ -45,19 +45,6 @@ public class AzureService {
             role = roles.get(0);
         };
         String name = (String) response.get("name");
-        System.out.println(userEmail + "\n");
-//        System.out.println(response);
-        System.out.println(role + "\n");
-        // fetch user info from Microsoft Graph with access token
-//        String graphApiUrl = "https://graph.microsoft.com/v1.0/me";
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.setBearerAuth(accessToken);
-//
-//        HttpEntity<String> entity = new HttpEntity<>(headers);
-//
-//        RestTemplate restTemplate = new RestTemplate();
-//        ResponseEntity<JSONObject> response = restTemplate.exchange(graphApiUrl, HttpMethod.GET, entity, JSONObject.class);
-//        String userEmail = (String) response.getBody().get("mail");
         User user = null;
         try {
             user = userRepository.findByEmail(userEmail).orElse(null);
@@ -67,43 +54,38 @@ public class AzureService {
         if (user == null) {
             String accessTokens = "";
             if ((role !=null) &&(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("announcer"))) {
-
-                User userObj = new User();
-                userObj.setUsername(name);
-                userObj.setName(name);
-                userObj.setEmail(userEmail);
-                userObj.setRole(Role.valueOf(role));
-                String savedPassword = this.encodingArgon2.getEncryption("user.getPassword()".trim());
-                userObj.setPassword(savedPassword);
-                userObj = userRepository.save(userObj);
-                accessTokens = jwtTokenUtil.generateAccessToken(userObj);
+                String username = userEmail.split("@")[0];
+                accessTokens = jwtTokenUtil.generateAzureAccessToken(username, userEmail, Role.valueOf(role).toString(),accessToken);
             } else {
                 accessTokens = jwtTokenUtil.generateVisitorAccessToken(name, userEmail);
             }
             String refreshTokens = jwtTokenUtil.generateRefreshToken(accessTokens);
             return Map.of("token", accessTokens, "refreshToken", refreshTokens);
         }
-        if (user.getRole().toString().equals(role))
-        {
-            String accessTokens = jwtTokenUtil.generateAccessToken(user);
-            String refreshTokens = jwtTokenUtil.generateRefreshToken(accessTokens);
-            return Map.of("token", accessTokens, "refreshToken", refreshTokens);
-        }
-        if (role == null) {
-            role = "";
-        }
-        if (role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("announcer")) {
-            user.setRole(Role.valueOf(role));
-            userRepository.saveAndFlush(user);
-            String accessTokens = jwtTokenUtil.generateAccessToken(user);
-            String refreshTokens = jwtTokenUtil.generateRefreshToken(accessTokens);
-            return Map.of("token", accessTokens, "refreshToken", refreshTokens);
-        }
-        else {
-            userRepository.delete(user);
-            String accessTokens = jwtTokenUtil.generateVisitorAccessToken(name, userEmail);
-            String refreshTokens = jwtTokenUtil.generateRefreshToken(accessTokens);
-            return Map.of("token", accessTokens, "refreshToken", refreshTokens);
-        }
+        accessToken = jwtTokenUtil.generateAccessToken(user);
+        String refreshTokens = jwtTokenUtil.generateRefreshToken(accessToken);
+        return Map.of("token", accessToken, "refreshToken", refreshTokens);
+//        if (user.getRole().toString().equals(role))
+//        {
+//            String accessTokens = jwtTokenUtil.generateAccessToken(user);
+//            String refreshTokens = jwtTokenUtil.generateRefreshToken(accessTokens);
+//            return Map.of("token", accessTokens, "refreshToken", refreshTokens);
+//        }
+//        if (role == null) {
+//            role = "";
+//        }
+//        if (role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("announcer")) {
+//            user.setRole(Role.valueOf(role));
+//            userRepository.saveAndFlush(user);
+//            String accessTokens = jwtTokenUtil.generateAccessToken(user);
+//            String refreshTokens = jwtTokenUtil.generateRefreshToken(accessTokens);
+//            return Map.of("token", accessTokens, "refreshToken", refreshTokens);
+//        }
+//        else {
+//            userRepository.delete(user);
+//            String accessTokens = jwtTokenUtil.generateVisitorAccessToken(name, userEmail);
+//            String refreshTokens = jwtTokenUtil.generateRefreshToken(accessTokens);
+//            return Map.of("token", accessTokens, "refreshToken", refreshTokens);
+//        }
     }
 }
