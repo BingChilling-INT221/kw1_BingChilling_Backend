@@ -41,7 +41,7 @@ public class JwtValidator {
             // Get the public key from Azure AD OpenID configuration endpoint
             URL endpointUrl = new URL("https://login.microsoftonline.com/" + tenantId + "/discovery/keys?appid=" + clientId);
             String publicKeyResponse = getAzureADPublicKey(endpointUrl);
-            System.out.println(publicKeyResponse);
+//            System.out.println(publicKeyResponse);
             // Extract the value of x5c for the matching key ID
             return extractX5CValue(publicKeyResponse, kid);
         } catch (Exception e) {

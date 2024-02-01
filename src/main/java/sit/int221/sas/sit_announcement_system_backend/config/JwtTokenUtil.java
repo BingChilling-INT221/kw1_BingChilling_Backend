@@ -73,7 +73,7 @@ public class JwtTokenUtil {
         claims.put("username", username);
         claims.put("role", role);
         claims.put("email", email);
-        claims.put("AzureAccessToken", accessToken);
+        claims.put("AAccessToken", accessToken);
         return doGenerateToken(claims, username);
     }
     // สร้าง token สำหรับ user ที่ยังไม่ได้ลงทะเบียน แต่ login ด้วย microsoft
