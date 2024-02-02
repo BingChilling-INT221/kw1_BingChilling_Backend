@@ -100,7 +100,8 @@ public class UserController {
         if (username.equals(userService.getUserById(id).getUsername())) {
             throw new ForbiddenException("You can't delete yourself.", "error");
         }
-        announcementService.updateAnnouncementsByAnnouncementOwner(id, username);
+        String owner = userService.getUserById(id).getUsername();
+        announcementService.updateAnnouncementsByAnnouncementOwner(owner, username);
         userService.deleteUser(id);
 
     }

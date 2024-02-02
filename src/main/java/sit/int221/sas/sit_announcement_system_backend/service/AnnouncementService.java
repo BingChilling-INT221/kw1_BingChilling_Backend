@@ -55,9 +55,9 @@ public class AnnouncementService {
 //        return announcementRepository.findByAnnouncementOwnerOrderByCloseDateDesc(ownerId);
 //    }
 
-    public List<Announcement> updateAnnouncementsByAnnouncementOwner(Integer ownerId, String newOwner) {
-        List<Announcement> announcements = announcementRepository.findByAnnouncementOwnerOrderByCloseDateDesc(newOwner);
-//        announcements.forEach(announcement -> announcement.setAnnouncementOwner(newOwner));
+    public List<Announcement> updateAnnouncementsByAnnouncementOwner(String ownerId, String newOwner) {
+        List<Announcement> announcements = announcementRepository.findByAnnouncementOwnerOrderByCloseDateDesc(ownerId);
+        announcements.forEach(announcement -> announcement.setAnnouncementOwner(newOwner));
         return announcementRepository.saveAllAndFlush(announcements);
     }
 
